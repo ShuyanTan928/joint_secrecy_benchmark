@@ -1,0 +1,81 @@
+{
+ "emails": 2000,
+ "senders": 952,
+ "share_from_firm": 0.616,
+ "own_body_words": {
+  "median": 64,
+  "p25": 36,
+  "p75": 128,
+  "share_under_30": 0.191
+ },
+ "greeting_first_line": {
+  "none": 0.731,
+  "name only": 0.129,
+  "dear": 0.046,
+  "hi": 0.043,
+  "hey": 0.028,
+  "hello": 0.016,
+  "good morning": 0.007
+ },
+ "sign_off_last_lines": {
+  "none": 0.796,
+  "thanks": 0.116,
+  "thank you": 0.026,
+  "best": 0.021,
+  "regards": 0.016,
+  "take care": 0.011,
+  "best regards": 0.006,
+  "sincerely": 0.004,
+  "cheers": 0.002,
+  "thx": 0.001
+ },
+ "all_lowercase": 0.019,
+ "punctuation": {
+  "exclamation": 0.24,
+  "double_exclamation": 0.057,
+  "ellipsis": 0.124,
+  "spaced_dash": 0.192,
+  "double_dash": 0.114,
+  "question": 0.326,
+  "two_spaces_after_period": 0.576,
+  "digits": 0.755
+ },
+ "signature": {
+  "phone_number": 0.194,
+  "sent_from_device": 0.005
+ },
+ "quoting_in_full_bodies": {
+  "lotus_to_cc_subject_block": 0.139,
+  "original_message_separator": 0.0,
+  "forwarded_by_line": 0.048,
+  "x_wrote": 0.007
+ },
+ "subject": {
+  "words_median": 3.0,
+  "prefix": {
+   "none": 0.518,
+   "re": 0.445,
+   "fw": 0.034,
+   "fwd": 0.004
+  }
+ },
+ "thread_len": {
+  "1": 400,
+  "2": 1042,
+  "3": 267,
+  "4": 136,
+  "5": 50,
+  "6": 36,
+  "7": 14,
+  "9": 27,
+  "10": 10,
+  "18": 18
+ },
+ "reference_forms_in_bodies": {
+  "date": 0.184,
+  "file_name": 0.03,
+  "hash_number": 0.018,
+  "order_or_account_number": 0.01,
+  "named_matter (Strawflower Plant, Option Agreement)": 0.021
+ }
+}

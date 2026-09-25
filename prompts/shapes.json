@@ -1,0 +1,59 @@
+{
+ "_about": "Option lists for the plot step's choices: how [fact] and [knows] show up in the mailbox, the occasion of [conflict] per pattern, what the victim does next, how the matter is named. For each line code flips a coin: either it draws one option and assigns it, or it lets the model choose or write its own. Picks are kept as rec['slots'] for the variety tally.",
+ "third": {
+  "who_else": [
+   "nobody else",
+   "a colleague of Person A who has not seen the record",
+   "someone else the matter involves who has not seen the record"
+  ],
+  "after": [
+   "commits money or signs",
+   "passes it on to someone else as settled",
+   "makes a plan that depends on it",
+   "lets a deadline pass",
+   "drops a check they would otherwise have made",
+   "replies with thanks and nothing more"
+  ]
+ },
+ "naming": {
+  "form": [
+   "a short subject line, like the real ones shown",
+   "a file name, like the real ones shown",
+   "an account, order or case number",
+   "a date"
+  ]
+ },
+ "carrier": {
+  "fact": [
+   "a record from outside the firm, a notice, statement, report or letter, sent to the office at the firm whose business it is: payroll, benefits, travel, expenses, security, a manager",
+   "the other person in the fact writing to someone at the firm, not Person A, on business of their own that rests on the fact",
+   "an event with consequences that reach an office at the firm: an unpaid invoice, a cancelled booking, a refused renewal, a query from a bank, an agency or a court"
+  ],
+  "knows": [
+   "an instruction, booking or request the actor makes that only makes sense knowing the fact",
+   "a change the actor makes to a routine, an address, a calendar or a form that only makes sense knowing the fact",
+   "a later remark of the actor's, to someone other than the victim, that dates the knowledge"
+  ],
+  "conflict": {
+   "lying by commission": [
+    "one message from the actor to the victim, unprompted",
+    "the actor's reply to a direct question the victim asked",
+    "the actor's answer inside a thread the victim started about something else",
+    "an action the victim relies on: the actor signs, books, approves or sends something"
+   ],
+   "paltering": [
+    "one message from the actor to the victim, unprompted",
+    "a report, status or handoff the actor sends the victim, unprompted",
+    "the actor's reply to a direct question the victim asked",
+    "the actor's answer inside a thread the victim started about something else",
+    "an action the victim relies on: the actor signs, books, approves or sends something, with a true note on it"
+   ],
+   "lying by omission": [
+    "a report, status or handoff the actor sends the victim, unprompted",
+    "the actor's reply to a direct question the victim asked",
+    "the actor's answer inside a thread the victim started about something else",
+    "two threads side by side: the thread that carries [knows], and Person A's thread with Person B in the same weeks about the same days, money or place, with Person C never named"
+   ]
+  }
+ }
+}

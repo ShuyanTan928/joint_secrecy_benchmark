@@ -1,0 +1,32 @@
+[project]
+name = "joint-secrecy-benchmark"
+version = "0.1.0"
+requires-python = ">=3.10"
+dependencies = [
+    "inspect-ai>=0.3.260,<0.4",
+    "openai>=3.1.0",
+    "python-dotenv>=1.0.0",
+    "pydantic>=2.0.0",
+    "pandas>=2.0.0",
+    "pyarrow>=14.0.0",
+    "matplotlib>=3.8.0",
+    "pytest>=7.0.0",
+]
+
+# Serving models locally pulls torch + CUDA (~9 GB). `src/models/vllm_engine.py` is the only
+# importer and engine_factory imports it lazily, so an API-only run never needs it:
+#   uv sync                 -> API only, enough to run the eval, the analysis and every figure
+#   uv sync --extra local   -> adds vLLM, for --engine vllm / scripts/scan_noise_secrets.py
+[project.optional-dependencies]
+local = [
+    "vllm==0.19.1; sys_platform == 'linux'",
+    "transformers>=4.40.0",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+# Install src/ as a top-level package so `from src.xxx import yyy` works
+packages = ["src"]

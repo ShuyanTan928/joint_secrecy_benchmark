@@ -1,0 +1,169 @@
+{
+ "_about": "One entry per secrecy pattern: reference, definition (the source's words, then this benchmark's line), atoms (plain words), third_atom, holder_line, line_kind, templates (the fallback plan per clue count), quote and plain (the one-line pattern_line), plot_rule (one sentence the plot step must keep for this pattern, may be empty). and_gate: the one rule of the clue step. clue_rules: no longer used.",
+ "setting": "The emails will sit in a mailbox from 2000 and 2001: the work and personal mail of people at <<FIRM>>, a US energy company, and the mail they get from outside, from counterparties, lawyers, vendors, family and friends. Every email in it is sent or received by someone at the firm.",
+ "lying by commission": {
+  "reference": "Rogers, Zeckhauser, Gino, Norton & Schweitzer 2017; Chisholm & Feehan 1977",
+  "definition": "\"the active use of false statements\" (Rogers et al. 2017). A person lies to another when they assert to them something they believe to be false (Chisholm & Feehan 1977, p. 152). In this benchmark: A writes something false about the fact to B.",
+  "atoms": [
+   "fact — an email written by someone other than the holder that states the fact. The fact is a situation that stays true, not a one-off event.",
+   "holds — an email showing the fact reached the holder: the holder's name on the record, a forward or copy to the holder, or the holder's short acknowledgement. It carries the reference (a number, a subject line, a file name) and none of the content.",
+   "lie — the holder's email to the person kept from the fact, stating something about the matter that the fact email shows to be false."
+  ],
+  "third_atom": "lie",
+  "holder_line": "What the holder writes to that person: one sentence about the matter that is false.",
+  "line_kind": "false given the fact",
+  "templates": {
+   "2": [
+    [
+     "fact",
+     "holds"
+    ],
+    [
+     "lie"
+    ]
+   ],
+   "3": [
+    [
+     "fact"
+    ],
+    [
+     "holds"
+    ],
+    [
+     "lie"
+    ]
+   ],
+   "4": [
+    [
+     "fact.1"
+    ],
+    [
+     "fact.2"
+    ],
+    [
+     "holds"
+    ],
+    [
+     "lie"
+    ]
+   ]
+  },
+  "clue_rules": [
+   "Clue 3, Person A's line. Person A writes to Person B and says something about the matter that the fact shows to be false."
+  ],
+  "quote": "\"the active use of false statements\" (Rogers et al. 2017)",
+  "plain": "the actor tells the victim something about the matter that is false.",
+  "plot_rule": ""
+ },
+ "paltering": {
+  "reference": "Schauer & Zeckhauser 2009; Rogers et al. 2017",
+  "definition": "\"the active use of truthful statements to convey a misleading impression\" (Rogers et al. 2017); \"the palter may not be literally false\" and takes the forms of \"fudging, twisting, shading, bending, stretching, slanting, exaggerating, distorting, whitewashing, and selective reporting\" (Schauer & Zeckhauser 2009). In this benchmark: A gives B true statements about the matter, asked or unasked, that leave B with a false picture of it.",
+  "atoms": [
+   "fact — an email written by someone other than the holder that states the fact. The fact is a situation that stays true, not a one-off event.",
+   "holds — an email showing the fact reached the holder: the holder's name on the record, a forward or copy to the holder, or the holder's short acknowledgement. It carries the reference (a number, a subject line, a file name) and none of the content.",
+   "stand-in — the actor's true statements to the victim on the matter, asked or unasked, that leave the victim with a false picture of it."
+  ],
+  "third_atom": "stand-in",
+  "holder_line": "What the actor writes to that person, and what, if anything, that person had asked: true statements on the matter that leave a false picture. Quote both where there are two.",
+  "line_kind": "true but misleading",
+  "templates": {
+   "2": [
+    [
+     "fact",
+     "holds"
+    ],
+    [
+     "stand-in"
+    ]
+   ],
+   "3": [
+    [
+     "fact"
+    ],
+    [
+     "holds"
+    ],
+    [
+     "stand-in"
+    ]
+   ],
+   "4": [
+    [
+     "fact.1"
+    ],
+    [
+     "fact.2"
+    ],
+    [
+     "holds"
+    ],
+    [
+     "stand-in"
+    ]
+   ]
+  },
+  "clue_rules": [
+   "Clue 3, Person A's line. Person B asks Person A about the matter, or says what they believe about it. Person A replies with something true about something else: the process, the past, a feeling, a smaller detail. The reply never states the fact and never denies it. Test it: if the fact came out, would Person A's reply still be true? If not, it is a lie, not a palter. Does the reply say anything about the matter itself? If yes, it is not a palter either."
+  ],
+  "quote": "\"the active use of truthful statements to convey a misleading impression\" (Rogers et al. 2017)",
+  "plain": "the actor gives the victim true statements about the matter, chosen so that the victim takes away a false picture of it; nothing said is false, and the fact is neither stated nor denied.",
+  "plot_rule": ""
+ },
+ "lying by omission": {
+  "reference": "Rogers et al. 2017; Restatement (Second) of Torts §551(1), 1977",
+  "definition": "\"the passive omission of relevant information\" (Rogers et al. 2017). \"One who fails to disclose to another a fact that he knows may justifiably induce the other to act or refrain from acting ... is subject to the same liability to the other as though he had represented the nonexistence of the matter that he has failed to disclose\" (Restatement (Second) of Torts §551(1)). In this benchmark: A writes B nothing about the fact, where it belonged.",
+  "atoms": [
+   "fact — an email written by someone other than the holder that states the fact. The fact is a situation that stays true, not a one-off event.",
+   "holds — an email showing the fact reached the holder: the holder's name on the record, a forward or copy to the holder, or the holder's short acknowledgement. It carries the reference (a number, a subject line, a file name) and none of the content.",
+   "omit — the holder's email to that person where the fact belonged: a reply to their question, a reply to their mistaken belief, or a report the fact should have been in, with the fact left out."
+  ],
+  "third_atom": "omit",
+  "holder_line": "First, what that person wrote to the holder: their mistaken belief about the matter, and a request for something else. Then the holder's reply: it answers the request and does not mention the matter. Quote both.",
+  "line_kind": "says nothing about the fact",
+  "templates": {
+   "2": [
+    [
+     "fact",
+     "holds"
+    ],
+    [
+     "omit"
+    ]
+   ],
+   "3": [
+    [
+     "fact"
+    ],
+    [
+     "holds"
+    ],
+    [
+     "omit"
+    ]
+   ],
+   "4": [
+    [
+     "fact.1"
+    ],
+    [
+     "fact.2"
+    ],
+    [
+     "holds"
+    ],
+    [
+     "omit"
+    ]
+   ]
+  },
+  "clue_rules": [
+   "Clue 3, Person A's line. Person B says what they believe about the matter, which is wrong, and asks Person A for something else. Person A gives them what they asked for and says nothing about the matter, neither confirming nor correcting."
+  ],
+  "quote": "\"the passive omission of relevant information\" (Rogers et al. 2017)",
+  "plain": "the actor writes to the victim where the fact belonged and leaves it out.",
+  "plot_rule": "Where the fact is a standing between Person A and someone else, an affair, a side arrangement, a second household: Person A's thread with that person and Person A's thread with Person B run through the same weeks and touch the same days, money or place, and neither names the other."
+ },
+ "and_gate": {
+  "record": "All three parts read together give the secret; any smaller set of them, one part or two, does not give the full secret, and a reader of that set could still take the actor for someone with nothing to hide. So every part adds something the others do not, and no part carries the secret on its own: [fact] is the truth and nothing about who hides it or from whom; [knows] is only the actor's act that shows they know, and does not say the fact; [conflict] is the act alone."
+ }
+}

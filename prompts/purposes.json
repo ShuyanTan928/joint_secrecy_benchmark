@@ -1,0 +1,31 @@
+{
+ "_about": "Goffman, The Presentation of Self in Everyday Life, University of Edinburgh Social Sciences Research Centre, Monograph No. 2, 1956. Quotes checked against the scanned text of that edition; pages are that edition's. Chapter IV, Discrepant Roles, pp. 87-89, gives the one objective and the kinds of secret; audience segregation is defined at p. 83 and first named at p. 31; the lie and its neighbours are at pp. 40-41. Not yet used by any prompt.",
+ "objective": {"page": 87, "quote": "One overall objective of any team is to sustain the definition of the situation that its performance fosters. This will involve the over-communication of some facts and the under-communication of others."},
+ "destructive_information": {"page": 87, "quote": "there are usually facts which, if attention is drawn to them during the performance, would discredit, disrupt, or make useless the impression that the performance fosters. These facts may be said to provide 'destructive information.' A basic problem for many performances, then, is that of information control; the audience must not acquire destructive information about the situation that is being defined for them. In other words, a team must be able to keep its secrets and have its secrets kept."},
+ "basis_of_types": {"page": 87, "quote": "The suggested types will be based upon the function the secret performs and the relation of the secret to the conception others have about the possessor; I will assume that any particular secret can represent more than one such type."},
+ "kinds": [
+  {"name": "dark secret", "page": 87,
+   "quote": "These consist of facts about a team which it knows and conceals and which are incompatible with the image of self that the team attempts to maintain before its audience. Dark secrets are, of course, double secrets: one is the crucial fact that is hidden and another is the fact that crucial facts have not been openly admitted."},
+  {"name": "strategic secret", "page": 87,
+   "quote": "These pertain to intentions and capacities of a team which it conceals from its audience in order to prevent them from adapting effectively to the state of affairs the team is planning to bring about. Strategic secrets are the ones that businesses and armies employ in designing future actions against the opposition.",
+   "note_page": 88, "note": "secrets that are merely strategic tend to be ones which the team eventually discloses, perforce, when action based upon secret preparations is consummated, whereas an effort may be made to keep dark secrets secret forever."},
+  {"name": "inside secret", "page": 88,
+   "quote": "These are ones whose possession marks an individual as being a member of a group and helps the group feel separate and different from those individuals who are not 'in the know.'"},
+  {"name": "entrusted secret", "page": 88,
+   "quote": "This is the kind which the possessor is obliged to keep because of his relation to the team to which the secret refers. If an individual who is entrusted with a secret is to be the person he claims he is, he must keep the secret, even though it is not a secret about himself.",
+   "note_page": 89, "note": "when a lawyer discloses the improprieties of his clients, two quite different performances are threatened: the client's show of innocence to the court, and the lawyer's show of trustworthiness to his client."},
+  {"name": "free secret", "page": 89,
+   "quote": "A free secret is somebody else's secret known to oneself that one could disclose without discrediting the image one was presenting of oneself. A team may acquire free secrets by discovery, involuntary disclosure, indiscreet admissions, re-transmission, etc."},
+  {"name": "latent secret", "page": 89,
+   "quote": "there seem to be facts about almost every performance which are incompatible with the impression fostered by the performance but which have not been collected and organized into a usable form by anyone. These are in a sense latent secrets, and the problems of keeping secrets are quite different from the problems of keeping latent secrets latent."}
+ ],
+ "segregation": [
+  {"page": 31, "quote": "by audience segregation the individual ensures that those before whom he plays one of his parts will not be the same individuals before whom he plays a different part in another setting. Audience segregation as a device for protecting fostered impressions will be considered later."},
+  {"page": 83, "quote": "The answer to this problem is for the performer to segregate his audiences so that the individuals who witness him in one of his roles will not be the individuals who witness him in another of his roles."}
+ ],
+ "misrepresentation": [
+  {"page": 40, "quote": "An 'open,' 'flat,' or barefaced lie may be defined as one for which there can be unquestionable evidence that the teller knew he lied and wilfully did so."},
+  {"page": 41, "quote": "in everyday life it is usually possible for the performer to create intentionally almost any kind of false impression without putting himself in the indefensible position of having told a clear-cut lie. Communication techniques such as innuendo, strategic ambiguity, and crucial omissions allow the misinformer to profit from lies without, technically, telling any."},
+  {"page": 42, "quote": "in well-adjusted marriages, we expect that each partner may keep from the other secrets having to do with financial matters, past experiences, current flirtations, indulgencies in 'bad' or expensive habits, personal aspirations and worries, actions of children, true opinions held about relatives or mutual friends, etc."}
+ ]
+}

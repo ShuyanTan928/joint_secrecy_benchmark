@@ -1,0 +1,37 @@
+attractions
+automotive
+books and literature
+business and finance
+careers
+communication
+crime
+disasters
+education
+entertainment
+events
+family and relationships
+fine art
+food and drink
+genres
+healthy living
+hobbies and interests
+holidays
+home and garden
+law
+medical health
+personal celebrations and life events
+personal finance
+pets
+politics
+pop culture
+real estate
+religion and spirituality
+science
+shopping
+sports
+style and fashion
+technology and computing
+travel
+video gaming
+war and conflicts
+other

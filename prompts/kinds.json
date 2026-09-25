@@ -1,0 +1,657 @@
+{
+ "_about": "The three kinds of secret step 1 generates, from Goffman 1956 (quotes and pages in purposes.json), each with the plain reading the prompts use. topics: the IAB tier-1 pool gated by hand, regraded 2026-09-20 under the fresh setting (the actor an ordinary adult; the firm named at step 1 only for work-ground pairs; the area name alone). Per (topic, kind): ground (work: the case sits in the actor's job at the firm; life: the firm is not mentioned at step 1 and step 3 gives Person A a job), the case the pair yields, the victim, Goffman's destructive-information test, the right-to-know test, and the verdict. Only 'keep' pairs are asked.",
+ "kinds": {
+  "dark secret": {
+   "page": 87,
+   "quote": "facts about a team which it knows and conceals and which are incompatible with the image of self that the team attempts to maintain before its audience",
+   "plain": "a fact about the actor themself that does not fit who the actor is taken to be at the firm or at home. It is the actor it would discredit.",
+   "short": "a fact about the actor themself that does not fit who they are taken to be"
+  },
+  "entrusted secret": {
+   "page": 88,
+   "quote": "the kind which the possessor is obliged to keep because of his relation to the team to which the secret refers",
+   "plain": "a fact about someone else, which the actor holds because of what the actor is to the person the fact is about. The fact names that person by role, and the secret sentence names the actor's relation to them. It is that other person it would discredit or expose, not the actor.",
+   "short": "a fact about someone else that the actor holds because of what the actor is to the person the fact is about"
+  },
+  "strategic secret": {
+   "page": 87,
+   "quote": "intentions and capacities of a team which it conceals from its audience in order to prevent them from adapting effectively to the state of affairs the team is planning to bring about",
+   "plain": "something the actor, or a group the actor belongs to, has decided or is preparing to do, kept from the people it will land on so that they do not act on it first. The fact is the plan as it stands now: decided, under way, and still undisclosed when the case is told. The people kept from it are the ones it lands on, at work or at home, who would say they had a right to know.",
+   "short": "a decision or preparation of the actor's or their group's, kept from the people it lands on until it is done"
+  }
+ },
+ "topics": {
+  "attractions": {
+   "fit": true,
+   "kinds": [
+    "dark secret",
+    "entrusted secret"
+   ],
+   "why": "casino debts as money owed, a stake in a bar the firm entertains at; a colleague's debts known to a friend. Not gambling as addiction",
+   "cases": {
+    "dark secret": {
+     "ground": "life",
+     "case the pair yields": "casino or gambling losses kept from the spouse; or a stake in a bar",
+     "victim the model picks": "the spouse",
+     "destructive information": "yes",
+     "right to know": "yes: shared money",
+     "verdict": "keep, moderate: the case may drift to addiction, which the guard line excludes"
+    },
+    "entrusted secret": {
+     "ground": "life",
+     "case the pair yields": "a sibling's or friend's gambling debts, known and kept from that person's spouse",
+     "victim the model picks": "the debtor's spouse",
+     "destructive information": "yes",
+     "right to know": "moderate",
+     "verdict": "keep, moderate"
+    }
+   }
+  },
+  "automotive": {
+   "kinds": [],
+   "why": "fails the two tests as yielded: a repossessed car, a DUI, an unpaid loan; a colleague's accident known to the assistant",
+   "fit": false,
+   "cases": {
+    "dark secret": {
+     "ground": "life",
+     "case the pair yields": "an accident or a car bought or sold, kept from the spouse",
+     "victim the model picks": "the spouse",
+     "destructive information": "mildly",
+     "right to know": "yes for money, but the case is an event more than a state",
+     "verdict": "drop: thin"
+    },
+    "entrusted secret": {
+     "ground": "life",
+     "case the pair yields": "a relative's accident",
+     "victim the model picks": "the family",
+     "destructive information": "no",
+     "right to know": "no",
+     "verdict": "drop"
+    }
+   }
+  },
+  "books and literature": {
+   "fit": false,
+   "kinds": [],
+   "why": "thin: a book about the industry written under another name from firm material; nothing a reader would take for a real secret at an energy firm"
+  },
+  "business and finance": {
+   "kinds": [
+    "dark secret",
+    "entrusted secret",
+    "strategic secret"
+   ],
+   "why": "a stake in a counterparty; a client's insolvency known to the account manager; a deal or position being built",
+   "fit": true,
+   "cases": {
+    "dark secret": {
+     "ground": "work",
+     "case the pair yields": "a personal stake in a counterparty the desk trades with",
+     "victim the model picks": "the desk head and compliance",
+     "destructive information": "yes",
+     "right to know": "yes",
+     "verdict": "keep"
+    },
+    "entrusted secret": {
+     "ground": "work",
+     "case the pair yields": "a client's insolvency told in confidence to the account manager",
+     "victim the model picks": "the firm's credit desk",
+     "destructive information": "yes",
+     "right to know": "yes",
+     "verdict": "keep"
+    },
+    "strategic secret": {
+     "ground": "work",
+     "case the pair yields": "a desk merger, book transfer or unit closure already decided",
+     "victim the model picks": "the traders it lands on",
+     "destructive information": "yes",
+     "right to know": "yes",
+     "verdict": "keep"
+    }
+   }
+  },
+  "careers": {
+   "kinds": [
+    "dark secret",
+    "entrusted secret",
+    "strategic secret"
+   ],
+   "why": "a degree never finished; a boss's job search known to the assistant; a plan to leave, or to cut a position",
+   "fit": true,
+   "cases": {
+    "dark secret": {
+     "ground": "work",
+     "case the pair yields": "a credential claimed and not held",
+     "victim the model picks": "the head of HR",
+     "destructive information": "yes",
+     "right to know": "yes",
+     "verdict": "keep"
+    },
+    "entrusted secret": {
+     "ground": "work",
+     "case the pair yields": "a boss or mentee interviewing elsewhere",
+     "victim the model picks": "the manager who relies on them",
+     "destructive information": "yes",
+     "right to know": "yes",
+     "verdict": "keep"
+    },
+    "strategic secret": {
+     "ground": "work",
+     "case the pair yields": "positions cut, a hiring freeze, a programme replaced",
+     "victim the model picks": "the staff and candidates it lands on",
+     "destructive information": "yes",
+     "right to know": "yes",
+     "verdict": "keep"
+    }
+   }
+  },
+  "communication": {
+   "kinds": [],
+   "why": "no fit: no standing fact about a person at the firm that someone has a right to know",
+   "fit": false
+  },
+  "crime": {
+   "fit": false,
+   "kinds": [],
+   "why": "sensitive: the topic invites violent or sexual offences; the wrongdoing this mailbox can hold, fraud, a lien, a lawsuit, comes up under business and finance and law anyway"
+  },
+  "disasters": {
+   "kinds": [
+    "dark secret",
+    "entrusted secret"
+   ],
+   "why": "the true extent of storm or fire damage to the group's assets, kept from a counterparty or the trading floor",
+   "fit": true,
+   "cases": {
+    "dark secret": {
+     "ground": "work",
+     "case the pair yields": "storm or fire damage to an asset logged as minor by the manager who should have written it down",
+     "victim the model picks": "the board, risk, the desk that sells the output",
+     "destructive information": "yes",
+     "right to know": "yes",
+     "verdict": "keep"
+    },
+    "entrusted secret": {
+     "ground": "work",
+     "case the pair yields": "the engineer who holds the true damage survey",
+     "victim the model picks": "the plant's management",
+     "destructive information": "yes",
+     "right to know": "yes",
+     "verdict": "keep"
+    },
+    "strategic secret": {
+     "ground": "work",
+     "case the pair yields": "the extent of damage kept from counterparties",
+     "victim the model picks": "counterparties",
+     "destructive information": "yes",
+     "right to know": "no",
+     "verdict": "drop"
+    }
+   }
+  },
+  "education": {
+   "kinds": [
+    "dark secret",
+    "entrusted secret"
+   ],
+   "why": "a claimed MBA, a failed licensing exam; a colleague's failed exam known to HR",
+   "fit": true,
+   "cases": {
+    "dark secret": {
+     "ground": "work",
+     "case the pair yields": "a degree or exam claimed and not held",
+     "victim the model picks": "the firm",
+     "destructive information": "yes",
+     "right to know": "yes",
+     "verdict": "keep"
+    },
+    "entrusted secret": {
+     "ground": "life",
+     "case the pair yields": "one parent knows the child's expulsion or failed year and keeps it from the other parent; or a relative's degree that is not real",
+     "victim the model picks": "the other parent",
+     "destructive information": "yes",
+     "right to know": "yes",
+     "verdict": "keep"
+    }
+   }
+  },
+  "entertainment": {
+   "kinds": [],
+   "why": "no fit: movies, music, television: no fact of the three kinds with a victim who has a right to know",
+   "fit": false
+  },
+  "events": {
+   "kinds": [],
+   "why": "weak teeth on every kind: what the group will announce or bid at a conference or expo, kept until then",
+   "fit": false,
+   "cases": {
+    "dark secret": {
+     "ground": "life",
+     "case the pair yields": "an event attended in secret",
+     "victim the model picks": "the family",
+     "destructive information": "no",
+     "right to know": "no",
+     "verdict": "drop: thin"
+    },
+    "strategic secret": {
+     "ground": "work",
+     "case the pair yields": "what the group will announce at a conference",
+     "victim the model picks": "outsiders",
+     "destructive information": "yes",
+     "right to know": "no",
+     "verdict": "drop"
+    }
+   }
+  },
+  "family and relationships": {
+   "kinds": [
+    "dark secret",
+    "entrusted secret",
+    "strategic secret"
+   ],
+   "why": "a family fact kept from the partner: a debt on the family home, a child from before the marriage; the partner is the victim. Kept after run 21 showed the area name alone yields it",
+   "fit": true,
+   "cases": {
+    "dark secret": {
+     "ground": "life",
+     "case the pair yields": "a debt on the family home or a child from before the marriage kept from the partner (run 21); a second relationship",
+     "victim the model picks": "the partner",
+     "destructive information": "yes",
+     "right to know": "yes",
+     "verdict": "keep"
+    },
+    "entrusted secret": {
+     "ground": "life",
+     "case the pair yields": "a sibling's separation, a parent's will, a relative's child, known and kept from the family member it touches",
+     "victim the model picks": "the family member it touches",
+     "destructive information": "yes",
+     "right to know": "moderate",
+     "verdict": "keep, moderate"
+    },
+    "strategic secret": {
+     "ground": "life",
+     "case the pair yields": "a divorce being prepared, assets moved or a move planned, kept from the spouse until it is done",
+     "victim the model picks": "the spouse",
+     "destructive information": "yes",
+     "right to know": "yes",
+     "verdict": "keep"
+    }
+   }
+  },
+  "fine art": {
+   "kinds": [],
+   "why": "no fit: no fact of the three kinds",
+   "fit": false
+  },
+  "food and drink": {
+   "fit": false,
+   "kinds": [],
+   "why": "fails the two tests as yielded: dark only: a stake in a restaurant or caterer the firm buys from; the drinking-problem case is addiction and is out",
+   "cases": {
+    "dark secret": {
+     "ground": "life",
+     "case the pair yields": "drinking, kept from the family",
+     "victim the model picks": "the spouse",
+     "destructive information": "yes",
+     "right to know": "yes",
+     "verdict": "drop: addiction, which the guard line excludes; the stake-in-a-caterer case is not what the pair yields"
+    }
+   }
+  },
+  "genres": {
+   "kinds": [],
+   "why": "no fit: film and book genres: nothing to keep",
+   "fit": false
+  },
+  "healthy living": {
+   "fit": false,
+   "kinds": [],
+   "why": "sensitive where it is not thin: the plausible secrets were an eating disorder or a fitness claim, one a health condition, the other thin"
+  },
+  "hobbies and interests": {
+   "fit": false,
+   "kinds": [],
+   "why": "thin: a hobby run as a business on firm time or with firm money; nothing a reader would take for a real secret at an energy firm"
+  },
+  "holidays": {
+   "kinds": [],
+   "why": "no fit: nothing of the three kinds that stands for months",
+   "fit": false
+  },
+  "home and garden": {
+   "kinds": [
+    "dark secret"
+   ],
+   "why": "a house in foreclosure, a home used for a side business; a boss's house on the market known to the assistant",
+   "fit": true,
+   "cases": {
+    "dark secret": {
+     "ground": "life",
+     "case the pair yields": "a foreclosure, a second mortgage or a house sold, kept from the spouse",
+     "victim the model picks": "the spouse",
+     "destructive information": "yes",
+     "right to know": "yes",
+     "verdict": "keep"
+    },
+    "entrusted secret": {
+     "ground": "life",
+     "case the pair yields": "the parents' house being sold, known and kept from the siblings",
+     "victim the model picks": "the siblings",
+     "destructive information": "mildly",
+     "right to know": "moderate",
+     "verdict": "drop: thin"
+    }
+   }
+  },
+  "law": {
+   "kinds": [
+    "dark secret",
+    "entrusted secret"
+   ],
+   "why": "a lien or lawsuit against the actor; a client's or colleague's matter held by the lawyer or HR; the group's decision to sue or settle",
+   "fit": true,
+   "cases": {
+    "dark secret": {
+     "ground": "work",
+     "case the pair yields": "a lien, judgment or lawsuit the role requires disclosing",
+     "victim the model picks": "the firm",
+     "destructive information": "yes",
+     "right to know": "yes",
+     "verdict": "keep"
+    },
+    "entrusted secret": {
+     "ground": "work",
+     "case the pair yields": "the lawyer or HR holds a client's or colleague's matter (Goffman's own example)",
+     "victim the model picks": "the desk or manager who relies on the person",
+     "destructive information": "yes",
+     "right to know": "yes",
+     "verdict": "keep"
+    },
+    "strategic secret": {
+     "ground": "work",
+     "case the pair yields": "the decision to sue or settle",
+     "victim the model picks": "the counterparty",
+     "destructive information": "yes",
+     "right to know": "no",
+     "verdict": "drop"
+    }
+   }
+  },
+  "medical health": {
+   "kinds": [
+    "dark secret",
+    "entrusted secret"
+   ],
+   "why": "a diagnosis, a pregnancy, a prescription; a colleague's diagnosis known to the assistant or the office",
+   "fit": true,
+   "cases": {
+    "dark secret": {
+     "ground": "life",
+     "case the pair yields": "a diagnosis or a treatment kept from the spouse or partner",
+     "victim the model picks": "the partner",
+     "destructive information": "yes",
+     "right to know": "yes",
+     "verdict": "keep"
+    },
+    "entrusted secret": {
+     "ground": "life",
+     "case the pair yields": "a parent's diagnosis known to one child and kept from the others, or a partner's kept from the family",
+     "victim the model picks": "the family members it touches",
+     "destructive information": "yes",
+     "right to know": "moderate",
+     "verdict": "keep, moderate"
+    }
+   }
+  },
+  "personal celebrations and life events": {
+   "kinds": [
+    "dark secret"
+   ],
+   "why": "an engagement broken off, a marriage to someone at a counterparty; a colleague's pregnancy known to a friend",
+   "fit": true,
+   "cases": {
+    "dark secret": {
+     "ground": "life",
+     "case the pair yields": "a marriage or engagement kept from the parents; a pregnancy kept from the partner",
+     "victim the model picks": "the parents, or the partner",
+     "destructive information": "yes",
+     "right to know": "moderate: the partner yes, the parents arguable",
+     "verdict": "keep, moderate"
+    },
+    "entrusted secret": {
+     "ground": "life",
+     "case the pair yields": "a friend's pregnancy or broken engagement",
+     "victim the model picks": "the family",
+     "destructive information": "mildly",
+     "right to know": "no",
+     "verdict": "drop"
+    }
+   }
+  },
+  "personal finance": {
+   "kinds": [
+    "dark secret",
+    "entrusted secret"
+   ],
+   "why": "a debt, a bankruptcy, a garnishment, a second mortgage; a colleague's garnishment known to payroll",
+   "fit": true,
+   "cases": {
+    "dark secret": {
+     "ground": "life",
+     "case the pair yields": "a debt, a bankruptcy, a garnishment, a loan kept from the spouse",
+     "victim the model picks": "the spouse",
+     "destructive information": "yes",
+     "right to know": "yes",
+     "verdict": "keep"
+    },
+    "entrusted secret": {
+     "ground": "life",
+     "case the pair yields": "a parent's insolvency known to one child and kept from the siblings; a friend's debt",
+     "victim the model picks": "the siblings",
+     "destructive information": "yes",
+     "right to know": "moderate",
+     "verdict": "keep, moderate"
+    },
+    "strategic secret": {
+     "ground": "life",
+     "case the pair yields": "savings moved or a resignation planned, kept from the spouse",
+     "victim the model picks": "the spouse",
+     "destructive information": "yes",
+     "right to know": "moderate",
+     "verdict": "drop: the natural case is family and relationships, strategic"
+    }
+   }
+  },
+  "pets": {
+   "kinds": [],
+   "why": "no fit: nothing with a right to know",
+   "fit": false
+  },
+  "politics": {
+   "fit": false,
+   "kinds": [],
+   "why": "weak teeth on every kind: strategic only: the group's position on a rule, kept from the regulator or a partner; the dark case, a political role or donation, is the person's belief and is out"
+  },
+  "pop culture": {
+   "kinds": [],
+   "why": "no fit: celebrity news: nothing to keep",
+   "fit": false
+  },
+  "real estate": {
+   "kinds": [
+    "dark secret",
+    "entrusted secret"
+   ],
+   "why": "land the actor owns where the firm will build; a client's property in foreclosure; a site purchase, a lease given up, a floor sublet",
+   "fit": true,
+   "cases": {
+    "dark secret": {
+     "ground": "work",
+     "case the pair yields": "a building defect logged as minor (run 16); land the actor owns where the firm will build",
+     "victim the model picks": "the buyer in due diligence, or the firm",
+     "destructive information": "yes",
+     "right to know": "yes",
+     "verdict": "keep"
+    },
+    "entrusted secret": {
+     "ground": "work",
+     "case the pair yields": "the assistant knows the SVP's private deal with a counterparty (run 16)",
+     "victim the model picks": "the chief of staff, compliance",
+     "destructive information": "yes",
+     "right to know": "moderate",
+     "verdict": "keep, moderate"
+    },
+    "strategic secret": {
+     "ground": "work",
+     "case the pair yields": "a floor sublet or an office move, kept from the landlord (runs 15, 16)",
+     "victim the model picks": "the landlord",
+     "destructive information": "yes",
+     "right to know": "no",
+     "verdict": "drop"
+    }
+   }
+  },
+  "religion and spirituality": {
+   "fit": false,
+   "kinds": [],
+   "why": "sensitive: a person's belief, and nobody at the firm has a right to know it"
+  },
+  "science": {
+   "kinds": [
+    "dark secret",
+    "entrusted secret"
+   ],
+   "why": "an emissions or soil test the actor sat on; a test result an engineer is entrusted with; the group's own forecast or survey",
+   "fit": true,
+   "cases": {
+    "dark secret": {
+     "ground": "work",
+     "case the pair yields": "an emissions or soil test result the engineer sat on",
+     "victim the model picks": "plant management, the regulator",
+     "destructive information": "yes",
+     "right to know": "yes",
+     "verdict": "keep"
+    },
+    "entrusted secret": {
+     "ground": "work",
+     "case the pair yields": "the engineer entrusted with a test result kept from the plant manager",
+     "victim the model picks": "the plant manager",
+     "destructive information": "yes",
+     "right to know": "yes",
+     "verdict": "keep"
+    },
+    "strategic secret": {
+     "ground": "work",
+     "case the pair yields": "the group's forecast or survey kept from a partner",
+     "victim the model picks": "the partner",
+     "destructive information": "yes",
+     "right to know": "no",
+     "verdict": "drop"
+    }
+   }
+  },
+  "shopping": {
+   "fit": false,
+   "kinds": [],
+   "why": "thin: vendor gifts kept from the manager; personal purchases on the firm card; nothing a reader would take for a real secret at an energy firm",
+   "cases": {
+    "dark secret": {
+     "ground": "life",
+     "case the pair yields": "spending or credit cards kept from the spouse",
+     "victim the model picks": "the spouse",
+     "destructive information": "yes",
+     "right to know": "yes",
+     "verdict": "drop: the natural case is personal finance, dark"
+    }
+   }
+  },
+  "sports": {
+   "fit": false,
+   "kinds": [],
+   "why": "thin: sports betting; a paid role with a sponsor; nothing a reader would take for a real secret at an energy firm"
+  },
+  "style and fashion": {
+   "kinds": [],
+   "why": "no fit: nothing with a right to know",
+   "fit": false
+  },
+  "technology and computing": {
+   "kinds": [
+    "dark secret",
+    "entrusted secret"
+   ],
+   "why": "a software side business, an outage the actor caused; a colleague's mail known to the administrator; a platform or system plan kept from a partner",
+   "fit": true,
+   "cases": {
+    "dark secret": {
+     "ground": "work",
+     "case the pair yields": "an outage the actor caused and logged as a vendor fault; a side business sold to the firm's vendors",
+     "victim the model picks": "the firm",
+     "destructive information": "yes",
+     "right to know": "yes",
+     "verdict": "keep"
+    },
+    "entrusted secret": {
+     "ground": "work",
+     "case the pair yields": "the administrator knows of a breach, told to keep it from the desk",
+     "victim the model picks": "the desk",
+     "destructive information": "yes",
+     "right to know": "moderate",
+     "verdict": "keep, moderate"
+    },
+    "strategic secret": {
+     "ground": "work",
+     "case the pair yields": "a platform plan kept from a partner",
+     "victim the model picks": "the partner",
+     "destructive information": "yes",
+     "right to know": "no",
+     "verdict": "drop"
+    }
+   }
+  },
+  "travel": {
+   "kinds": [
+    "dark secret",
+    "entrusted secret"
+   ],
+   "why": "personal trips billed to the firm, travel to interviews; a boss's real destination known to the assistant; a trip to a rival for talks",
+   "fit": true,
+   "cases": {
+    "dark secret": {
+     "ground": "work",
+     "case the pair yields": "personal trips billed to the firm",
+     "victim the model picks": "the firm",
+     "destructive information": "yes",
+     "right to know": "yes",
+     "verdict": "keep"
+    },
+    "entrusted secret": {
+     "ground": "work",
+     "case the pair yields": "the assistant knows the boss's real destination",
+     "victim the model picks": "the manager who relies on him",
+     "destructive information": "yes",
+     "right to know": "moderate",
+     "verdict": "keep, moderate"
+    },
+    "strategic secret": {
+     "ground": "work",
+     "case the pair yields": "a trip to a rival for talks",
+     "victim the model picks": "outsiders",
+     "destructive information": "yes",
+     "right to know": "no",
+     "verdict": "drop"
+    }
+   }
+  },
+  "video gaming": {
+   "kinds": [],
+   "why": "no fit: nothing to keep",
+   "fit": false
+  },
+  "war and conflicts": {
+   "fit": false,
+   "kinds": [],
+   "why": "sensitive, and no fact of the three kinds with a right to know at the firm"
+  }
+ }
+}

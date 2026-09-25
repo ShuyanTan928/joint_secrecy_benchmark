@@ -1,0 +1,128 @@
+{
+ "name": "background_2000",
+ "status": "FINAL as of this run",
+ "n_emails": 2000,
+ "n_threads": 1067,
+ "topics": {
+  "automotive": 59,
+  "books and literature": 59,
+  "business and finance": 59,
+  "careers": 59,
+  "communication": 59,
+  "crime": 59,
+  "disasters": 59,
+  "education": 59,
+  "entertainment": 59,
+  "events": 59,
+  "family and relationships": 59,
+  "fine art": 58,
+  "food and drink": 59,
+  "healthy living": 59,
+  "hobbies and interests": 59,
+  "holidays": 59,
+  "home and garden": 59,
+  "law": 59,
+  "medical health": 59,
+  "other": 59,
+  "personal celebrations and life events": 59,
+  "personal finance": 59,
+  "pets": 58,
+  "politics": 59,
+  "real estate": 59,
+  "religion and spirituality": 59,
+  "science": 58,
+  "shopping": 59,
+  "sports": 59,
+  "style and fashion": 58,
+  "technology and computing": 59,
+  "travel": 59,
+  "video gaming": 58,
+  "war and conflicts": 58
+ },
+ "sha256": "f79b38ffc991f3bd65d016d44588fd752aa6546b8582f3092d592b11dea5208f",
+ "provenance": {
+  "source": "Enron corpus (FERC 2003 release), 150 custodians, full parsed set",
+  "sampled_by": "scripts/sample_dataset.py",
+  "name_detection": {
+   "script": "scripts/extract_people.py",
+   "model": "Qwen/Qwen3-32B, local vLLM, temperature 0",
+   "cache": "data/topics/people_extract.jsonl",
+   "note": "the model tags and links names per email; it never generates a replacement and never sees the real->fake map"
+  },
+  "replacement": {
+   "script": "scripts/anonymize_llm.py",
+   "seed": 7,
+   "note": "pure function of (cache, seed); verified byte-identical across runs under randomised PYTHONHASHSEED"
+  },
+  "verification": {
+   "script": "scripts/audit_names.py",
+   "model": "Qwen/Qwen3-32B, reads the anonymized text with no knowledge of the pipeline"
+  }
+ },
+ "verification": {
+  "enron_people_identifiable_from_an_address": 635,
+  "surname_absent_from_output": 620,
+  "surname_present_but_an_ordinary_english_word": 13,
+  "surname_present_genuine_miss": 2,
+  "genuine_misses": [
+   "bill iii",
+   "steve january"
+  ],
+  "ordinary_word_surnames_left_alone": [
+   "chris long",
+   "don black",
+   "ed wood",
+   "jae black",
+   "jeff king",
+   "kay young",
+   "larry lawyer",
+   "louise kitchen",
+   "marie heard",
+   "maurice winter",
+   "randy young",
+   "rick buy",
+   "victor contract"
+  ],
+  "audit_emails_flagged": 360,
+  "audit_buckets": {
+   "residual_name_leak": 361,
+   "kinship_or_pronoun_left_deliberately": 55,
+   "initials": 54,
+   "ordinary_english_word_left_deliberately": 33,
+   "organisation_left_deliberately": 20
+  },
+  "must_keep": {
+   "Long time no talk": 1,
+   "Long-Term Care": 1,
+   "Customer Satisfaction Manager": 1,
+   "Long Term Northwest": 1,
+   "January": 42,
+   "February": 34,
+   "Monday": 151,
+   "Houston": 299,
+   "Texas": 137
+  },
+  "must_go": {
+   "Skilling": 0,
+   "Kaminski": 0,
+   "Dasovich": 0,
+   "Titman": 0,
+   "Perlingiere": 0,
+   "Whalley": 0,
+   "Zufferli": 0,
+   "Lokay": 0,
+   "Enron": 0
+  }
+ },
+ "known_gaps": [
+  "surnames that are also ordinary English words (Long, Black, King, May, Cash, Kitchen) are replaced only where the model identifies a person; sweeping them corpus-wide is what produced 'Gwyneth time no talk' in the previous pipeline",
+  "'January' is in NOT_SURNAME, so Steve January is not registered \u2014 the month is worth more than the one surname",
+  "logins that never appear beside an @domain (lbaltz, ktennes, sevatt) have nothing to map them to",
+  "EB nnnn Enron Building room numbers are not yet anonymized",
+  "the planted-secret cast must be drawn from this pseudonym pool, or the cast is a tell"
+ ],
+ "private_do_not_publish": [
+  "data/topics/sample_anon_llm.jsonl.map.json",
+  "data/topics/sample.jsonl.idmap.json"
+ ]
+}

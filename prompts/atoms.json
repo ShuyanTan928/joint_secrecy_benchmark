@@ -1,0 +1,25 @@
+{
+ "_about": "Fills for the clue step (clues.md), ported from enron_benchmark prompts/atomize.md and fills/mechanisms.json. parts: the three fixed parts [fact], [knows], [conflict], with <<ACT>> for the pattern's act. act per pattern: the concealing act (render) and its role name. labels: the part names. No worked examples: the user found they steer the model.",
+ "lying by commission": {
+  "act": "one plain sentence the actor states to the victim, false given the truth. The occasion is not given here.",
+  "act_role": "false_statement"
+ },
+ "paltering": {
+  "act": "true statements the actor gives the victim on the matter, put together so that they leave a false picture of it: \"fudging, twisting, shading, bending, stretching, slanting, exaggerating, distorting, whitewashing, and selective reporting\" (Schauer & Zeckhauser 2009). Every statement is true, and the fact is neither stated nor denied. The part gives what the actor states, not what the victim takes from it. The occasion is not given here.",
+  "act_role": "misleading_truth"
+ },
+ "lying by omission": {
+  "act": "the actor's own message to the victim in which the fact belonged: the answer to the victim's question about the matter, or the report, form, review or handoff on the matter that the fact should have been in. The message does what it is for and is silent on the fact: it does not deny it, does not reassure about it, does not give a status on it. Here the occasion is part of the act, so give it.",
+  "act_role": "withheld_disclosure"
+ },
+ "labels": {
+  "record": [
+   "fact",
+   "knows",
+   "conflict"
+  ]
+ },
+ "parts": {
+  "record": "- [fact]: the objective truth, a checkable state of affairs, with nothing of the actor in it.\n- [knows]: the one thing the actor does or arranges that only someone who knows the fact would do: an instruction, a booking, a request, a change of routine, done in writing with someone other than the victim, at a moment that gives it an ordinary reason of its own. The part names the act, whom it is done with, and that occasion. It is the reader's proof that the actor knows, so the fact itself is not in it and nothing in it says that anything is hidden.\n- [conflict]: the actor's act against what they know: <<ACT>>\nThe matter is what the fact is about: the thing the victim would ask after."
+ }
+}

@@ -1,0 +1,54 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+*.egg-info/
+dist/
+
+# uv
+.python-version
+
+# Secrets & credentials
+.env
+
+# Large data (keep scripts and processed enron_10, ignore raw maildir)
+data/enron/maildir/
+data/enron/enron_mail_20150507.tar.gz
+
+# Outputs
+profiles/
+results/
+*.log
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+.pytest_cache/
+data/enron
+data/enron/
+.claude/
+
+# Every verbatim model answer of every paid call
+logs/api_raw.jsonl
+
+# Private id map from the released sample back to source message_ids — never publish
+data/topics/*.idmap.json
+data/topics/*.map.json
+
+# Anonymization key material — re-identifies every real person in the release.
+# Never commit, never publish.
+data/release/*.map.json
+
+# Pre-anonymisation files: real names keyed by the same email ids as the released sample. Never publish.
+data/topics/sample.jsonl
+data/topics/people_extract.jsonl
+data/topics/name_audit.jsonl
+
+# Run results stay local
+logs/
