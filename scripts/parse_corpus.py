@@ -17,6 +17,7 @@ import email
 import email.utils
 import re
 from datetime import timezone
+from email.message import Message
 from pathlib import Path
 
 MAILDIR = Path("data/enron/maildir")
@@ -26,35 +27,52 @@ CUT = re.compile(r"(^\s*>|^-{3,}\s*Original Message|^[^\n]*@[A-Za-z]+\s*\n\s*\d{
 
 
 def addrs(v: str) -> list[str]:
-    return [a.strip().lower() for a in (v or "").replace("\n", " ").replace("\t", " ").split(",") if a.strip()]
+    return [a.strip().lower() for a in str(v or "").replace("\n", " ").replace("\t", " ").split(",") if a.strip()]
+
+
+def header(msg: Message, name: str) -> str:
+    """Malformed RFC 2047 headers may be Header objects rather than strings."""
+    return str(msg.get(name) or "")
 
 
 def parse(path: Path, root: Path) -> dict | None:
     try:
-        msg = email.message_from_bytes(path.read_bytes())
+        raw = path.read_bytes()
     except Exception:
         return None
-    mid = (msg.get("Message-ID") or "").strip().strip("<>").lower()
+    return parse_bytes(raw, str(path.relative_to(root)))
+
+
+def parse_bytes(raw: bytes, file_path: str) -> dict | None:
+    """Parse one raw maildir file, including files read from a tar archive."""
+    try:
+        msg = email.message_from_bytes(raw)
+    except Exception:
+        return None
+    mid = header(msg, "Message-ID").strip().strip("<>").lower()
     if not mid:
         return None
     body = msg.get_payload(decode=True) if not msg.is_multipart() else b"".join(
         p.get_payload(decode=True) or b"" for p in msg.walk() if p.get_content_type() == "text/plain")
+    if isinstance(body, str):
+        body = body.encode("utf-8", errors="replace")
     body = (body or b"").decode("utf-8", errors="replace").replace("\r\n", "\n")
     m = CUT.search(body)
     if m: body = body[:m.start()]
     body = body.strip()
     try:
-        d = email.utils.parsedate_to_datetime(msg.get("Date")) if msg.get("Date") else None
+        date_header = header(msg, "Date")
+        d = email.utils.parsedate_to_datetime(date_header) if date_header else None
     except Exception:
         d = None
     if d is not None and d.tzinfo is not None: d = d.astimezone(timezone.utc)      # the header's offset applied: dates are UTC
-    subj = re.sub(r"\s*\n\s*", " ", (msg.get("Subject") or "").replace("\r", "")).strip()   # folded header lines joined
-    return {"message_id": mid, "from_addr": (msg.get("From") or "").strip().lower(),
-            "to_addrs": addrs(msg.get("To")), "cc_addrs": addrs(msg.get("Cc")), "bcc_addrs": addrs(msg.get("Bcc")),
+    subj = re.sub(r"\s*\n\s*", " ", header(msg, "Subject").replace("\r", "")).strip()   # folded header lines joined
+    return {"message_id": mid, "from_addr": header(msg, "From").strip().lower(),
+            "to_addrs": addrs(header(msg, "To")), "cc_addrs": addrs(header(msg, "Cc")), "bcc_addrs": addrs(header(msg, "Bcc")),
             "subject": subj, "normalized_subject": PREFIX.sub("", subj.lower()).strip(),
-            "date": d.replace(tzinfo=None) if d else None, "in_reply_to": (msg.get("In-Reply-To") or "").strip() or None,
-            "references": [r for r in (msg.get("References") or "").split() if r],
-            "body": body, "word_count": len(body.split()), "file_path": str(path.relative_to(root))}
+            "date": d.replace(tzinfo=None) if d else None, "in_reply_to": header(msg, "In-Reply-To").strip() or None,
+            "references": [r for r in header(msg, "References").split() if r],
+            "body": body, "word_count": len(body.split()), "file_path": file_path}
 
 
 def main() -> int:

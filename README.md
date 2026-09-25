@@ -102,6 +102,21 @@ One command runs the stages in order; each is also its own script.
 
 Released mailbox: 2,000 emails, 1,067 threads, 34 topics; firm Ashford, `ashford.com`. Details: [docs/methods.md](docs/methods.md).
 
+### Independent topic classification
+
+`scripts/reclassify_topics.py` labels the same 133,252 eligible message IDs with a second model. It streams
+the official Enron archive, sends each email's own text in batches, and checkpoints completed batches
+under `results/`. Set `BENCHMARK_AZURE_OPENAI_ENDPOINT` and `BENCHMARK_AZURE_OPENAI_API_KEY` for the
+Azure OpenAI resource with a `gpt-6-sol` deployment, then run:
+
+```bash
+python scripts/reclassify_topics.py --workers 64
+```
+
+The output is `results/labels_gpt-6-sol.jsonl` with a manifest recording the model, source hashes,
+token use, topic counts, and agreement with the original labels. The raw archive and checkpoint remain
+local; the labels and manifest can be distributed as release assets.
+
 ### Generation: `scripts/generate.py`
 
 | step | prompt | one call per | in | out |
