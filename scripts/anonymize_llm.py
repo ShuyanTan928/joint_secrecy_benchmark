@@ -22,8 +22,10 @@ from name_registry import (                                                   # 
     NOT_NAME, STOP_EN, NOT_SURNAME, COMPANY_SRC,
 )
 
-HONORIFIC = {"mr", "mrs", "ms", "miss", "dr", "prof", "professor", "rev", "sir", "madam"}
+HONORIFIC = {"mr", "mrs", "ms", "miss", "dr", "prof", "professor", "rev", "sir", "madam", "general", "gen"}
 SUFFIX = {"jr", "sr", "ii", "iii", "iv"}
+# Legacy mail joins names to URL, quote-header, and conjunction suffixes.
+NAME_END = r"(?:(?![A-Za-z])|(?=www\.|At\s+\d|and\b))"
 # Pronouns and kinship terms refer to a person without identifying one; they are not rewritten.
 NOT_PERSON = {"you", "your", "yours", "i", "me", "my", "we", "us", "our", "he", "him", "his",
               "she", "her", "hers", "they", "them", "their", "it", "who", "whom", "someone",
@@ -35,6 +37,10 @@ NOT_PERSON = {"you", "your", "yours", "i", "me", "my", "we", "us", "our", "he", 
 
 def name_tokens(form: str) -> list[str]:
     """The identity-bearing words of a tagged form: honorifics, suffixes and initials removed."""
+    # Roster names retain their source spelling but share the normal identity key.
+    left, comma, right = form.partition(",")
+    if comma and any(w.lower() not in SUFFIX for w in re.findall(r"[A-Za-z]+", right)):
+        form = f"{right} {left}"
     toks = re.findall(r"[A-Za-z][A-Za-z'\-]*", form)
     return [t for t in toks
             if len(t) > 1 and t.lower() not in HONORIFIC and t.lower() not in SUFFIX]
@@ -119,7 +125,8 @@ def merge(extract: list[dict]) -> tuple[Union, dict]:
                     uf.find(anchor)
                 local.append((f, anchor))
         mentions[row["email_id"]] = local
-    return uf, mentions
+    # Later emails may merge earlier anchors; replacements need the final root.
+    return uf, {eid: [(form, uf.find(key)) for form, key in values] for eid, values in mentions.items()}
 
 
 def canonical(forms: collections.Counter) -> tuple[str, str] | None:
@@ -265,6 +272,13 @@ def main() -> int:
                     reg.addr2key[a] = k
                 for f in forms:
                     reg.person[k]["firsts"] |= nicks_of(name_tokens(f)[0]) if name_tokens(f) else set()
+    # An address anchors a nickname even when several people share that nickname.
+    for root, addresses in addrs_of.items():
+        if root in key_of:
+            continue
+        matches = {reg.addr2key[address] for address in addresses if address in reg.addr2key}
+        if len(matches) == 1:
+            key_of[root] = next(iter(matches))
     # A lone token may join an existing cluster when it identifies exactly one. Surnames are tried first;
     # a token that is also an ordinary word never joins.
     by_last: dict[str, set] = collections.defaultdict(set)
@@ -325,9 +339,9 @@ def main() -> int:
     print(f"clusters: {len(forms_of):,}   with a full name: {len(key_of):,}   "
           f"bare first name only: {len(solo):,}")
 
-    # A lone word with no address, no full name, and an ordinary-word reading is dropped.
+    # Keep explicitly capitalized names (Grant); ordinary lowercase prose stays intact.
     dropped = {root for root, forms in forms_of.items()
-               if root not in key_of and all(is_wordlike(f, frac, lower_n) for f in forms)}
+               if root not in key_of and all(f.islower() and is_wordlike(f, frac, lower_n) for f in forms)}
     for root in dropped:
         solo.pop(root, None)
     if dropped:
@@ -375,6 +389,7 @@ def main() -> int:
     # ---- rewrite
     out_rows = []
     changed = 0
+    rendered_names: set[str] = set()
     for r in rows:
         held: list[str] = []
 
@@ -384,9 +399,15 @@ def main() -> int:
             held.append(final)
             return f"\x00{len(held) - 1}\x00"
 
+        def hold_name(final: str) -> str:
+            # Record actual spellings, including shortened logins, for the audit.
+            rendered_names.add(final)
+            return hold(final)
+
         def do(text: str) -> str:
             if not text:
                 return text
+            source_text = text
             text = SSN.sub(lambda m: hold(reg.fake_phone(m.group(0))), text)
             text = SUITE.sub(lambda m: hold(re.sub(r"\d+", str(rng.randint(1, 999)), m.group(0))), text)
             text = PO_BOX.sub(lambda m: hold(f"P.O. Box {rng.randint(100, 99999)}"), text)
@@ -418,8 +439,9 @@ def main() -> int:
                     rep = (lead.group(1) if lead else "") + fake
                 if not rep:
                     continue
-                text = re.sub(rf"(?<![A-Za-z]){re.escape(form)}(?![A-Za-z])",
-                              lambda m: hold(_case_like(m.group(0), rep)), text)
+                flags = 0 if form in source_text and is_wordlike(form, frac, lower_n) else re.I
+                text = re.sub(rf"(?<![A-Za-z]){re.escape(form)}{NAME_END}",
+                              lambda m: hold_name(_case_like(m.group(0), rep)), text, flags=flags)
 
             # Companies: domain-derived names first, then "enron" as a substring (ENRON_DEVELOPMENT defeats word boundaries).
             if reg.org_re is not None:
@@ -452,13 +474,13 @@ def main() -> int:
                 if rep:
                     # Allow a possessive tail without an apostrophe ("Skillings availability").
                     text = re.sub(rf"(?<![A-Za-z]){re.escape(s)}(?:'s|s'|'|s)?(?![A-Za-z])",
-                                  lambda m: hold(_case_like(m.group(0), rep)), text, flags=re.I)
+                                  lambda m: hold_name(_case_like(m.group(0), rep)), text, flags=re.I)
             for real_local, fake_local in login_sweep:
                 if real_local not in text.lower():
                     continue
                 # '@' is allowed on both sides: well-formed addresses were consumed earlier, so what is left is malformed (dperlin@enron).
                 text = re.sub(rf"(?<![A-Za-z0-9.]){re.escape(real_local)}(?![A-Za-z0-9.])",
-                              lambda m, fl=fake_local: hold(_case_like(m.group(0), fl)),
+                              lambda m, fl=fake_local: hold_name(_case_like(m.group(0), fl)),
                               text, flags=re.I)
             return re.sub(r"\x00(\d+)\x00", lambda m: held[int(m.group(1))], text)
 
@@ -480,7 +502,8 @@ def main() -> int:
         "people": {f"{p['first']} {p['last']}": {"fake": f"{p['fake_first']} {p['fake_last']}",
                                                  "addrs": sorted(p["addrs"])}
                    for p in reg.person.values()},
-        "solo": {sorted(forms_of[r])[0]: v for r, v in solo.items()},
+        "solo": dict(solo),
+        "rendered_names": sorted(rendered_names),
         # Addresses that resolved to nobody get a person-shaped fake local part, recorded so the audit does not report it.
         "unknown_addrs": reg.contact,
         "companies": reg.company,

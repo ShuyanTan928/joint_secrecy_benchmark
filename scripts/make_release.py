@@ -44,7 +44,9 @@ def model_of(path: Path, default: str) -> str:
     """The model that wrote a file, from the <file>.model.json its script left beside it."""
     side = Path(str(path) + ".model.json")
     if side.exists():
-        d = json.loads(side.read_text()); return f"{d.get('model')} ({d.get('engine')}, preset {d.get('preset')})"
+        d = json.loads(side.read_text())
+        effort = f", reasoning {d['reasoning_effort']}" if d.get("reasoning_effort") else ""
+        return f"{d.get('model')} ({d.get('engine')}, preset {d.get('preset')}{effort})"
     return default
 
 
@@ -109,7 +111,7 @@ def main() -> int:
             "sampled_by": "scripts/sample_dataset.py",
             "name_detection": {
                 "script": "scripts/extract_people.py",
-                "model": model_of(EXTRACT, "unrecorded") + ", temperature 0",
+                "model": model_of(EXTRACT, "unrecorded"),
                 "cache": str(EXTRACT),
                 "note": "the model tags and links names per email; it never generates a "
                         "replacement and never sees the real->fake map",

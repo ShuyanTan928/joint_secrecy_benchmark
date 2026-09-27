@@ -42,6 +42,9 @@ def main() -> int:
     a = ap.parse_args()
     py = sys.executable
     model = ["--engine", a.engine, "--preset", a.preset, "--tp", str(a.tp), "--gpu-mem", str(a.gpu_mem)]
+    if a.reasoning:
+        model += ["--reasoning", a.reasoning]
+    model += ["--workers", str(a.workers)]
     min_pool = a.min_pool or (max(2, a.limit // 40) if a.limit else 100)
     if not a.eager: model.append("--no-eager")
     cmds = {

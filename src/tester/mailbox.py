@@ -76,12 +76,12 @@ class MailboxEnv:
         self.opened.update(mh)
         if not mh:
             return f"(no email with handle {h!r})"
-        cap = 1500 if len(mh) == 1 else 700
+        # Evidence may occur at the end; only search snippets are truncated.
         out = [f"thread {th_h} ({len(mh)} message{'s' if len(mh) != 1 else ''}):"]
         for x in mh:
             m = self.msgs[x]
             out.append(f"\n[{x}] From: {m.get('from', '')}  Date: {(m.get('date', '') or '')[:10]}\n"
-                       f"Subject: {m.get('subject', '')}\n{_line(m.get('body', ''), cap)}")
+                       f"Subject: {m.get('subject', '')}\n{m.get('body', '') or ''}")
         return "\n".join(out)
 
     def list_threads(self, cap: int = 40) -> str:

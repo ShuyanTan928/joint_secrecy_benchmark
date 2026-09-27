@@ -34,7 +34,10 @@ def build_engine(kind: str, preset: str, tp: int = 2,
 def add_engine_args(ap, engine: str = "api", preset: str = "or-claude-opus"):
     """The model flags every script shares. Defaults to Claude Opus 5.5 through OpenRouter."""
     g = ap.add_argument_group("model")
-    g.add_argument("--engine", default=engine, choices=["api", "vllm", "stub"], help="api: OpenRouter/Gemini preset or slug; vllm: local model; stub: replays stored answers, no cost, for a dry run")
+    g.add_argument("--engine", default=engine, choices=["api", "azure", "vllm", "stub"], help="api: OpenRouter/Gemini; azure: checkpointed Responses; vllm: local; stub: stored answers")
+    g.add_argument("--reasoning", choices=["none", "low", "medium", "high", "xhigh", "max"], default=None)
+    g.add_argument("--workers", type=int, default=16, help="concurrent Azure requests")
+    g.add_argument("--checkpoint", default="", help="private Azure response checkpoint")
     g.add_argument("--preset", default=preset, help="an API preset (or-claude-opus, or-claude-sonnet, or-gpt-5, gemini-pro), an OpenRouter slug, or a vLLM preset (qwen3-32b)")
     g.add_argument("--tp", type=int, default=4, help="vllm: GPUs to shard over")
     g.add_argument("--gpu-mem", type=float, default=0.90, help="vllm: fraction of each GPU's memory")
@@ -44,13 +47,20 @@ def add_engine_args(ap, engine: str = "api", preset: str = "or-claude-opus"):
 
 
 def engine_from_args(a):
+    if a.engine == "azure":
+        from src.models.azure_engine import AzureEngine
+        checkpoint = a.checkpoint or str(Path("results/azure_cache") / (Path(a.out).name + ".jsonl"))
+        return AzureEngine(a.preset, reasoning=a.reasoning or "medium", checkpoint=checkpoint, workers=a.workers)
     if a.engine in ("api", "stub"):
-        return build_engine(a.engine, a.preset)
+        return build_engine(a.engine, a.preset, reasoning=getattr(a, "reasoning", None))
     return build_engine("vllm", a.preset, tp=a.tp, gpu_mem=a.gpu_mem, max_model_len=a.max_model_len, enforce_eager=a.eager)
 
 
 def model_record(engine, a) -> dict:
-    return {"engine": a.engine, "preset": a.preset, "model": getattr(engine, "model_name", None) or type(engine).__name__}
+    record = {"engine": a.engine, "preset": a.preset, "model": getattr(engine, "model_name", None) or type(engine).__name__}
+    if a.engine == "azure":
+        record.update(engine.record())
+    return record
 
 
 def write_model_record(out_path, engine, a):
@@ -61,4 +71,7 @@ def write_model_record(out_path, engine, a):
 def answer_tokens(a, local: int) -> int:
     """The output cap for a short answer: `local` tokens on a local model; on an API model 1,500, since a
     reasoning model spends tokens before it writes the answer and returns nothing if the cap is hit first."""
+    if a.engine == "azure":
+        from src.models.azure_engine import DEFAULT_OUTPUT_TOKENS
+        return DEFAULT_OUTPUT_TOKENS
     return local if a.engine == "vllm" else 1500

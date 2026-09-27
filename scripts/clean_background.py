@@ -49,6 +49,9 @@ def collect_votes(log_dir: Path, mapping: dict[str, str]) -> tuple[dict[str, set
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--models", default="", help="comma list of Inspect model strings to sweep with")
+    ap.add_argument("--provider", choices=("default", "azure"), default="default")
+    ap.add_argument("--reasoning", choices=("none", "low", "medium", "high", "xhigh", "max"), default=None)
+    ap.add_argument("--cost-limit", type=float, default=None, help="estimated dollar limit per run")
     ap.add_argument("--runs", type=int, default=1, help="runs per model")
     ap.add_argument("--release", default="data/release/background_2000.jsonl")
     ap.add_argument("--budget", type=int, default=100)
@@ -77,7 +80,14 @@ def main() -> int:
                               seed=a.seed, sweep=True)
         for model in [m.strip() for m in a.models.split(",") if m.strip()]:
             print(f"== sweep with {model}, {a.runs} run(s)", flush=True)
-            eval(task, model=model, log_dir=str(log_dir), log_format="eval", epochs=a.runs, display=a.display)
+            if a.provider == "azure":
+                from src.models.azure_engine import azure_model
+                model = azure_model(model, a.reasoning or "high")
+            options = {"reasoning_effort": a.reasoning} if a.reasoning else {}
+            logs = eval(task, model=model, log_dir=str(log_dir), log_format="eval", epochs=a.runs,
+                        display=a.display, cost_limit=a.cost_limit, **options)
+            if any(log.status != "success" for log in logs):
+                raise RuntimeError("Sweep failed; inspect its saved conversation before continuing")
 
     mapping = handle_to_thread_ids(a.release, settings)
     votes, said = collect_votes(log_dir, mapping)

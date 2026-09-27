@@ -33,9 +33,27 @@ ORG_WORD = {"team", "group", "committee", "department", "dept", "inc", "llc", "l
             "associates", "office", "bank", "energy", "gas", "power", "capital", "holdings"}
 
 
+def source_name(name: str, text: str) -> str | None:
+    """Recover a normalized name only when its reversed spelling occurs verbatim."""
+    if name.lower() in text.lower():
+        return name
+    parts = name.split()
+    # Preserve names wrapped across lines in quoted mail.
+    pattern = r"\s+".join(map(re.escape, parts))
+    match = re.search(pattern, text, re.I)
+    if match:
+        return match.group(0)
+    for split in range(1, len(parts)):
+        first = r"\s+".join(map(re.escape, parts[:split]))
+        last = r"\s+".join(map(re.escape, parts[split:]))
+        match = re.search(rf"(?<![A-Za-z]){last}\s*,\s*{first}(?![A-Za-z])", text, re.I)
+        if match:
+            return match.group(0)
+    return None
+
+
 def parse(raw: str, text: str) -> list[dict]:
     """Model output -> [{'forms': [...], 'addr': str|None}]. A form or an address that does not occur in the email is dropped."""
-    low = text.lower()
     in_text = {a.lower() for a in ADDR.findall(text)}
     out = []
     for line in (raw or "").splitlines():
@@ -52,7 +70,8 @@ def parse(raw: str, text: str) -> list[dict]:
             f = STRIP.sub("", f).strip().strip('"\'')
             if not f or len(f) > 60 or not re.search(r"[A-Za-z]{2}", f):
                 continue
-            if f.lower() not in low:                      # guard: must be in the email
+            f = source_name(f, text)
+            if f is None:                                # guard: must be in the email
                 continue
             toks = [w for w in re.findall(r"[A-Za-z']+", f.lower()) if len(w) > 1]
             if not toks or all(t in ROLE for t in toks):   # guard: a bare title is not a person

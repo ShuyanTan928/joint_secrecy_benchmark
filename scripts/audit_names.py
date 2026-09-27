@@ -32,6 +32,8 @@ def load_fakes(map_path: Path) -> set[str]:
     # Bare-first-name pseudonyms sit in their own section of the map.
     for v in m.get("solo", {}).values():
         out |= {t.lower() for t in str(v).split()}
+    for value in m.get("rendered_names", []):
+        out |= set(re.findall(r"[a-z']+", value.lower()))
     # Addresses that resolved to nobody still have a fake local part from the pool.
     for v in m.get("unknown_addrs", {}).values():
         out |= set(re.findall(r"[a-z]+", str(v).lower()))

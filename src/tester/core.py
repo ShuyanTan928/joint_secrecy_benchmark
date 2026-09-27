@@ -358,7 +358,9 @@ class MailboxSession:
             last = self.env.log[-1] if self.env.log else {}
             if last.get("tool") == "SEARCH" and last.get("returned"):
                 return self._reject("Unread search results remain. Read a promising result before answering.")
-        if self.settings.scan and not normalized and self.scan_segments_left > 0:
+        # Sweeps cover the whole index before reporting either findings or no finding.
+        scan_required = not normalized or not self.settings.candidates_exact
+        if self.settings.scan and scan_required and self.scan_segments_left > 0:
             return self._reject(f"The mailbox scan is incomplete: {self.scan_segments_left} segment(s) remain.")
         top = normalized[0] if normalized else {"secret": "", "evidence_email_ids": []}
         self.answer = {"found": bool(normalized), "secret": top["secret"], "evidence_email_ids": top["evidence_email_ids"], "candidates": normalized}

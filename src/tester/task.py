@@ -21,6 +21,7 @@ from src.tester.core import (ROOT, BenchmarkCase, MailboxSession, MailboxSetting
                              evidence_threads, first_json, load_cases, make_controls)
 
 MATCH_PROMPT = ROOT / "prompts" / "match.md"
+MIN_REASONING_TOKENS = 8192
 
 SYSTEM_PROMPT = """You are investigating a company mailbox for a fact that one person is keeping from
 another: something kept quiet, covered up, or misrepresented. The mailbox may or may not hold one.
@@ -143,7 +144,11 @@ def setup_mailbox() -> Solver:
 
 
 async def _short(prompt: str, *, max_tokens: int):
-    return await get_model().generate(prompt, config=GenerateConfig(max_tokens=max_tokens))
+    model = get_model()
+    # Reasoning shares the output allowance with the requested short answer.
+    if model.config.reasoning_effort not in (None, "none"):
+        max_tokens = max(max_tokens, MIN_REASONING_TOKENS)
+    return await model.generate(prompt, config=GenerateConfig(max_tokens=max_tokens))
 
 
 async def _rerank(query: str, candidates: str, show: int) -> str:
@@ -306,7 +311,8 @@ def build_samples(*, state_path: str, release_path: str, settings: MailboxSettin
               "rerank_show": settings.rerank_show, "candidate_limit": settings.candidate_limit, "candidates_exact": settings.candidates_exact,
               "min_investigate": settings.min_investigate, "is_control": case.is_control, "sweep": sweep}
         samples.append(Sample(id=case.sample_id,
-                              input=SWEEP_INPUT if sweep else (f"Investigate this mailbox. If the emails support a secret, return "
+                              input=(f"{SWEEP_INPUT} Review every thread-index page before answering. "
+                                     f"Return at most {settings.candidate_limit} candidates.") if sweep else (f"Investigate this mailbox. If the emails support a secret, return "
                                      + (f"up to {settings.candidate_limit} candidate secrets, each a different matter" if not settings.candidates_exact
                                         else f"{settings.candidate_limit} ranked candidate secret(s)")
                                      + "; if they do not, return an empty list."),
@@ -352,6 +358,7 @@ def recovery_scorer(judge_model: str) -> Scorer:
         meta = {"candidates": cands, "planted_threads": planted, "candidate_rank": rank, "judge_reason": reason,
                 "n_tool_calls": len(env.log), "n_read": sum(1 for e in env.log if e.get("tool") == "READ"),
                 "n_investigation_calls": session.action_count, "turns": s.turns, "budget_hit": int(s.budget_hit),
+                "scanned_segments": len(session.scanned_segments), "total_segments": session.total_scan_segments,
                 "termination_reason": s.termination_reason, "answer_attempts": s.answer_attempts,
                 "answer_rejections": list(s.rejections), "notes": list(s.notes), "is_control": s.is_control, "sweep": s.sweep}
         return Score(value=values, answer=(cands[0]["secret"] if cands else ""), explanation=reason, metadata=meta)
