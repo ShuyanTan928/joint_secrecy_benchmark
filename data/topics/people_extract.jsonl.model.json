@@ -1,0 +1,29 @@
+{
+ "engine": "azure",
+ "preset": "gpt-6-sol",
+ "model": "gpt-6-sol",
+ "provider": "Azure OpenAI",
+ "api": "Responses",
+ "reasoning_effort": "medium",
+ "checkpoint": "results/azure_cache/people_extract.jsonl.jsonl",
+ "usage": {
+  "calls": 2014,
+  "input_tokens": 612707,
+  "output_tokens": 343798,
+  "estimated_standard_usd": 4.6634
+ },
+ "targeted_refinement": {
+  "provider": "Azure OpenAI",
+  "api": "Responses",
+  "reasoning_effort": "high",
+  "checkpoint": "results/azure_cache/refinement.jsonl",
+  "usage": {
+   "calls": 54,
+   "input_tokens": 24370,
+   "output_tokens": 31607,
+   "estimated_standard_usd": 0.3648
+  },
+  "reviewed_emails": 54,
+  "added_person_entries": 68
+ }
+}

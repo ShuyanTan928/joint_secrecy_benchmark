@@ -1,0 +1,15 @@
+{
+ "engine": "azure",
+ "preset": "gpt-6-sol",
+ "model": "gpt-6-sol",
+ "provider": "Azure OpenAI",
+ "api": "Responses",
+ "reasoning_effort": "medium",
+ "checkpoint": "results/azure_cache/name_audit.jsonl.jsonl",
+ "usage": {
+  "calls": 8966,
+  "input_tokens": 2638786,
+  "output_tokens": 1069172,
+  "estimated_standard_usd": 15.9693
+ }
+}
