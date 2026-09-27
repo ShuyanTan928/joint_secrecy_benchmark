@@ -1,0 +1,444 @@
+{
+  "type": "header",
+  "model": "gpt-6-sol",
+  "endpoint_host": "andrewgully-foundry-resource.cognitiveservices.azure.com",
+  "reference_sha256": "1480e0e3a6b7c1583ab23b4c23374d73108ea7e1c5b8672a9df300f413f56d52",
+  "archive_sha256": "b3da1b3fe0369ec3140bb4fbce94702c33b7da810ec15d718b3fadf5cd748ca7",
+  "taxonomy_sha256": "6b342acd196ed9e96444bc6f3a540943f0a719e9fa396b4a65dfcfd0488c58b8",
+  "batch_size": 50,
+  "limit": 0,
+  "reasoning_effort": "none",
+  "prompt_sha256": "42255ca0efc1352cf3dd59bd6359a22323045c57ad0c14fa359f8ccc234c35db",
+  "n_emails": 133252,
+  "n_batches": 2666,
+  "model_usage": {
+    "input_tokens": 23110906,
+    "output_tokens": 467353,
+    "total_tokens": 23578259
+  },
+  "output_sha256": "4aa628e844877595d94cbc3c0e28ec4b8624928e29ce080b0b53a9103a93100a",
+  "response_models": [
+    "gpt-6-sol"
+  ],
+  "agreement_with_reference": 0.563361150301684,
+  "cohen_kappa_with_reference": 0.38738490623194216,
+  "topic_counts": {
+    "attractions": 448,
+    "automotive": 382,
+    "books and literature": 208,
+    "business and finance": 55885,
+    "careers": 8905,
+    "communication": 4234,
+    "crime": 127,
+    "disasters": 247,
+    "education": 2495,
+    "entertainment": 463,
+    "events": 1572,
+    "family and relationships": 2785,
+    "fine art": 237,
+    "food and drink": 1342,
+    "genres": 8,
+    "healthy living": 221,
+    "hobbies and interests": 246,
+    "holidays": 580,
+    "home and garden": 620,
+    "law": 15769,
+    "medical health": 727,
+    "other": 10560,
+    "personal celebrations and life events": 1157,
+    "personal finance": 2192,
+    "pets": 132,
+    "politics": 5336,
+    "pop culture": 407,
+    "real estate": 818,
+    "religion and spirituality": 312,
+    "science": 591,
+    "shopping": 933,
+    "sports": 3052,
+    "style and fashion": 163,
+    "technology and computing": 7485,
+    "travel": 2483,
+    "video gaming": 29,
+    "war and conflicts": 101
+  },
+  "reference_topic_counts": {
+    "attractions": 37,
+    "automotive": 824,
+    "books and literature": 604,
+    "business and finance": 87434,
+    "careers": 5490,
+    "communication": 2547,
+    "crime": 1549,
+    "disasters": 403,
+    "education": 1145,
+    "entertainment": 1612,
+    "events": 4098,
+    "family and relationships": 2064,
+    "fine art": 190,
+    "food and drink": 793,
+    "genres": 37,
+    "healthy living": 393,
+    "hobbies and interests": 334,
+    "holidays": 884,
+    "home and garden": 697,
+    "law": 3032,
+    "medical health": 626,
+    "other": 2350,
+    "personal celebrations and life events": 1792,
+    "personal finance": 534,
+    "pets": 143,
+    "politics": 1620,
+    "pop culture": 1,
+    "real estate": 869,
+    "religion and spirituality": 231,
+    "science": 71,
+    "shopping": 204,
+    "sports": 2358,
+    "style and fashion": 107,
+    "technology and computing": 4575,
+    "travel": 3358,
+    "video gaming": 71,
+    "war and conflicts": 175
+  },
+  "agreement_by_reference_topic": {
+    "attractions": {
+      "n": 37,
+      "agreed": 15,
+      "rate": 0.40540540540540543
+    },
+    "automotive": {
+      "n": 824,
+      "agreed": 287,
+      "rate": 0.3483009708737864
+    },
+    "books and literature": {
+      "n": 604,
+      "agreed": 134,
+      "rate": 0.22185430463576158
+    },
+    "business and finance": {
+      "n": 87434,
+      "agreed": 50895,
+      "rate": 0.5820962097124688
+    },
+    "careers": {
+      "n": 5490,
+      "agreed": 4294,
+      "rate": 0.7821493624772313
+    },
+    "communication": {
+      "n": 2547,
+      "agreed": 1111,
+      "rate": 0.4361994503337259
+    },
+    "crime": {
+      "n": 1549,
+      "agreed": 85,
+      "rate": 0.05487411233053583
+    },
+    "disasters": {
+      "n": 403,
+      "agreed": 162,
+      "rate": 0.40198511166253104
+    },
+    "education": {
+      "n": 1145,
+      "agreed": 837,
+      "rate": 0.731004366812227
+    },
+    "entertainment": {
+      "n": 1612,
+      "agreed": 345,
+      "rate": 0.2140198511166253
+    },
+    "events": {
+      "n": 4098,
+      "agreed": 478,
+      "rate": 0.1166422645192777
+    },
+    "family and relationships": {
+      "n": 2064,
+      "agreed": 1199,
+      "rate": 0.5809108527131783
+    },
+    "fine art": {
+      "n": 190,
+      "agreed": 101,
+      "rate": 0.531578947368421
+    },
+    "food and drink": {
+      "n": 793,
+      "agreed": 558,
+      "rate": 0.7036569987389659
+    },
+    "genres": {
+      "n": 37,
+      "agreed": 1,
+      "rate": 0.02702702702702703
+    },
+    "healthy living": {
+      "n": 393,
+      "agreed": 96,
+      "rate": 0.24427480916030533
+    },
+    "hobbies and interests": {
+      "n": 334,
+      "agreed": 38,
+      "rate": 0.11377245508982035
+    },
+    "holidays": {
+      "n": 884,
+      "agreed": 371,
+      "rate": 0.41968325791855204
+    },
+    "home and garden": {
+      "n": 697,
+      "agreed": 307,
+      "rate": 0.44045911047345765
+    },
+    "law": {
+      "n": 3032,
+      "agreed": 2132,
+      "rate": 0.7031662269129287
+    },
+    "medical health": {
+      "n": 626,
+      "agreed": 394,
+      "rate": 0.6293929712460063
+    },
+    "personal celebrations and life events": {
+      "n": 1792,
+      "agreed": 734,
+      "rate": 0.4095982142857143
+    },
+    "personal finance": {
+      "n": 534,
+      "agreed": 362,
+      "rate": 0.6779026217228464
+    },
+    "pets": {
+      "n": 143,
+      "agreed": 97,
+      "rate": 0.6783216783216783
+    },
+    "politics": {
+      "n": 1620,
+      "agreed": 1223,
+      "rate": 0.7549382716049383
+    },
+    "pop culture": {
+      "n": 1,
+      "agreed": 1,
+      "rate": 1.0
+    },
+    "real estate": {
+      "n": 869,
+      "agreed": 409,
+      "rate": 0.4706559263521289
+    },
+    "religion and spirituality": {
+      "n": 231,
+      "agreed": 176,
+      "rate": 0.7619047619047619
+    },
+    "science": {
+      "n": 71,
+      "agreed": 35,
+      "rate": 0.49295774647887325
+    },
+    "shopping": {
+      "n": 204,
+      "agreed": 143,
+      "rate": 0.7009803921568627
+    },
+    "sports": {
+      "n": 2358,
+      "agreed": 2088,
+      "rate": 0.8854961832061069
+    },
+    "style and fashion": {
+      "n": 107,
+      "agreed": 60,
+      "rate": 0.5607476635514018
+    },
+    "technology and computing": {
+      "n": 4575,
+      "agreed": 2762,
+      "rate": 0.6037158469945355
+    },
+    "travel": {
+      "n": 3358,
+      "agreed": 1876,
+      "rate": 0.5586658725431805
+    },
+    "video gaming": {
+      "n": 71,
+      "agreed": 19,
+      "rate": 0.2676056338028169
+    },
+    "war and conflicts": {
+      "n": 175,
+      "agreed": 42,
+      "rate": 0.24
+    },
+    "other": {
+      "n": 2350,
+      "agreed": 1202,
+      "rate": 0.5114893617021277
+    }
+  },
+  "top_disagreements": [
+    {
+      "reference": "business and finance",
+      "gpt_6_sol": "law",
+      "n": 13197
+    },
+    {
+      "reference": "business and finance",
+      "gpt_6_sol": "other",
+      "n": 4806
+    },
+    {
+      "reference": "business and finance",
+      "gpt_6_sol": "technology and computing",
+      "n": 4133
+    },
+    {
+      "reference": "business and finance",
+      "gpt_6_sol": "politics",
+      "n": 3758
+    },
+    {
+      "reference": "business and finance",
+      "gpt_6_sol": "careers",
+      "n": 3612
+    },
+    {
+      "reference": "business and finance",
+      "gpt_6_sol": "communication",
+      "n": 1859
+    },
+    {
+      "reference": "business and finance",
+      "gpt_6_sol": "personal finance",
+      "n": 1588
+    },
+    {
+      "reference": "events",
+      "gpt_6_sol": "other",
+      "n": 1138
+    },
+    {
+      "reference": "crime",
+      "gpt_6_sol": "business and finance",
+      "n": 1130
+    },
+    {
+      "reference": "technology and computing",
+      "gpt_6_sol": "business and finance",
+      "n": 1068
+    },
+    {
+      "reference": "business and finance",
+      "gpt_6_sol": "education",
+      "n": 998
+    },
+    {
+      "reference": "business and finance",
+      "gpt_6_sol": "events",
+      "n": 924
+    },
+    {
+      "reference": "communication",
+      "gpt_6_sol": "other",
+      "n": 703
+    },
+    {
+      "reference": "other",
+      "gpt_6_sol": "communication",
+      "n": 442
+    },
+    {
+      "reference": "events",
+      "gpt_6_sol": "food and drink",
+      "n": 375
+    },
+    {
+      "reference": "events",
+      "gpt_6_sol": "business and finance",
+      "n": 365
+    },
+    {
+      "reference": "travel",
+      "gpt_6_sol": "other",
+      "n": 363
+    },
+    {
+      "reference": "careers",
+      "gpt_6_sol": "other",
+      "n": 342
+    },
+    {
+      "reference": "personal celebrations and life events",
+      "gpt_6_sol": "family and relationships",
+      "n": 304
+    },
+    {
+      "reference": "books and literature",
+      "gpt_6_sol": "business and finance",
+      "n": 303
+    },
+    {
+      "reference": "travel",
+      "gpt_6_sol": "business and finance",
+      "n": 294
+    },
+    {
+      "reference": "business and finance",
+      "gpt_6_sol": "science",
+      "n": 290
+    },
+    {
+      "reference": "automotive",
+      "gpt_6_sol": "business and finance",
+      "n": 290
+    },
+    {
+      "reference": "other",
+      "gpt_6_sol": "business and finance",
+      "n": 278
+    },
+    {
+      "reference": "business and finance",
+      "gpt_6_sol": "real estate",
+      "n": 275
+    },
+    {
+      "reference": "events",
+      "gpt_6_sol": "sports",
+      "n": 263
+    },
+    {
+      "reference": "technology and computing",
+      "gpt_6_sol": "other",
+      "n": 227
+    },
+    {
+      "reference": "communication",
+      "gpt_6_sol": "technology and computing",
+      "n": 227
+    },
+    {
+      "reference": "family and relationships",
+      "gpt_6_sol": "other",
+      "n": 226
+    },
+    {
+      "reference": "careers",
+      "gpt_6_sol": "business and finance",
+      "n": 222
+    }
+  ],
+  "openai_standard_list_rate_estimate_usd": 50.9,
+  "usage_note": "Counts checkpointed API responses; attempts before a process failure may be absent."
+}

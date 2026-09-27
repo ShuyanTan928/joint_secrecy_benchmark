@@ -67,6 +67,26 @@ python scripts/build_mailbox.py --limit 500 --total 200          # 500 emails cl
 python scripts/build_mailbox.py --engine vllm --preset qwen3-32b  # the whole corpus, on local GPUs
 ```
 
+The topic labels in `data/topics/labels.jsonl` are the GPT-6 Sol classification of the 133,252 eligible
+emails, published as a [release](https://github.com/ShuyanTan928/joint_secrecy_benchmark/releases/tag/enron-topics-gpt-6-sol-2026-09-25)
+with its manifest and checksums. To fetch them again:
+
+```bash
+R=https://github.com/ShuyanTan928/joint_secrecy_benchmark/releases/download/enron-topics-gpt-6-sol-2026-09-25
+curl -sSL -o data/topics/labels.jsonl $R/labels_gpt-6-sol.jsonl
+curl -sSL -o data/topics/labels.jsonl.manifest.json $R/labels_gpt-6-sol.jsonl.manifest.json
+```
+
+The shipped mailbox in `data/release/` was drawn from the earlier Qwen3-32B labels (in git history at
+commit 46d337e); the two label sets agree on 56% of emails. `scripts/reclassify_topics.py` is the
+script that made the release: it streams the archive, sends each email's own text in batches to an
+Azure OpenAI deployment, and checkpoints under `results/`. It needs `BENCHMARK_AZURE_OPENAI_ENDPOINT`
+and `BENCHMARK_AZURE_OPENAI_API_KEY`:
+
+```bash
+python scripts/reclassify_topics.py --workers 64      # -> results/labels_gpt-6-sol.jsonl and its manifest
+```
+
 The default model is Claude Opus 5.5 through OpenRouter; see [Command reference](#command-reference)
 for the switch.
 
@@ -751,6 +771,7 @@ scripts/
   name_registry.py
   parse_corpus.py
   quiet_people.py
+  reclassify_topics.py
   sample_dataset.py
 src/
   __init__.py
@@ -765,7 +786,7 @@ src/
 | path | holds |
 |---|---|
 | `prompts/` | the four generation prompts (`secret.md`, `clues.md`, `plot.md`, `email.md`) and their fill files (`kinds.json` the pool and Goffman's kinds; `purposes.json` Goffman's quotes; `patterns.json` the three patterns with the sources' words; `atoms.json` the parts and acts; `shapes.json` the plot's choices; `mailbox_style.md` the quoting form); the mailbox prompts (`topic_classify.md`, `people_extract.md`, `name_audit.md`, `quiet_people.md`); the IAB taxonomy |
-| `scripts/` | `parse_corpus.py`, the corpus to one parquet; `build_mailbox.py` and the stage scripts it drives; `generate.py`; `assemble.py`; `name_registry.py`, the pseudonym registry `anonymize_llm.py` uses |
+| `scripts/` | `parse_corpus.py`, the corpus to one parquet; `build_mailbox.py` and the stage scripts it drives; `reclassify_topics.py`, the independent classification; `generate.py`; `assemble.py`; `name_registry.py`, the pseudonym registry `anonymize_llm.py` uses |
 | `src/models/` | one engine interface over the API (`api_engine.py`), local vLLM (`vllm_engine.py`) and the stub (`stub_engine.py`); the shared flags in `engine_factory.py` |
 | `data/topics/` | topic labels for the eligible pool, the sample, the anonymised sample and its map (the map is private and gitignored) |
 | `data/release/` | the released mailbox and its manifest |

@@ -1,0 +1,7 @@
+{
+ "engine": "azure-openai",
+ "preset": "gpt-6-sol",
+ "model": "gpt-6-sol",
+ "source": "GitHub release enron-topics-gpt-6-sol-2026-09-25",
+ "output_sha256": "4aa628e844877595d94cbc3c0e28ec4b8624928e29ce080b0b53a9103a93100a"
+}
