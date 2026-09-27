@@ -51,7 +51,7 @@ def parse(o: str) -> dict:
 
 
 def main() -> int:
-    from src.models.engine_factory import add_engine_args, engine_from_args, write_model_record
+    from src.models.engine_factory import add_engine_args, answer_tokens, engine_from_args, write_model_record
     ap = add_engine_args(argparse.ArgumentParser())
     ap.add_argument("--in", dest="inp", default=str(RELEASE))
     ap.add_argument("--out", default=str(OUT))
@@ -114,7 +114,7 @@ def main() -> int:
     prompts = [shell.replace("<<THREAD>>", thread_text(c["_row"], c["_other"], args.window)) for c in cands]
     from src.models.engine_factory import build_engine
     eng = engine_from_args(args)
-    outs = eng.generate(prompts, max_tokens=300, temperature=0.0)
+    outs = eng.generate(prompts, max_tokens=answer_tokens(args, 300), temperature=0.0)
 
     people = []
     for c, o in zip(cands, outs):

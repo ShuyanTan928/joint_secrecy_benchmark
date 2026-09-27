@@ -1012,3 +1012,54 @@ sources note (SSA, Census, GeoNames CC BY 4.0), the unused xlsx and zip dropped.
 Renamed (2026-09-25, user): the repository folder is joint_secrecy_benchmark (was joint_privacy_benchmark); project name
 joint-secrecy-benchmark; README title Joint Secrecy Benchmark. The venv's absolute paths were rewritten in place; the
 memory directory was copied to the new project key.
+
+## The tester (2026-09-27, no API calls)
+
+The parent repository's agentic evaluation (enron_benchmark: src/agent, src/inspect_eval, run_inspect_agent_eval.py)
+ported as src/tester/ and scripts/test_agent.py, against this repository's format: a sample is the release's threads
+plus one chain's planted threads from a generation state file, placed by date, handles e1/t1; controls are the same
+mailbox with nothing planted. Same five tools (list_threads, search with model rerank, read with related threads and
+an auto-note, segment pages, answer), same gates (n distinct probes, read after search, full scan before an empty
+answer), same score (found x match x evidence recall x precision, thread-level), judge prompt prompts/match.md with the
+chain's secret, actor and victim as cast. Differences from the parent: no anonymisation step (the release is
+anonymised and chains use pseudonyms); no To field (the release has none); BM25 copied into src/tester/retrieval.py;
+the legacy text-protocol ReAct loop was not ported. Checked without a model: core gates and score
+(tests/test_tester_core.py, 6 tests) and an end-to-end Inspect run on mockllm (turn limit, empty answer, rows.csv).
+Not run on a real model yet.
+
+Sampling with per-topic jitter on the GPT-6 Sol labels (user): `sample_dataset.py --total 2000 --jitter 5
+--with-text --whole-threads --seed 20260927` gives 2,000 emails, 972 threads, 34 topics at 54 to 64 each (genres
+and video gaming are below the 100 floor). Drawn to a scratch file; data/topics/sample.jsonl untouched. A shadowed
+import in the sampler's thread-map fallback fixed on the way.
+
+Tester report and cleaning (2026-09-27, user): no product score. The report is three counts: chains where the tester
+said yes, chains where the judge accepted the finding as the planted secret, controls where it said yes. rows.csv keeps
+the cited threads beside the planted ones. scripts/clean_background.py: the tester in sweep mode (background only, up
+to N candidates, "report every fact one person keeps from another") with several models; a thread cited by --agree
+models is removed with --apply, recorded beside the release. The unused-name reserve now comes from the anonymisation
+pass itself (anonymize_llm.write_unused_names: the pools minus every token in the anonymised text and every pseudonym,
+same seed), so pseudonyms and minted names are one list; scripts/fresh_names.py removed. Both tester paths checked on
+mockllm; the anonymiser checked in the repository copy.
+
+## Everything on a cheap API model (2026-09-27, openai/gpt-5-mini through OpenRouter, about $0.20 in total)
+
+Four runs to check the code with a real model: generation steps 1 to 4 on one pair (16 calls: three chains with
+emails, casts taken as given, lines kept 0.97 to 1.0); the whole mailbox build in a copy of the repository on 60
+classified and 20 sampled emails (classify, sample, people, anonymise with the reserve, audit, release with its
+regression checks, profile, quiet people); the tester on one chain and one control (budget 8, 300 background
+threads: 15 turns, 14 tool calls, a no on both); the background sweep (7 tool calls, an empty answer at the budget);
+and the judge on a true and a wrong finding (match and no match). Three faults found and fixed: (1) OpenAI's strict
+tool schemas reject an optional parameter, so the segment tool's page number is required, -1 for the next page;
+(2) a reasoning model spends its output cap on reasoning and returns nothing, so short answers on API models get
+1,500 tokens (engine_factory.answer_tokens) in the classifier, the people and audit passes, quiet_people, and the
+tester's rerank, note and judge calls; (3) the sampler's per-topic floor for a tiny pool is now at least 2, not 5.
+Also dropped the dollar estimate from the classifier's message.
+
+## Handoff of the mailbox rebuild and the background sweep (2026-09-27, no API calls)
+
+The driver now draws the sample with `--jitter 5` by default (build_mailbox.py --only sample: 2,000 emails in 999 threads,
+34 topics at 54 to 64 each with seed 20260910; genres and video gaming stay below the 100 floor). Riccardo runs the
+rebuild from the sample stage on (people and audit are one call per email, 2,008 and 2,000; quiet_people one per
+candidate) and the sweep with clean_background.py on models of his choice; nothing was run here. Sweep examples now
+name the OpenRouter route for GPT-6 Sol (openrouter/openai/gpt-6-sol), since a bare openai/ string goes to OpenAI
+directly.

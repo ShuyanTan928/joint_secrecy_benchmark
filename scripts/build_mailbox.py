@@ -3,12 +3,12 @@
 
 Stages, each also a script of its own:
   classify   classify_topics.py   one call per email: its IAB tier-1 topic
-  sample     sample_dataset.py    a seeded draw, equal per topic, round-robin over senders
+  sample     sample_dataset.py    a seeded draw, equal per topic within +/- jitter, round-robin over senders
   people     extract_people.py    one call per sampled email: the people in it
-  anonymize  anonymize_llm.py     one pseudonym per person
+  anonymize  anonymize_llm.py     one pseudonym per person; writes the unused-name reserve
   audit      audit_names.py       one call per email: surviving names
   release    make_release.py      data/release/background_2000.jsonl and its manifest
-  banks      mailbox_profile.py, quiet_people.py, fresh_names.py
+  banks      mailbox_profile.py, quiet_people.py
 
 --limit caps the classified pool and scales the sampler's per-topic floor (limit/40). classify_topics
 refuses more than 5,000 API calls without --allow-big-run.
@@ -34,23 +34,24 @@ def main() -> int:
     ap.add_argument("--limit", type=int, default=0, help="classify at most this many eligible emails (0 = all 133k)")
     ap.add_argument("--total", type=int, default=2000, help="emails in the mailbox")
     ap.add_argument("--seed", type=int, default=20260910, help="the sampling seed")
-    ap.add_argument("--min-pool", type=int, default=0, help="a topic needs this many labelled emails to be sampled; default 100, or limit/40 when --limit is set")
+    ap.add_argument("--jitter", type=int, default=5, help="vary each topic's count by up to this much, so no topic count gives a planted email away")
+    ap.add_argument("--min-pool", type=int, default=0, help="a topic needs this many labelled emails to be sampled; default 100, or limit/40 (at least 2) when --limit is set")
     ap.add_argument("--from", dest="start", default="classify", choices=STAGES, help="start at this stage")
     ap.add_argument("--only", default="", choices=[""] + STAGES, help="run one stage")
     ap.add_argument("--dry", action="store_true", help="print the commands and stop")
     a = ap.parse_args()
     py = sys.executable
     model = ["--engine", a.engine, "--preset", a.preset, "--tp", str(a.tp), "--gpu-mem", str(a.gpu_mem)]
-    min_pool = a.min_pool or (max(5, a.limit // 40) if a.limit else 100)
+    min_pool = a.min_pool or (max(2, a.limit // 40) if a.limit else 100)
     if not a.eager: model.append("--no-eager")
     cmds = {
         "classify": [[py, "scripts/classify_topics.py", *model] + (["--limit", str(a.limit)] if a.limit else [])],
-        "sample": [[py, "scripts/sample_dataset.py", "--total", str(a.total), "--seed", str(a.seed), "--min-pool", str(min_pool), "--with-text", "--whole-threads"]],
+        "sample": [[py, "scripts/sample_dataset.py", "--total", str(a.total), "--seed", str(a.seed), "--min-pool", str(min_pool), "--jitter", str(a.jitter), "--with-text", "--whole-threads"]],
         "people": [[py, "scripts/extract_people.py", *model]],
         "anonymize": [[py, "scripts/anonymize_llm.py", "--seed", str(a.seed % 1000)]],
         "audit": [[py, "scripts/audit_names.py", *model]],
         "release": [[py, "scripts/make_release.py"]],
-        "banks": [[py, "scripts/mailbox_profile.py"], [py, "scripts/quiet_people.py", *model], [py, "scripts/fresh_names.py"]],
+        "banks": [[py, "scripts/mailbox_profile.py"], [py, "scripts/quiet_people.py", *model]],
     }
     todo = [a.only] if a.only else STAGES[STAGES.index(a.start):]
     for stage in todo:

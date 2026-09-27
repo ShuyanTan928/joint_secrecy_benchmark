@@ -7,7 +7,7 @@ rotates over senders and spreads months. The manifest records the config and a d
   python scripts/sample_dataset.py --total 2000 --with-text --whole-threads   -> data/topics/sample.jsonl, its manifest, a private id map
 """
 from __future__ import annotations
-import argparse, re, collections, hashlib, json, random, re
+import argparse, hashlib, re, collections, hashlib, json, random, re
 from pathlib import Path
 
 import pyarrow.parquet as pq
@@ -215,7 +215,6 @@ def main() -> int:
         if not m2t_path.exists():
             # No thread map: thread the pool by normalized subject, RE:/FW: stripped. The released map came from the
             # parent corpus's threading by subject and participants.
-            import hashlib
             keys = {}
             for b in pq.ParquetFile(PARQUET).iter_batches(batch_size=50000, columns=["message_id", "normalized_subject"]):
                 d = b.to_pydict()

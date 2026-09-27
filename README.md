@@ -51,6 +51,7 @@ The background mailbox ships in `data/release/`, so generation runs as is:
 ```bash
 python scripts/generate.py all --topics "family and relationships" --k 1 --facts 3   # steps 1 to 4 -> logs/generate.json
 python scripts/assemble.py --state logs/generate.json                                # -> data/benchmark/mailbox.jsonl + answer_key.json
+python scripts/test_agent.py --model openrouter/anthropic/claude-opus-5.5     --judge-model openrouter/anthropic/claude-sonnet-4.6 --state logs/generate.json --out results/tester/opus   # the tester
 ```
 
 Building a new mailbox needs the Enron corpus (the 2015-05-07 release, https://www.cs.cmu.edu/~enron/):
@@ -670,7 +671,8 @@ Firm roles are cast from corpus people the corpus says nothing about, so no plan
 real one; outside parties (a wife, a bank, a registrar) get minted names. `scripts/quiet_people.py`
 keeps senders of one email who received at most one, not named in full elsewhere, whose email fixes no
 role of theirs (a model reads it): 139 people in `benchmark_pool/quiet_people.json`, each used once.
-Minted names (`benchmark_pool/fresh_names.json`) occur nowhere in the release. Step 4 is shown five of
+Minted names come from `benchmark_pool/fresh_names.json`, the names the anonymisation pass did not
+use, so they occur nowhere in the release. Step 4 is shown five of
 each and returns its cast; code checks it.
 
 ## Command reference
@@ -682,14 +684,14 @@ a vLLM preset (`qwen3-32b`); for vLLM also `--tp`, `--gpu-mem`, `--max-model-len
 ```bash
 # the corpus and the mailbox, all stages or from one on
 python scripts/parse_corpus.py [--maildir data/enron/maildir] [--out data/enron/parsed_emails.parquet] [--limit N]
-python scripts/build_mailbox.py [--limit N] [--total 2000] [--seed S] [--min-pool N] [--from STAGE] [--only STAGE] [--dry]
+python scripts/build_mailbox.py [--limit N] [--total 2000] [--seed S] [--jitter 5] [--min-pool N] [--from STAGE] [--only STAGE] [--dry]
 python scripts/classify_topics.py [--limit N] [--min-tokens 30] [--max-tokens-in 500] [--allow-big-run]   # -> data/topics/labels.jsonl
-python scripts/sample_dataset.py --total 2000 --with-text --whole-threads [--min-pool 100] [--seed S]     # -> data/topics/sample.jsonl
+python scripts/sample_dataset.py --total 2000 --jitter 5 --with-text --whole-threads [--min-pool 100] [--seed S]   # -> data/topics/sample.jsonl
 python scripts/extract_people.py [--limit N]                                                              # -> data/topics/people_extract.jsonl
-python scripts/anonymize_llm.py [--seed 7] [--name-pool census|corpus]                                    # -> data/topics/sample_anon.jsonl (+ .map.json, private)
+python scripts/anonymize_llm.py [--seed 7] [--name-pool census|corpus]                                    # -> data/topics/sample_anon.jsonl (+ .map.json, private), benchmark_pool/fresh_names.json
 python scripts/audit_names.py                                                                             # -> data/topics/name_audit.jsonl
 python scripts/make_release.py                                                                            # -> data/release/background_2000.jsonl + manifest
-python scripts/mailbox_profile.py; python scripts/quiet_people.py [--dry]; python scripts/fresh_names.py  # -> benchmark_pool/*
+python scripts/mailbox_profile.py; python scripts/quiet_people.py [--dry]                                 # -> benchmark_pool/*
 
 # generation, into one state file (--state logs/generate.json by default)
 python scripts/generate.py [--state F] [--max-calls N] [--classify] [--judge] all     --topics "a,b" --kinds "dark secret" --k 1 --facts 12 [--vary-n] [--plots-only]
@@ -698,6 +700,11 @@ python scripts/generate.py clues   [--per-topic N]
 python scripts/generate.py chains  --facts 12 [--seed S] [--vary-n] [--plots-only] [--append] [--per-topic N]
 python scripts/generate.py report
 python scripts/assemble.py --state logs/generate.json [--outdir data/benchmark] [--keep-flagged]         # -> mailbox.jsonl + answer_key.json
+
+# the tester
+python scripts/test_agent.py --model M --judge-model J [--state F] [--release F] [--noise N] [--budget 100] [--no-scan] [--rerank 40]
+    [--candidate-count 1] [--n-controls N] [--limit N] [--sample-id ID] [--max-samples 1] --out DIR    # or --export-only --out DIR
+python scripts/clean_background.py --models M1,M2 [--runs 1] [--candidate-count 5] [--agree 2] --out DIR [--apply]
 ```
 
 `--topics` and `--kinds` take names as written in `prompts/iab_tier1.txt` and `prompts/kinds.json`;
@@ -712,6 +719,12 @@ CLAUDE.md
 LICENSE
 README.md
 pyproject.toml
+.pytest_cache/
+  CACHEDIR.TAG
+  README.md
+  v/
+    cache/
+      nodeids
 benchmark_pool/
   file_bank.json
   fresh_names.json
@@ -746,6 +759,7 @@ prompts/
   iab_tier1_desc.json
   kinds.json
   mailbox_style.md
+  match.md
   name_audit.md
   patterns.json
   people_extract.md
@@ -762,8 +776,8 @@ scripts/
   build_mailbox.py
   classify_topics.py
   classify_topics_embed.py
+  clean_background.py
   extract_people.py
-  fresh_names.py
   generate.py
   mailbox_profile.py
   make_release.py
@@ -772,6 +786,7 @@ scripts/
   quiet_people.py
   reclassify_topics.py
   sample_dataset.py
+  test_agent.py
 src/
   __init__.py
   models/
@@ -780,6 +795,16 @@ src/
     engine_factory.py
     stub_engine.py
     vllm_engine.py
+  tester/
+    __init__.py
+    core.py
+    export.py
+    mailbox.py
+    retrieval.py
+    task.py
+tests/
+  __init__.py
+  test_tester_core.py
 ```
 
 | path | holds |
@@ -787,6 +812,8 @@ src/
 | `prompts/` | the four generation prompts (`secret.md`, `clues.md`, `plot.md`, `email.md`) and their fill files (`kinds.json` the pool and Goffman's kinds; `purposes.json` Goffman's quotes; `patterns.json` the three patterns with the sources' words; `atoms.json` the parts and acts; `shapes.json` the plot's choices; `mailbox_style.md` the quoting form); the mailbox prompts (`topic_classify.md`, `people_extract.md`, `name_audit.md`, `quiet_people.md`); the IAB taxonomy |
 | `scripts/` | `parse_corpus.py`, the corpus to one parquet; `build_mailbox.py` and the stage scripts it drives; `reclassify_topics.py`, the independent classification; `generate.py`; `assemble.py`; `name_registry.py`, the pseudonym registry `anonymize_llm.py` uses |
 | `src/models/` | one engine interface over the API (`api_engine.py`), local vLLM (`vllm_engine.py`) and the stub (`stub_engine.py`); the shared flags in `engine_factory.py` |
+| `src/tester/` | the tester: the mailbox environment, the session with its gates, the Inspect task (chains, or the background sweep), the export |
+| `tests/` | the tester's gates and score, without a model |
 | `data/topics/` | topic labels for the eligible pool, the sample, the anonymised sample and its map (the map is private and gitignored) |
 | `data/release/` | the released mailbox and its manifest |
 | `benchmark_pool/` | banks mined from the mailbox: the profile, the quiet people, the fresh names, real subject lines, real file names |
@@ -796,25 +823,62 @@ src/
 
 ## Testing
 
-The repository generates items; it does not yet evaluate a model on them. Every chain so far has been
-read by hand for the AND gate and for whether these people would have written these emails
-(`docs/run_log.md`). Not yet in the repository:
+The tester is an agent that investigates one mailbox per chain with read-only tools and reports the
+secret it finds. It runs as an [Inspect AI](https://inspect.aisi.org.uk/) task (`src/tester/`,
+`scripts/test_agent.py`); the full model and tool conversation is kept in `.eval` logs, and `rows.csv`
+has one line per sample.
 
-- **The evaluation.** A model reads `data/benchmark/mailbox.jsonl` and says what is hidden; the answer
-  is scored against `answer_key.json`. The mailbox has the release's schema (`email_id, thread_id,
-  thread_pos, thread_len, topic, from, date, subject, body`); planted rows carry no mark; the key gives
-  per chain the secret, kind, pattern, stake, cast, and the planted email ids by clue.
-- **The subset test.** The rule every chain must keep is that the three clues together give the
-  secret and no clue or pair of clues does. Blind probers read each proper subset of a chain's planted
-  emails, then the full set; a chain is kept only if no subset yields the secret and the full set does
-  (Trivedi et al. 2022).
+Each sample is the release's threads plus one chain's planted threads, placed by date, with handles
+(e1, t1) that say nothing about which are planted. Paired controls (`--n-controls N`) are the same
+mailbox with nothing planted, for the false-positive rate. The agent knows only that a mailbox may
+hold a fact one person keeps from another.
 
-Generation, 2026-09-25: five chains at three clues on Claude Opus 5.5, all five plots holding the AND
-gate by hand, four with emails. Open: on dark secrets about the actor's own life, a [fact] record that
-names the actor lets [fact] with [conflict] give the secret without [knows]; the fix is a record that
-identifies the matter by a reference, with [knows] tying it to the actor. The email step over-uses
-greetings and sign-offs, returns Person A's points nearly verbatim, and invents names for people in no
-cast.
+| tool | what it does |
+|---|---|
+| `list_threads` | a date-spread sample of threads, to orient |
+| `search` | BM25 over subjects and bodies, then the model reranks 40 candidates down to 8 |
+| `read` | a whole thread, with its related unread threads; the model writes a one-line note of the key fact |
+| `segment` | one seeded page of 50 thread cards, for exhaustive coverage; bodies stay hidden until read |
+| `answer` | the finding: ranked candidate secrets, each with its evidence handles; ends the run |
+
+Gates: an answer is accepted only after at least *n* distinct searches or reads (*n* the clue count);
+a search must be followed by a read before answering; with scanning on, an empty answer waits until
+every page is reviewed. Listing, searching and reading share one budget (100 calls).
+
+The report is three counts. On the chains: how many the tester said yes on, and how many of those a
+separate judge model accepted as the planted secret, comparing the finding with the chain's secret,
+actor and victim (`prompts/match.md`). On the controls: how many it said yes on with nothing planted.
+Each row also keeps the threads the tester cited beside the planted ones, for reading.
+
+```bash
+python scripts/test_agent.py --model openrouter/anthropic/claude-opus-5.5 --judge-model openrouter/anthropic/claude-sonnet-4.6     --state logs/generate.json --n-controls 2 --out results/tester/opus
+python scripts/test_agent.py --model mockllm/model --judge-model mockllm/model --limit 1 --out results/tester/mock   # the path, no model
+python scripts/test_agent.py --export-only --out results/tester/opus       # rows.csv from the logs
+inspect view --log-dir results/tester/opus/logs                             # browse the trajectories
+```
+
+Models are Inspect model strings: `openrouter/<slug>`, `openai/<model>`, `vllm/<hf-model>` for a local
+server. Flags: `--noise N` background threads instead of the whole release; `--budget`; `--no-scan`;
+`--rerank 0` for plain BM25; `--seed`. Tests of the gates and the score: `pytest tests/`.
+
+**Cleaning the background first.** The real mailbox may hold secrets of its own, and the tester would
+report them. So before anything is planted, the same tester runs on the untouched release with several
+models, each asked to report every fact it finds that one person keeps from another, with the emails
+that support it. A thread that two or more models cite is treated as a real secret and removed:
+
+```bash
+python scripts/clean_background.py --models openrouter/anthropic/claude-opus-5.5,openrouter/openai/gpt-6-sol --runs 2 --out results/clean
+python scripts/clean_background.py --out results/clean --apply     # remove the agreed threads from data/release/background_2000.jsonl
+```
+
+`votes.json` lists every cited thread with the models and the secrets they reported; `--agree N` sets
+how many models must agree; `--apply` writes the release without those threads and records what was
+removed beside it.
+
+Not yet run: the subset test, where blind probers read each proper subset of a chain's planted emails
+and the chain is kept only if no subset yields the secret and the full set does (Trivedi et al. 2022).
+Every chain so far has been read by hand for that and for whether these people would have written
+these emails (`docs/run_log.md`).
 
 ## References
 

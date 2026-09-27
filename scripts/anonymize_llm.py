@@ -9,7 +9,8 @@ full names, surnames that are not ordinary words, unambiguous first names, and b
   python scripts/anonymize_llm.py --seed 7    -> data/topics/sample_anon.jsonl and sample_anon.jsonl.map.json (private)
 """
 from __future__ import annotations
-import argparse, collections, json, random, re, sys
+import argparse
+import random, collections, json, random, re, sys
 from pathlib import Path
 
 sys.path.insert(0, ".")
@@ -487,7 +488,32 @@ def main() -> int:
     }, indent=1))
     print(f"WROTE {out}   ({changed:,} of {len(rows):,} emails changed)")
     print(f"WROTE {mp}   (private — never publish)")
+    write_unused_names(reg, out_rows, args.seed)
     return 0
+
+
+def write_unused_names(reg, out_rows, seed, path=Path("benchmark_pool/fresh_names.json"), n_names=6000):
+    """The names the pass did not use: first names and surnames from the same pools that occur nowhere in the
+    anonymised text and were handed to nobody, recombined into a reserve for the people planted chains mint,
+    plus domain stems the mailbox does not have. Same seed, same list."""
+    text = "\n".join(f"{r.get('from') or ''}\n{r.get('subject') or ''}\n{r.get('body') or ''}" for r in out_rows).lower()
+    taken = set(re.findall(r"[a-z]+", text))
+    for p in reg.person.values():
+        taken |= {str(p.get("fake_first", "")).lower(), str(p.get("fake_last", "")).lower()}
+    firsts = [n for n in reg.pool_first if n.isalpha() and n.lower() not in taken]
+    lasts = [n for n in reg.pool_last if n.isalpha() and n.lower() not in taken][:4000]   # the common surnames read as names
+    domains = sorted({(r.get("from") or "").split("@")[1] for r in out_rows if "@" in (r.get("from") or "")})
+    stems = sorted({re.sub(r"\d.*$", "", d.split(".")[0]) for d in domains if re.match(r"[a-z]+\d+\.", d)})
+    rng = random.Random(seed)
+    names = sorted({f"{rng.choice(firsts).capitalize()} {rng.choice(lasts).capitalize()}" for _ in range(n_names)}) if firsts and lasts else []
+    rng.shuffle(names)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps({"_about": "Names and domain stems the anonymisation pass did not use and that occur nowhere in the "
+                                          "anonymised mailbox; the people a planted chain mints are drawn from here. Written by "
+                                          "scripts/anonymize_llm.py from the same pools and seed as the pseudonyms.",
+                                "seed": seed, "counts": {"first_names": len(firsts), "surnames": len(lasts), "names": len(names), "corpus_domains": len(domains)},
+                                "names": names, "domain_stems": stems, "corpus_domains": domains}, indent=1))
+    print(f"WROTE {path}   ({len(names):,} unused names from {len(firsts):,} first x {len(lasts):,} last)")
 
 
 if __name__ == "__main__":

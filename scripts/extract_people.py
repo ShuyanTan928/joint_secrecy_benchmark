@@ -66,7 +66,7 @@ def parse(raw: str, text: str) -> list[dict]:
 
 
 def main() -> int:
-    from src.models.engine_factory import add_engine_args, engine_from_args, write_model_record
+    from src.models.engine_factory import add_engine_args, answer_tokens, engine_from_args, write_model_record
     ap = add_engine_args(argparse.ArgumentParser())
     ap.add_argument("--in", dest="inp", default=str(SAMPLE))
     ap.add_argument("--out", default="data/topics/people_extract.jsonl")
@@ -94,7 +94,7 @@ def main() -> int:
     prompts = [shell.replace("<<EMAIL>>", t) for t in texts]
 
     eng = engine_from_args(args)
-    outs = eng.generate(prompts, max_tokens=512, temperature=0.0)
+    outs = eng.generate(prompts, max_tokens=answer_tokens(args, 512), temperature=0.0)
 
     per_email: dict[int, list[dict]] = collections.defaultdict(list)
     for i, t, o in zip(owner, texts, outs):

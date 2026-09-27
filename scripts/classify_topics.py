@@ -71,13 +71,13 @@ def eligible(subject: str, body: str):
 
 
 def main() -> int:
-    from src.models.engine_factory import add_engine_args, engine_from_args, write_model_record
+    from src.models.engine_factory import add_engine_args, answer_tokens, engine_from_args, write_model_record
     ap = add_engine_args(argparse.ArgumentParser())
     ap.add_argument("--min-tokens", type=int, default=30)
     ap.add_argument("--max-tokens-in", type=int, default=500)
     ap.add_argument("--limit", type=int, default=0, help="stop after N eligible emails (smoke test)")
     ap.add_argument("--out", default="data/topics/labels.jsonl")
-    ap.add_argument("--allow-big-run", action="store_true", help="let an API model classify more than 5,000 emails (the full pool is about $800 on Opus 5.5)")
+    ap.add_argument("--allow-big-run", action="store_true", help="let an API model classify more than 5,000 emails")
     ap.add_argument("--free-text", action="store_true",
                     help="disable constrained decoding; let the model answer freely and parse the label out")
     args = ap.parse_args()
@@ -130,8 +130,7 @@ def main() -> int:
     print(f"raw {raw:,}  dropped {dropped:,}  -> to classify: {len(ids):,}")
 
     # ---- classify: one email per prompt (vLLM batches internally; the API engine calls one by one)
-    est = len(ids) * 1.6e-3 * 4 + len(ids) * 1e-5 * 20                # ~1.6k tokens in and ~10 out per call, at Opus 5.5's $4 / $20 per million
-    print(f"calls to make: {len(ids):,} on {args.engine} {args.preset}" + (f"; about ${est:,.0f} on Opus 5.5" if args.engine == "api" else ""))
+    print(f"calls to make: {len(ids):,} on {args.engine} {args.preset}")
     if args.engine == "api" and len(ids) > 5000 and not args.allow_big_run:
         print("more than 5,000 API calls: pass --limit for a smaller pool, --engine vllm for a local model, or --allow-big-run"); return 2
     shell = PROMPT.read_text()
@@ -142,7 +141,7 @@ def main() -> int:
     if args.engine == "vllm": args.max_model_len = min(args.max_model_len, 2048)
     eng = engine_from_args(args)
     # Constrained decoding (vLLM only) pins the answer to one of TOPICS.
-    outs = eng.generate(prompts, max_tokens=24, temperature=0.0,
+    outs = eng.generate(prompts, max_tokens=answer_tokens(args, 24), temperature=0.0,
                         choices=None if (args.free_text or args.engine != "vllm") else TOPICS)
 
     out = Path(args.out)

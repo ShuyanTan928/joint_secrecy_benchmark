@@ -56,3 +56,9 @@ def model_record(engine, a) -> dict:
 def write_model_record(out_path, engine, a):
     """<out>.model.json beside an output file: which model produced it."""
     Path(str(out_path) + ".model.json").write_text(json.dumps(model_record(engine, a), indent=1))
+
+
+def answer_tokens(a, local: int) -> int:
+    """The output cap for a short answer: `local` tokens on a local model; on an API model 1,500, since a
+    reasoning model spends tokens before it writes the answer and returns nothing if the cap is hit first."""
+    return local if a.engine == "vllm" else 1500
