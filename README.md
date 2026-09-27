@@ -27,7 +27,7 @@ flowchart TB
     A --> B[("benchmark: mailbox + answer key")]:::data
 ```
 
-**Contents.** [Install](#install) · [Quick start](#quick-start) · [The pipeline](#the-pipeline) · [Kinds of secret](#kinds-of-secret-goffman-1956) ·
+**Contents.** [Install](#install) · [Quick start](#quick-start) · [Kinds of secret](#kinds-of-secret-goffman-1956) ·
 [Concealment patterns](#concealment-patterns) · [A worked example](#a-worked-example-every-step) · [Casting](#casting-who-the-people-are-in-the-mailbox) ·
 [Testing](#testing) · [Command reference](#command-reference) · [Repository structure](#repository-structure) · [References](#references)
 
@@ -70,66 +70,6 @@ python scripts/build_mailbox.py --engine vllm --preset qwen3-32b  # the whole co
 The default model is Claude Opus 5.5 through OpenRouter; see [Command reference](#command-reference)
 for the switch.
 
-## The pipeline
-
-Terms:
-
-| term | meaning |
-|---|---|
-| actor | who keeps the fact; Person A |
-| victim | who the fact is kept from; Person B |
-| fact | the state of affairs, with nothing of the actor in it |
-| secret | one sentence: the actor keeps the fact from the victim |
-| parts | what the secret is split into: **[fact]** the truth; **[knows]** the one thing the actor does that only makes sense knowing the fact; **[conflict]** the actor's act toward the victim in the pattern's way |
-| clue | one email thread, carrying one part |
-| chain | one secret under one pattern with its clues: an item |
-| stake | what the victim is about to do, not knowing |
-| AND gate | the parts together give the secret; no clue and no pair does |
-
-### The mailbox: `scripts/build_mailbox.py`
-
-One command runs the stages in order; each is also its own script.
-
-| stage | script | what it does | model |
-|---|---|---|---|
-| classify | `classify_topics.py` | filters (bulk, auto-generated, non-prose, duplicates, 30–500 tokens), then one call per email: its IAB tier-1 topic (`prompts/topic_classify.md`) | yes |
-| sample | `sample_dataset.py` | a seeded draw, equal per topic, round-robin over senders, whole threads | no |
-| people | `extract_people.py` | one call per email: the people in it, every name form, their address (`prompts/people_extract.md`) | yes |
-| anonymize | `anonymize_llm.py` | one pseudonym per person, applied to every form; a pure function of the people file and the seed | no |
-| audit | `audit_names.py` | one call per email: names still in the anonymised text (`prompts/name_audit.md`) | yes |
-| release | `make_release.py` | `data/release/background_2000.jsonl` and a manifest that measures the result | no |
-| banks | `mailbox_profile.py`, `quiet_people.py`, `fresh_names.py` | the mail's register; firm people the corpus says nothing about; names that occur nowhere in it | quiet_people |
-
-Released mailbox: 2,000 emails, 1,067 threads, 34 topics; firm Ashford, `ashford.com`. Details: [docs/methods.md](docs/methods.md).
-
-### Independent topic classification
-
-`scripts/reclassify_topics.py` labels the same 133,252 eligible message IDs with a second model. It streams
-the official Enron archive, sends each email's own text in batches, and checkpoints completed batches
-under `results/`. Set `BENCHMARK_AZURE_OPENAI_ENDPOINT` and `BENCHMARK_AZURE_OPENAI_API_KEY` for the
-Azure OpenAI resource with a `gpt-6-sol` deployment, then run:
-
-```bash
-python scripts/reclassify_topics.py --workers 64
-```
-
-The output is `results/labels_gpt-6-sol.jsonl` with a manifest recording the model, source hashes,
-token use, topic counts, and agreement with the original labels. The raw archive and checkpoint remain
-local; the labels and manifest can be distributed as release assets.
-
-### Generation: `scripts/generate.py`
-
-| step | prompt | one call per | in | out |
-|---|---|---|---|---|
-| 1 secrets | `prompts/secret.md` | (topic, kind) | the kind in Goffman's words, the area of life, Goffman's test; the model writes worked examples for a chapter on his kinds of secret | actor, fact, secret, victim |
-| 2 clues | `prompts/clues.md` | secret × pattern | the step 1 fields, the pattern, the three parts with this pattern's act (`prompts/atoms.json`), the AND gate | [fact], [knows], [conflict], and whom they are written to |
-| 3 plots | `prompts/plot.md` | chain | the parts, the cast, how the threads carry the parts, the choices (`prompts/shapes.json`) | stake, people, timeline, and per clue its messages with what each says |
-| 4 emails | `prompts/email.md` | chain | the plot, ten names to cast from, the mailbox's quoting form (`prompts/mailbox_style.md`) | the cast and the messages |
-
-Code checks each answer: the plan ([fact] and [conflict] never in one clue), the dates, who is on
-which thread, the cast; it restores the planned headers and flags what a reviewer should read.
-`scripts/assemble.py` then places each chain's threads in the mailbox by date and writes the answer key.
-
 ## Kinds of secret (Goffman 1956)
 
 From *The Presentation of Self in Everyday Life*, University of Edinburgh Social Sciences Research
@@ -166,14 +106,17 @@ another (`prompts/patterns.json`).
 
 | pattern | the source's definition | here |
 |---|---|---|
-| **lying by commission** | "the active use of false statements" (Rogers et al. 2017). The definition of the lie: "*x* lies to *y* =df there is a proposition *p* such that (i) either *x* believes that *p* is not true or *x* believes that *p* is false and (ii) *x* asserts *p* to *y*" (Chisholm & Feehan 1977, p. 152) | A tells B something false |
-| **paltering** | "the active use of truthful statements to convey a misleading impression" (Rogers et al. 2017). "The palter may not be literally false", and takes the forms of "fudging, twisting, shading, bending, stretching, slanting, exaggerating, distorting, whitewashing, and selective reporting" (Schauer & Zeckhauser 2009) | A tells B true things that leave a false picture; the fact is neither stated nor denied |
+| **lying by commission** | "the active use of false statements" (Rogers et al. 2017). The definition of the lie: "*x* lies to *y* =df There is a proposition *p* such that (i) either *x* believes that *p* is not true or *x* believes that *p* is false and (ii) *x* asserts *p* to *y*" (Chisholm & Feehan 1977, p. 152) | A tells B something false |
+| **paltering** | "the active use of truthful statements to convey a misleading impression" (Rogers et al. 2017). "The palter may not be literally false", and takes the forms of "fudging, twisting, shading, bending, stretching, slanting, exaggerating, distorting, whitewashing, and selective reporting" (Schauer & Zeckhauser 2009, p. 39) | A tells B true things that leave a false picture; the fact is neither stated nor denied |
 | **lying by omission** | "the passive omission of relevant information" (Rogers et al. 2017). The duty it breaks: "One who fails to disclose to another a fact that he knows may justifiably induce the other to act or refrain from acting … is subject to the same liability to the other as though he had represented the nonexistence of the matter that he has failed to disclose" (Restatement (Second) of Torts §551(1), 1977) | A answers B where the fact belonged and leaves it out |
 
 ## A worked example, every step
 
 Careers, entrusted secret, lying by commission, three clues; Claude Opus 5.5. Each prompt is the text
-the model received; each result is its answer.
+the model received; each result is its answer. The secret is split into three parts at step 2, one
+per clue: **[fact]**, the truth; **[knows]**, the one thing the actor does that only makes sense
+knowing it; **[conflict]**, the actor's act toward the victim in the pattern's way. The actor is
+Person A, the victim Person B.
 
 ### Step 1: secret generation
 
@@ -841,8 +784,10 @@ read by hand for the AND gate and for whether these people would have written th
   is scored against `answer_key.json`. The mailbox has the release's schema (`email_id, thread_id,
   thread_pos, thread_len, topic, from, date, subject, body`); planted rows carry no mark; the key gives
   per chain the secret, kind, pattern, stake, cast, and the planted email ids by clue.
-- **The subset test.** Blind probers read each proper subset of a chain's planted emails, then the full
-  set; a chain is kept only if no subset yields the secret and the full set does (Trivedi et al. 2022).
+- **The subset test.** The rule every chain must keep is that the three clues together give the
+  secret and no clue or pair of clues does. Blind probers read each proper subset of a chain's planted
+  emails, then the full set; a chain is kept only if no subset yields the secret and the full set does
+  (Trivedi et al. 2022).
 
 Generation, 2026-09-25: five chains at three clues on Claude Opus 5.5, all five plots holding the AND
 gate by hand, four with emails. Open: on dark secrets about the actor's own life, a [fact] record that
@@ -853,27 +798,38 @@ cast.
 
 ## References
 
+Every entry was checked against the linked page on 2026-09-25.
+
 Secrecy and deception, oldest first:
 
-- Simmel. The sociology of secrecy and of secret societies. *American Journal of Sociology* 11(4):441–498, 1906.
-- Keeton. Fraud — concealment and non-disclosure. *Texas Law Review* 15:1–36, 1936.
-- Goffman. *The Presentation of Self in Everyday Life*. University of Edinburgh Social Sciences Research Centre, Monograph No. 2, 1956. The kinds of secret pp. 87–89; destructive information p. 87; audience segregation pp. 31, 83; the lie and "crucial omissions" pp. 40–41.
-- Turner, Edgley & Olmstead. Information control in conversations: honesty is not always the best policy. *Kansas Journal of Sociology* 11(1):69–89, 1975.
-- Chisholm & Feehan. The intent to deceive. *Journal of Philosophy* 74(3):143–159, 1977. The definition of lying, p. 152.
-- American Law Institute. *Restatement (Second) of Torts* §§ 529, 550, 551, 1977.
-- Warren & Laslett. Privacy and secrecy: a conceptual comparison. *Journal of Social Issues* 33(3):43–51, 1977.
-- Bok. *Secrets: On the Ethics of Concealment and Revelation*. Pantheon, 1982.
-- Ekman. *Telling Lies*. Norton, 1985.
-- Schauer & Zeckhauser. Paltering. In Harrington, ed., *Deception: From Ancient Empires to Internet Dating*, Stanford University Press, 38–54, 2009.
-- Mahon. The definition of lying and deception. *Stanford Encyclopedia of Philosophy*, 2008, revised 2015.
-- Marwick & boyd. I tweet honestly, I tweet passionately. *New Media & Society* 13(1):114–133, 2011.
-- Connelly, Zweig, Webster & Trougakos. Knowledge hiding in organizations. *Journal of Organizational Behavior* 33(1):64–88, 2012.
-- Slepian, Chun & Mason. The experience of secrecy. *JPSP* 113(1):1–33, 2017.
-- Rogers, Zeckhauser, Gino, Norton & Schweitzer. Artful paltering. *JPSP* 112(3):456–473, 2017. The three names, defined against one another.
+- Simmel, G. (1906). The sociology of secrecy and of secret societies. *American Journal of Sociology* 11(4), 441–498. https://doi.org/10.1086/211418
+- Keeton, W. P. (1936). Fraud: concealment and non-disclosure. *Texas Law Review* 15, 1–40. Cited in *Obde v. Schlemeyer*, 56 Wn.2d 449 (1960): https://case-law.vlex.com/vid/obde-v-schlemeyer-no-893831755
+- Goffman, E. (1956). *The Presentation of Self in Everyday Life*. University of Edinburgh Social Sciences Research Centre, Monograph No. 2. The kinds of secret pp. 87–89; destructive information p. 87; audience segregation pp. 31, 83; the lie and "crucial omissions" pp. 40–41. https://en.wikipedia.org/wiki/The_Presentation_of_Self_in_Everyday_Life
+- Turner, R. E., Edgley, C., & Olmstead, G. (1975). Information control in conversations: honesty is not always the best policy. *Kansas Journal of Sociology* 11(1), 69–89. https://kuscholarworks.ku.edu/handle/1808/6098
+- Chisholm, R. M., & Feehan, T. D. (1977). The intent to deceive. *Journal of Philosophy* 74(3), 143–159. The definition of lying, p. 152. https://doi.org/10.2307/2025605
+- American Law Institute (1977). *Restatement (Second) of Torts* §§ 529, 550, 551. https://en.wikipedia.org/wiki/Restatement_of_Torts,_Second
+- Warren, C., & Laslett, B. (1977). Privacy and secrecy: a conceptual comparison. *Journal of Social Issues* 33(3), 43–51. https://doi.org/10.1111/j.1540-4560.1977.tb01881.x
+- Bok, S. (1982). *Secrets: On the Ethics of Concealment and Revelation*. Pantheon. https://philpapers.org/rec/BOKSOT
+- Ekman, P. (1985). *Telling Lies: Clues to Deceit in the Marketplace, Politics, and Marriage*. Norton. https://books.google.com/books/about/Telling_Lies.html?id=RfAMAQAAMAAJ
+- Schauer, F., & Zeckhauser, R. (2009). Paltering. In B. Harrington (Ed.), *Deception: From Ancient Empires to Internet Dating* (pp. 38–54). Stanford University Press. https://doi.org/10.1515/9781503626607-004. The working paper: https://papers.ssrn.com/sol3/papers.cfm?abstract_id=832634
+- Mahon, J. E. (2008, revised 2015). The definition of lying and deception. *Stanford Encyclopedia of Philosophy*. https://plato.stanford.edu/entries/lying-definition/
+- Marwick, A. E., & boyd, d. (2011). I tweet honestly, I tweet passionately: Twitter users, context collapse, and the imagined audience. *New Media & Society* 13(1), 114–133. https://doi.org/10.1177/1461444810365313
+- Connelly, C. E., Zweig, D., Webster, J., & Trougakos, J. P. (2012). Knowledge hiding in organizations. *Journal of Organizational Behavior* 33(1), 64–88. https://doi.org/10.1002/job.737
+- Slepian, M. L., Chun, J. S., & Mason, M. F. (2017). The experience of secrecy. *Journal of Personality and Social Psychology* 113(1), 1–33. https://doi.org/10.1037/pspa0000085
+- Rogers, T., Zeckhauser, R., Gino, F., Norton, M. I., & Schweitzer, M. E. (2017). Artful paltering: the risks and rewards of using truthful statements to mislead others. *Journal of Personality and Social Psychology* 112(3), 456–473. https://pubmed.ncbi.nlm.nih.gov/27936834/
 
-Privacy, excluded here and defined there: Duncan, Jabine & de Wolf, eds., *Private Lives and Public Policies*, 1993; Sweeney, k-anonymity, *IJUFKS* 10(5), 2002; Machanavajjhala et al., ℓ-diversity, *ACM TKDD* 1(1), 2007; Solove, A taxonomy of privacy, *154 U. Pa. L. Rev.* 477, 2006; Staab et al., Beyond memorization, *ICLR* 2024.
+Privacy, excluded here and defined there:
 
-Method: Trivedi, Balasubramanian, Khot & Sabharwal. MuSiQue. *TACL* 10, 2022 (connected vs. disconnected reasoning, the subset test); IAB Tech Lab, *Content Taxonomy 3.1*
+- Duncan, G. T., Jabine, T. B., & de Wolf, V. A. (Eds.) (1993). *Private Lives and Public Policies: Confidentiality and Accessibility of Government Statistics*. National Academy Press. https://doi.org/10.17226/2122
+- Sweeney, L. (2002). k-anonymity: a model for protecting privacy. *International Journal of Uncertainty, Fuzziness and Knowledge-Based Systems* 10(5), 557–570. https://doi.org/10.1142/S0218488502001648
+- Machanavajjhala, A., Kifer, D., Gehrke, J., & Venkitasubramaniam, M. (2007). ℓ-diversity: privacy beyond k-anonymity. *ACM Transactions on Knowledge Discovery from Data* 1(1), Article 3. https://doi.org/10.1145/1217299.1217302
+- Solove, D. J. (2006). A taxonomy of privacy. *University of Pennsylvania Law Review* 154(3), 477–564. https://scholarship.law.gwu.edu/faculty_publications/921/
+- Staab, R., Vero, M., Balunović, M., & Vechev, M. (2024). Beyond memorization: violating privacy via inference with large language models. *ICLR 2024*. https://arxiv.org/abs/2310.07298
+
+Method:
+
+- Trivedi, H., Balasubramanian, N., Khot, T., & Sabharwal, A. (2022). MuSiQue: multihop questions via single-hop question composition. *Transactions of the Association for Computational Linguistics* 10, 539–554. https://doi.org/10.1162/tacl_a_00475
+- IAB Tech Lab. *Content Taxonomy 3.1*. https://github.com/InteractiveAdvertisingBureau/Taxonomies/blob/main/Content%20Taxonomies/Content%20Taxonomy%203.1.tsv
 
 ## License
 
