@@ -77,11 +77,10 @@ curl -sSL -o data/topics/labels.jsonl $R/labels_gpt-6-sol.jsonl
 curl -sSL -o data/topics/labels.jsonl.manifest.json $R/labels_gpt-6-sol.jsonl.manifest.json
 ```
 
-The shipped mailbox in `data/release/` was drawn from the earlier Qwen3-32B labels (in git history at
-commit 46d337e); the two label sets agree on 56% of emails. `scripts/reclassify_topics.py` is the
-script that made the release: it streams the archive, sends each email's own text in batches to an
-Azure OpenAI deployment, and checkpoints under `results/`. It needs `BENCHMARK_AZURE_OPENAI_ENDPOINT`
-and `BENCHMARK_AZURE_OPENAI_API_KEY`:
+The shipped mailbox in `data/release/` predates these labels; a mailbox drawn from them is a rerun of
+the sample stage onward. `scripts/reclassify_topics.py` is the script that made the release: it streams
+the archive, sends each email's own text in batches to an Azure OpenAI deployment, and checkpoints
+under `results/`. It needs `BENCHMARK_AZURE_OPENAI_ENDPOINT` and `BENCHMARK_AZURE_OPENAI_API_KEY`:
 
 ```bash
 python scripts/reclassify_topics.py --workers 64      # -> results/labels_gpt-6-sol.jsonl and its manifest
