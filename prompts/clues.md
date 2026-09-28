@@ -10,15 +10,16 @@ Secret: <<SECRET>>
 Kept from: <<VICTIM>>
 Kind of secret: <<KIND>>
 
-The parts are written to one person: when the victim is one person, that person; when the victim
-is a party or everyone else, the one person, by role, who stands for them and whom the actor
-actually writes to. Name that person in [conflict] and in the victim field.
-
-## The three parts, one sentence each, in the third person, people called by role
-<<PARTS>>
+The matter is what the fact is about, the thing the victim would ask after. The parts are written
+to one person: the victim when the victim is one person; otherwise the one person, by role, who
+stands for the party and whom the actor writes to. Name that person in [concealment] and in the
+victim field.
 
 ## How it is kept
 <<PATTERN>>
+
+## The three parts, one sentence each, in the third person, people called by role
+<<PARTS>>
 
 ## The parts are an AND gate
 <<AND_GATE>>

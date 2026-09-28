@@ -5,7 +5,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from src.tester.core import (MailboxSession, MailboxSettings, answer_key, background_case, build_mailbox, evidence_threads,
-                             load_cases, make_controls)
+                             load_cases, make_controls, release_threads)
 
 STATE = "logs/fourstep_opus37.json"
 
@@ -18,7 +18,7 @@ def _session(scan=False, budget=10):
 
 def test_mailbox_has_background_and_planted_threads():
     case, s = _session()
-    assert len(s.env.thread_msgs) == 1067 + case.n_clues
+    assert len(s.env.thread_msgs) == len(release_threads(str(Path.cwd() / 'data/release/background_2000.jsonl'))) + case.n_clues
     assert len({s.env.thread_of[h] for h in s.env.clue_handles}) == case.n_clues
 
 
@@ -26,7 +26,7 @@ def test_control_has_nothing_planted():
     cases = load_cases(STATE)
     ctrl = make_controls(cases, 1)[0]
     env = build_mailbox(ctrl, MailboxSettings())
-    assert ctrl.is_control and not env.clue_handles and len(env.thread_msgs) == 1067
+    assert ctrl.is_control and not env.clue_handles and len(env.thread_msgs) == len(release_threads(str(Path.cwd() / 'data/release/background_2000.jsonl')))
     assert answer_key(ctrl) == {"is_control": True, "secret": ""}
 
 

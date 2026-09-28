@@ -1,128 +1,143 @@
 {
  "name": "background_2000",
- "status": "FINAL as of this run",
+ "status": "Pseudonymized and reviewed; see scope and limitations",
  "n_emails": 2000,
- "n_threads": 1067,
+ "n_threads": 1007,
  "topics": {
-  "automotive": 59,
-  "books and literature": 59,
-  "business and finance": 59,
-  "careers": 59,
+  "attractions": 55,
+  "automotive": 58,
+  "books and literature": 54,
+  "business and finance": 56,
+  "careers": 64,
   "communication": 59,
-  "crime": 59,
-  "disasters": 59,
-  "education": 59,
-  "entertainment": 59,
-  "events": 59,
-  "family and relationships": 59,
-  "fine art": 58,
-  "food and drink": 59,
+  "crime": 58,
+  "disasters": 63,
+  "education": 58,
+  "entertainment": 55,
+  "events": 55,
+  "family and relationships": 56,
+  "fine art": 56,
+  "food and drink": 56,
   "healthy living": 59,
-  "hobbies and interests": 59,
-  "holidays": 59,
+  "hobbies and interests": 64,
+  "holidays": 62,
   "home and garden": 59,
-  "law": 59,
-  "medical health": 59,
-  "other": 59,
-  "personal celebrations and life events": 59,
-  "personal finance": 59,
-  "pets": 58,
-  "politics": 59,
-  "real estate": 59,
-  "religion and spirituality": 59,
-  "science": 58,
-  "shopping": 59,
-  "sports": 59,
-  "style and fashion": 58,
-  "technology and computing": 59,
-  "travel": 59,
-  "video gaming": 58,
-  "war and conflicts": 58
+  "law": 63,
+  "medical health": 55,
+  "personal celebrations and life events": 61,
+  "personal finance": 58,
+  "pets": 63,
+  "politics": 57,
+  "pop culture": 64,
+  "real estate": 58,
+  "religion and spirituality": 55,
+  "science": 57,
+  "shopping": 60,
+  "sports": 60,
+  "style and fashion": 56,
+  "technology and computing": 61,
+  "travel": 64,
+  "war and conflicts": 61
  },
- "sha256": "f79b38ffc991f3bd65d016d44588fd752aa6546b8582f3092d592b11dea5208f",
+ "sha256": "55d9f70fd23d46d8d6475c0668a1814b4e24acb9503ec1026048d8e9a007c70a",
  "provenance": {
   "source": "Enron corpus (FERC 2003 release), 150 custodians, full parsed set",
   "sampled_by": "scripts/sample_dataset.py",
   "name_detection": {
    "script": "scripts/extract_people.py",
-   "model": "Qwen/Qwen3-32B, local vLLM, temperature 0",
+   "model": "gpt-6-sol (azure, preset gpt-6-sol, reasoning medium)",
    "cache": "data/topics/people_extract.jsonl",
-   "note": "the model tags and links names per email; it never generates a replacement and never sees the real->fake map"
+   "note": "the model tags and links names per email; it never generates a replacement and never sees the real->fake map",
+   "targeted_refinement": {
+    "model": "gpt-6-sol",
+    "reasoning_effort": "high",
+    "emails": 54,
+    "added_person_entries": 68
+   }
   },
   "replacement": {
    "script": "scripts/anonymize_llm.py",
-   "seed": 7,
-   "note": "pure function of (cache, seed); verified byte-identical across runs under randomised PYTHONHASHSEED"
+   "seed": 910,
+   "note": "Deterministic replacement followed by 11 reviewed corrections across 10 emails. Replaying both steps produced byte-identical corpus and private map with a different PYTHONHASHSEED."
   },
   "verification": {
    "script": "scripts/audit_names.py",
-   "model": "Qwen/Qwen3-32B, reads the anonymized text with no knowledge of the pipeline"
-  }
+   "model": "gpt-6-sol (azure, preset gpt-6-sol, reasoning medium), reads the anonymized text with no knowledge of the pipeline"
+  },
+  "source_release": "https://github.com/ShuyanTan928/joint_secrecy_benchmark/releases/tag/enron-topics-gpt-6-sol-2026-09-25"
  },
  "verification": {
-  "enron_people_identifiable_from_an_address": 635,
-  "surname_absent_from_output": 620,
-  "surname_present_but_an_ordinary_english_word": 13,
-  "surname_present_genuine_miss": 2,
-  "genuine_misses": [
-   "bill iii",
-   "steve january"
-  ],
-  "ordinary_word_surnames_left_alone": [
-   "chris long",
-   "don black",
-   "ed wood",
-   "jae black",
-   "jeff king",
-   "kay young",
-   "larry lawyer",
-   "louise kitchen",
-   "marie heard",
-   "maurice winter",
-   "randy young",
-   "rick buy",
-   "victor contract"
-  ],
-  "audit_emails_flagged": 360,
-  "audit_buckets": {
-   "residual_name_leak": 361,
-   "kinship_or_pronoun_left_deliberately": 55,
-   "initials": 54,
-   "ordinary_english_word_left_deliberately": 33,
-   "organisation_left_deliberately": 20
-  },
-  "must_keep": {
-   "Long time no talk": 1,
-   "Long-Term Care": 1,
-   "Customer Satisfaction Manager": 1,
-   "Long Term Northwest": 1,
-   "January": 42,
-   "February": 34,
-   "Monday": 151,
-   "Houston": 299,
-   "Texas": 137
-  },
-  "must_go": {
-   "Skilling": 0,
-   "Kaminski": 0,
-   "Dasovich": 0,
-   "Titman": 0,
-   "Perlingiere": 0,
-   "Whalley": 0,
-   "Zufferli": 0,
-   "Lokay": 0,
-   "Enron": 0
+  "address_derived_surnames_checked": 420,
+  "address_derived_surnames_absent": 403,
+  "ordinary_word_surnames_retained_in_prose": 14,
+  "nonword_address_surname_misses": 3,
+  "final_model_audit": {
+   "flagged_emails": 28,
+   "reviewed_email_name_pairs": 30,
+   "review_categories": {
+    "fictional_or_artistic_title": 2,
+    "organization": 18,
+    "generated_address_alias": 1,
+    "religious_reference": 3,
+    "familiar_address_term": 2,
+    "pet": 1,
+    "named_venue": 1,
+    "named_event": 1,
+    "location": 1
+   },
+   "review_outcome": "No further person-name correction required among these flags under the scope below.",
+   "scope": "Person names and personal aliases; preserve familiar address terms, pets, fictional/religious references, organizations, venues, and locations.",
+   "targeted_high_effort_emails": 54,
+   "targeted_added_person_entries": 68,
+   "final_manual_repairs": {
+    "person_or_family_entries": 6,
+    "restored_nonperson_phrases": 5,
+    "emails": 10
+   },
+   "limitation": "Review of detected flags is not a proof of complete de-identification. Dates, locations, organization references and some URLs remain; context may link back to public source mail."
   }
  },
  "known_gaps": [
-  "surnames that are also ordinary English words (Long, Black, King, May, Cash, Kitchen) are replaced only where the model identifies a person; sweeping them corpus-wide is what produced 'Gwyneth time no talk' in the previous pipeline",
-  "'January' is in NOT_SURNAME, so Steve January is not registered \u2014 the month is worth more than the one surname",
-  "logins that never appear beside an @domain (lbaltz, ktennes, sevatt) have nothing to map them to",
-  "EB nnnn Enron Building room numbers are not yet anonymized",
-  "the planted-secret cast must be drawn from this pseudonym pool, or the cast is a tell"
+  "This is benchmark pseudonymization, not a guarantee against linkage to the public source.",
+  "Model extraction and audit can miss names. Ordinary words, context, and partial organization replacements can create ambiguity.",
+  "Some organizations, locations, dates, web addresses, familiar address terms, pet names and artistic/religious references remain.",
+  "The secret search is one bounded episode from one model; its candidates are unconfirmed and no threads are removed.",
+  "Use the supplied casting pools and review name_consistent when reusing a person; 66 of 100 usable candidates pass that check."
  ],
  "private_do_not_publish": [
-  "data/topics/sample_anon_llm.jsonl.map.json",
-  "data/topics/sample.jsonl.idmap.json"
- ]
+  "Source ID and pseudonym maps",
+  "Original sampled emails",
+  "Name extraction/audit rows and response checkpoints",
+  "Reviewed replacement mappings"
+ ],
+ "topic_classifier": "gpt-6-sol (azure-openai, preset gpt-6-sol)",
+ "secret_search": {
+  "model": "gpt-6-sol",
+  "provider": "Azure OpenAI",
+  "reasoning_effort": "high",
+  "episodes": 1,
+  "status": "success",
+  "candidate_count": 1,
+  "threads_cited": 1,
+  "threads_removed": 0,
+  "index_pages_reviewed": 21,
+  "index_pages_total": 21,
+  "investigation_calls": 53,
+  "investigation_budget": 100,
+  "read_calls": 30,
+  "turns": 76,
+  "budget_hit": 0,
+  "termination_reason": "answer",
+  "candidate_limit": 50,
+  "started_at": "2026-09-27T17:21:30+00:00",
+  "completed_at": "2026-09-27T17:32:39+00:00",
+  "estimated_standard_usd": 1.7284969999999995,
+  "limitations": [
+   "One model provides no cross-model consensus; candidates remain unconfirmed.",
+   "The complete thread index was scanned; only selected full email bodies were read. This is not an exhaustive audit of all content.",
+   "The 100-action investigation budget excludes index pages and model helper calls.",
+   "Native control-sample accuracy/false_positive metrics do not label these background findings."
+  ]
+ },
+ "usage_record": "run_provenance.json"
 }

@@ -1,14 +1,30 @@
 #!/usr/bin/env python3
-"""Run once per mailbox: a profile of how its mail reads, and a bank of real subject lines that
-name a matter. The profile is what prompts/mailbox_style.md was written from by hand; the plot step
-draws real subject lines from the bank. No model.
+"""Run once per mailbox: a profile of how its mail reads, a bank of real subject lines that name a
+matter, and a bank of real attachment names. The profile is what prompts/mailbox_style.md was written
+from by hand; the plot step draws subject lines and file names from the banks. No model. The subject
+bank needs the private map, to keep pseudonyms out of it; the file bank does not.
 
-  python scripts/mailbox_profile.py        -> benchmark_pool/mailbox_profile.json, benchmark_pool/reference_bank.json
+  python scripts/mailbox_profile.py               -> benchmark_pool/mailbox_profile.json, reference_bank.json, file_bank.json
+  python scripts/mailbox_profile.py --only-files  -> benchmark_pool/file_bank.json, from a released mailbox with no map
 """
-import json, re, collections, statistics
+import json, re, collections, statistics, sys
 from pathlib import Path
 
 M = [json.loads(l) for l in open("data/release/background_2000.jsonl")]
+ATTACH = re.compile(r"(?:^|\n)\s*-\s+([\w][\w \-().&']{1,60}\.(?:doc|xls|pdf|ppt|txt|zip))\s*(?:\n|$)", re.I)
+
+
+def file_bank():
+    """Attachment names as the mailbox lists them under a message, most frequent first, one form each."""
+    names = collections.Counter(m.strip() for r in M for m in ATTACH.findall(r.get("body", "")))
+    bank = [n for n, _ in sorted(names.items(), key=lambda kv: (-kv[1], kv[0].lower()))]
+    Path("benchmark_pool/file_bank.json").write_text(json.dumps(bank, indent=1, ensure_ascii=False))
+    print(f"file bank: {len(bank)} attachment names, e.g. {bank[:6]}")
+
+
+if "--only-files" in sys.argv:
+    file_bank(); raise SystemExit(0)
+
 MAP = json.load(open("data/topics/sample_anon.jsonl.map.json"))
 FIRM_DOMAIN = MAP["domains"].get("enron.com", "")
 own = [m["own_body"] for m in M if m.get("own_body")]
@@ -76,3 +92,4 @@ for s in subj:
     seen.add(k); bank.append(t)
 Path("benchmark_pool/reference_bank.json").write_text(json.dumps(bank, indent=1, ensure_ascii=False))
 print(json.dumps(profile, indent=1)); print(f"\nreference bank: {len(bank)} subjects, e.g. {bank[:15]}")
+file_bank()

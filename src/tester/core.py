@@ -69,11 +69,11 @@ def _resolve(path: str | Path, root: Path = ROOT) -> Path:
 
 
 def load_cases(state: str | Path = DEFAULT_STATE, *, root: Path = ROOT, limit: int = 0) -> list[BenchmarkCase]:
-    """Every chain in the state file that has emails and no error, in file order."""
+    """Every chain in the state file that has emails, no error and was not dropped by the AND check, in file order."""
     st = json.loads(_resolve(state, root).read_text())
     cases: list[BenchmarkCase] = []
     for i, chain in enumerate(st.get("chains", [])):
-        if chain.get("error") or not chain.get("emails"):
+        if chain.get("error") or not chain.get("emails") or (chain.get("and_check") or {}).get("status") == "DROP":
             continue
         topic = str(chain.get("topic") or "")
         sid = f"{i:02d}-{ABBR.get(chain.get('pattern'), 'x')}-{re.sub(r'[^a-z]+', '-', topic.lower()).strip('-')[:20]}"

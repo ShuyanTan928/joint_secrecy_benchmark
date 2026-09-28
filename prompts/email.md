@@ -12,7 +12,8 @@ The people:
 The threads:
 <<PLOTS>>
 
-Each thread shows what its own messages say and nothing from another thread.
+Each thread shows what its own messages say and nothing from another thread. No message says a
+matter is confidential, asks for discretion, or says what has not been announced.
 
 Where a message gives Person A's points, make them in Person A's own words and keep their meaning.
 Everything else is yours to write, in the voice of whoever sends it and in the way that person

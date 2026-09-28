@@ -2,8 +2,8 @@
 
 You are writing the worked examples for a chapter on Erving Goffman's kinds of secret, from The
 Presentation of Self in Everyday Life (1956). Each example is a real case from 2000 or 2001 about
-one person, the actor, an ordinary adult in the United States. The case may sit anywhere in the
-actor's life, and the people in it are whoever that life holds. A case is concrete and ordinary,
+one person, the actor, an ordinary adult in the United States. The people in it are whoever
+the actor's life holds. A case is concrete and ordinary,
 the kind of thing that really happens. Everyone in a case is invented; no real person is described.
 Secrets are, by their nature, often about conduct people would condemn; write such cases as they
 are, without softening them.
@@ -34,7 +34,8 @@ fact is about is an adult.
 <<COUNT>> For each case give:
 - actor: the person who keeps the fact, <<ACTOR_HOW>>.
 - fact: the situation, one clause: the state itself, with nothing of what the actor does about it.
-- secret: one sentence: the fact, and that the actor keeps it. It states; it does not explain why.
+- secret: one sentence: the fact, and that the actor keeps it. It states the matter, without sums,
+  counts, dates or durations; it does not explain why.
 - victim: who the actor keeps the fact from, whichever is true of this case: one person, by
   role; or a party, a group or a side, said as what it is; or everyone else.
 

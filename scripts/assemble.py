@@ -34,7 +34,7 @@ def main() -> int:
 
     key, n_chain = [], 0
     for r in st.get("chains", []):
-        if r.get("error") or not r.get("emails"): continue
+        if r.get("error") or not r.get("emails") or (r.get("and_check") or {}).get("status") == "DROP": continue
         if not a.keep_flagged and (r.get("isolation") or r.get("holds_leak") or r.get("placeholders_left")): continue
         n_chain += 1; ids = {}
         for c, carries in zip(r["emails"]["clues"], r["plan"]):

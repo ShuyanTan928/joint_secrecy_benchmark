@@ -1,8 +1,8 @@
 """A stub engine: replays stored answers, so any command runs end to end without a model (--engine stub).
 
 The topic classifier gets a topic, the people and audit passes get "none", the quiet-people check gets
-"no role", and the generation steps get one real chain's answers from STUB_STATE (default
-logs/fourstep_opus37.json). Calls are counted in .calls.
+"no role", the subset probe says yes, the judge says match, the diagnoser asks for one email change, and the generation steps get one real
+chain's answers from STUB_STATE (default logs/fourstep_opus37.json). Calls are counted in .calls.
 """
 import json
 import os
@@ -31,7 +31,10 @@ class StubEngine:
         if tail.endswith("topic:"): return self.rng.choice(TOPICS)
         if tail.endswith("people:") or tail.endswith("names:"): return "none"
         if "signed_name" in prompt: return json.dumps({"signed_name": "", "role_fixed": "no", "role": "", "evidence": ""})
+        if "## The finding" in prompt: return json.dumps({"match": True, "reason": "stub"})
+        if '"step": "clues" or "plot" or "emails"' in prompt: return json.dumps({"clue": 1, "mode": "leak", "why": "stub", "step": "emails", "change": "stub change"})
         if self.chain is None: return "{}"
+        if '"evidence_email_ids"' in prompt: return json.dumps({"candidates": [{"secret": self.secret["secret"], "evidence_email_ids": ["e1"]}]})
         if '"cases"' in prompt: return json.dumps({"cases": [{k: self.secret[k] for k in ("actor", "fact", "secret", "victim")}]})
         if "## The secret to place" in prompt: return json.dumps(self.secret["clues"][self.chain["pattern"]])
         if '"cast"' in prompt: return json.dumps(dict(self.chain["emails_placeholders"], cast=self.chain["cast_by_model"]))

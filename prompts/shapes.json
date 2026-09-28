@@ -1,5 +1,5 @@
 {
- "_about": "Option lists for the plot step's choices: how [fact] and [knows] show up in the mailbox, the occasion of [conflict] per pattern, what the victim does next, how the matter is named. For each line code flips a coin: either it draws one option and assigns it, or it lets the model choose or write its own. Picks are kept as rec['slots'] for the variety tally.",
+ "_about": "Option lists for the plot step's choices: how [fact] and [knows] show up in the mailbox, the occasion of [concealment] per pattern, what the victim does next, how the matter is named. For each line code flips a coin: either it draws one option and assigns it, or it lets the model choose or write its own. Picks are kept as rec['slots'] for the variety tally.",
  "third": {
   "who_else": [
    "nobody else",

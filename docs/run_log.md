@@ -1063,3 +1063,342 @@ rebuild from the sample stage on (people and audit are one call per email, 2,008
 candidate) and the sweep with clean_background.py on models of his choice; nothing was run here. Sweep examples now
 name the OpenRouter route for GPT-6 Sol (openrouter/openai/gpt-6-sol), since a bare openai/ string goes to OpenAI
 directly.
+
+## The AND check on the emails (2026-09-27, stub only)
+
+scripts/subset_check.py, the user's design: blind probers (API models other than the generation model) read every
+proper subset of a chain's planted threads and the full set, one call each with nothing else, and answer a simple
+question, is there a secret here and what (prompts/probe.md). Each yes goes to the tester's judge (prompts/match.md)
+against the answer key. Keep = no subset gives the secret to any prober and the full set gives it to every prober.
+Output logs/subset_check.json with every answer and verdict; the state file is not touched. Dry run on the stub over
+the four run-37 chains: 28 subset calls per prober, the stub says yes everywhere so all four drop, as it should.
+Not run on a real model yet. Earlier checks were not this: the email step's flags are regex checks on the text, and
+the September 14 subset probe ran on the one-pass secrets, not on emails.
+
+## The AND check on local Qwen3-32B (2026-09-27, GPUs 4-7, no API calls)
+
+The probe now answers in the tester's form, a candidates list with the secret and its evidence e-handles or an empty
+list, so the same judge and the same three counts apply; the probe and judge prompts were cut to the rule and the
+format. Run over the four run-37 chains with Qwen3-32B as prober and judge: 28 probe calls, all parsed, 11 of the
+24 proper subsets said yes, 28 judge calls. Kept 1 of 4. 00 omission, family (dark secret): clues 1+2 give the secret
+(the child from before the marriage, from the [fact] record plus the [knows] act), so the chain fails the gate. 03
+paltering, business and finance: clue 2 alone and clue 3 alone each give the false-degree secret. 02 lying, careers:
+kept; the two-clue sets that said yes named the wrong keeper and the judge refused them. 01 paltering, family (the
+mother's facility): Qwen found nothing even with all three threads; a stronger prober will say whether the chain or the
+model is at fault. One judge error: on 03 clues 2+3 the finding named the HR manager as the keeper and Qwen still said
+match; the real run's judge is Claude Sonnet. Output logs/subset_check_qwen37.json.
+
+## Step 5: the AND check with fix rounds, from the parent's loop (2026-09-27, stub only)
+
+The parent repository's email step (enron_benchmark scripts/email_generate.py) generates the clue emails, blind-probes
+every proper subset and the full set, and on a failure asks a diagnoser that sees the secret for the clue at fault
+and one change, which it inserts as a revision block into the next generation pass; the atoms never change, up to
+three rounds, then KEPT or DROP. Ported as step 5 of scripts/generate.py: src/andcheck.py holds the check (the
+probes in the tester's answer form, the judge, the keep rule) and the diagnosis; prompts/diagnose.md is the
+diagnoser, cut to the rule and the format, with our parts [fact] [knows] [conflict] fixed and a `step` field, plot
+or emails, that says which step is redone with the change (the parent's one distribute step is our two). Flags
+--probers, --matcher, --diagnoser, --rounds on chains, all and the new check command; --engine vllm or stub uses the
+one engine for every part; the check's calls count toward --max-calls and go to logs/api_raw.jsonl. The chain's
+and_check field holds every round with every answer and verdict and the status; assemble.py and the tester skip
+DROP chains. scripts/subset_check.py folded in and removed. Stub runs: check with two rounds on two run-37 chains
+(172 check calls, both DROP as the stub leaks everywhere), check only, and all with one fix round.
+
+## Run 38: five secrets end to end on the API (2026-09-27, Opus 5.5 generating, GPT-6 Sol probing, judging and diagnosing, one fix round)
+
+Five pairs, one secret each (careers dark work, personal finance dark life, law entrusted work, medical health entrusted
+life, business and finance strategic work), 15 chains at n=3 on the Ashford background. 81 generation calls, 214 check
+calls, about $3.5 in all. Result: 11 of 15 chains completed, 2 KEPT (business and finance under commission and under
+paltering), 9 DROP, 4 errors.
+
+What the run showed, in order of weight:
+1. Anthropic's content filter. 12 of the 81 Opus calls came back empty with finish_reason content_filter, 11 of them on the
+   email step; all three medical-health chains (a father's blood-pressure medication kept from the mother) and the
+   personal-finance paltering chain died on it, two attempts each. Not a parse problem; the model's output was blocked.
+   A fallback model for a filtered email call is the open question.
+2. Full-set misses, not leaks, are the main failure: 9 of 12 checked chains had the full set unrecovered at least once.
+   The judge's refusals fall in two groups. (a) The keeper: for the entrusted secret (law) every finding named the
+   attorney hiding his own suspension, not the paralegal keeping it from the general counsel; for the strategic secret
+   the findings named "Ashford management", not the plant manager; the answer key's actor is not who a blind reader sees
+   keeping the secret. (b) Detail: "suspended" refused for lacking "practicing on it for months"; the concise judge
+   prompt had lost the earlier "vaguer or more detailed wording is fine". Restored as one clause.
+3. The fix round worked once and hurt once. Business and finance under commission: the [fact] email carried "keep this
+   one close, nothing has been announced", clue 1 alone leaked, the diagnoser named it, the rewrite removed it, KEPT.
+   Personal finance under omission: clues 1+2 leaked; the diagnoser replaced the named account owners with an account
+   number, which cut the identity link, and the full set then failed: the swing to the opposite failure the prompt warns
+   against. Eight of nine diagnoses chose the emails step; the law and careers misses look like plan-level faults that a
+   wording change cannot reach.
+4. The known dark-secret pair leak again: personal finance under commission leaked on [fact]+[conflict] both rounds.
+5. One diagnosis came back empty at the 1,500-token cap (a reasoning model spent it all before the answer); the check's
+   API cap is now 4,000. The judge's reason on a refusal was not being kept; it is now.
+6. Casting: two chains got firm people named "dq Glisan" and "hb Spinks" (an initials login with the address surname),
+   others "shaye Midolo" and "ford.serigny@ashford.com Serigny". The quiet pool has 18 of 139 such forms; the cast draw
+   now takes only names of the form First Last, 106 people.
+State: logs/generate.json; raw answers in logs/api_raw.jsonl.
+
+After run 38 (2026-09-28, user): three changes. (1) A generation call the content filter empties goes once to a fallback
+model, the judge's by default (--fallback, GPT-6 Sol); a plain empty answer is retried once on the generator first.
+Recorded per chain. (2) The judge judges the matter, not its measure: figures, dates and durations the secret does not
+give, or a detail of the secret the finding leaves out, are fine; the keeper and the victim may be a role or a group the
+person belongs to. The judge's reason on a refusal now reaches the diagnoser, so a miss is fed back with what was
+missing. (3) Step 1 writes the matter without its measure: no sums, fractions, counts, dates or durations in the secret
+sentence; the plot sets those. Not rerun yet.
+
+## Run 39: the same five pairs under the new prompts and the fallback (2026-09-28, Opus 5.5 generating, GPT-6 Sol probing, judging, diagnosing and as fallback, one fix round)
+
+Same plan as run 38; step 1 is not deterministic, so the careers case became a procurement manager with a stake in a
+contractor and the medical case a mother refusing a biopsy. 82 generation calls (13 of them on the fallback), 345 check
+calls, about $4.60. 15 of 15 chains completed, 4 KEPT (personal finance and careers under omission, careers under
+commission, medical under commission), 11 DROP, no errors. Run 38 was 2 KEPT, 9 DROP, 4 errors.
+
+1. The fallback worked: 13 calls were content-filtered (12 emails, 1 plot), every one was resent to GPT-6 Sol and
+   parsed; 8 chains have emails partly written by it, and they pass the code checks as Opus's do. The filter is not
+   about the medical topic: it hit personal finance (3 chains), business and finance (3), law, careers and medical (1
+   each). Roughly one email call in three is filtered on the first attempt.
+2. The failure flipped from misses to leaks. Full-set misses fell from 9 chains to 3 (the two medical chains whose
+   reader names the mother as the keeper, and one business chain). Round-0 subset leaks rose from 3 chains to 10:
+   [fact]+[conflict] in 6 chains, [knows]+[conflict] in 3, [fact]+[knows] in 2, [fact] alone in 2, [conflict] alone
+   in 1. The tolerant judge did what it was for on the law and careers chains, and the general secrets matched readings
+   that carried the plot's figures.
+3. The judge now over-accepts on the keeper. Under the group clause, "Ashford management has decided to close the
+   plant but has not yet told the employees" read from the [fact] record alone counts as the plant manager keeping it
+   from the crew; and "Kay and Akilah know the account fell" (the brokers) was matched to the husband keeping it from
+   his wife. For a strategic secret the [fact] record itself says the plan is unannounced, so clue 1 leaks by
+   construction under this judge.
+4. The fix round: leak -> pass 3 (every one by de-identifying the actor in the [fact] record, the fix the memory on the
+   pair leak names; the diagnoser found it on its own), miss -> leak 3 (the law chains: once the paralegal's knowing was
+   made explicit, [knows]+[conflict] gave the secret), leak -> leak 6, miss -> miss 2 (medical: the mother's own
+   concealment from her husband is the reading, whatever the daughter's clue says).
+5. Diagnoses: 11 emails, 3 plot; the plot-step fixes were the ones that turned a chain (the omission personal-finance
+   chain replanned clue 1 as an anonymised statement thread and passed).
+Open: the keeper for entrusted and strategic secrets (what a blind reader sees keeping it is the subject, or the group);
+the [fact]+[conflict] pair leak as a rule in the plot prompt rather than a fix the diagnoser has to find; the judge's
+group clause versus "not yet told".
+
+## Run 39 read through: the judge against the generator, and the fix loop's prompts (2026-09-28, no API calls)
+
+All 125 judged findings read against the keys. The judge was wrong about 8 times: 6 lenient, 2 strict or inconsistent.
+Lenient: on the strategic secret, "management has decided to close the plant but has not yet told the employees" read
+from the [fact] record alone counted as the plant manager keeping it (4 verdicts across the three business chains);
+"the brokers know the account fell" counted as the husband keeping it from his wife (1); "withholds whether it has lost
+half its value" from the [conflict] clue alone counted as the loss (1). Strict: the law commission chain's clues 2+3
+reading was refused in round 0 and an almost identical one accepted in round 1. The other refusals follow the key: the
+entrusted readings name the subject (the attorney, the mother) as the keeper, which is what the emails show. So the drops
+are mostly the generator's and the design's; the judge's own fault is the "not yet told" reading of a strategic [fact].
+
+The fix loop, checked on the assembled prompts. (1) The diagnoser got the leaks and the full-set findings with the
+judge's reasons, the plan, the emails, the history; it did not get the readers' evidence handles, nor the cast, so it saw
+the plan as Person A and the emails as Bria with nothing linking them. Both added. (2) The prompts read cleanly.
+(3) The generator did not know enough to avoid an over-fix: the email step regenerated from the plan with a fresh cast,
+so the diagnoser's "rewrite e4" and its names meant nothing to it, and it never saw the previous emails or the gate.
+Now a redo keeps the cast, the revision block carries what failed and what the readers found, the previous version (the
+emails as the readers saw them with their handles, or the plan), the one change, the earlier changes, and the gate in
+one line; for the plot step the names in the diagnosis are put back as placeholders. Each round's emails, names and
+plan are kept in the state, so a run can be read afterwards.
+
+## Where the reading drifts from the key, step by step, and the loop simulated (2026-09-28, no API calls)
+
+Run 39 traced per chain from the secret through the parts, the plan and what each subset gave the reader. The secret
+sentence never changes; what drifts is which concealment the emails make visible, and that is set at steps 1 to 3:
+- Step 1, entrusted secrets: the sentence carries the subject's own concealment ("her mother is refusing the biopsy while
+  assuring her husband her checkups are clear"; "the attorney has been practicing on a lapsed licence"). The reader
+  reports that concealment, whose keeper is the mother or the attorney, not the actor.
+- Step 2, [fact] and [knows] break their own rules in three cells: the medical [fact] copies the mother's lie ("she has
+  told her husband her checkups came back clear"), so clue 1 alone is a complete secret (the one medical chain whose
+  [fact] had no lie in it was KEPT); the careers [fact] names the actor as the owner ("the procurement manager holds a
+  silent 15 percent share"), so the record at step 3 names them and [fact]+[conflict] leaks; the finance [knows] states
+  the fact's measure ("a large capital loss"), so [knows]+[conflict] leaks.
+- Step 3: the finance [fact] record names both spouses (the pair leak on record); the strategic [fact] thread is counsel
+  and HR scheduling WARN notices, so "not yet told" is legible from clue 1 alone; the law [fact] thread has the attorney
+  saying he will take care of it, which makes him the visible concealer.
+- Step 4 adds tells: "keep this one close", a categorical lie ("the crash is in tech stocks we don't own") that clue 1
+  exposes without clue 2.
+- Step 5: the judge's group clause and, in run 38, its strictness on detail.
+The fix loop simulated on a run-39 chain with recording fake models, an emails diagnosis and a plot diagnosis: per
+round 14 probes and 8 judge calls, one diagnosis, one generator call for emails (three for plot, two of them the plot
+step's own re-ask); the diagnoser's prompt carries the cast section and the evidence handles; the email redo keeps the
+cast and, when the generator returns its previous answer, the emails come back identical, so "keep everything else as it
+was" is possible; the plot redo carries the previous plan with names put back as placeholders. One finding on the way:
+the run-39 state predates the stored draw, so on that state alone a redo would redraw the cast; new runs store it.
+
+## Faults at steps 1 and 2: three levers (2026-09-28, user; stub and simulation only)
+
+(1) The step-2 rules made concrete in prompts/atoms.json: [fact] as a record holds it, the matter and whom it concerns
+by a reference, not the actor's name or role, and nothing anyone says, tells or hides about it; [knows] without the
+fact or its measure, a sum, a count, a date, a loss. (2) A code check at step 2 with one re-ask (generate.part_flags):
+the actor's role in [fact], a telling or assuring verb in [fact], a measure in [knows], hiding words. Over run 39's
+15 clue sets it flags 9: the three careers [fact]s naming the procurement manager, two business [fact]s naming the
+plant manager, the two medical [fact]s with the mother's lie, and two finance [knows] with "capital loss" and one
+careers [knows] with a wire amount. (3) The diagnoser may now send a chain back to step 2 ("clues"), when a part itself
+carries more than its piece; the clue prompt then gets the previous parts, the people by placeholder and role, the
+readers' findings and the change, the plot and emails are redone from the new parts, and the new parts replace the old
+in the secret record. Simulated with fake models on the careers commission chain: clue prompt, plot, emails, second
+check, in that order. The parts are no longer described as fixed in prompts/diagnose.md.
+
+## Step 2 alone on run 39's five secrets, under the new rules and gate (2026-09-28, Opus 5.5, 15 calls, about $0.30)
+
+State logs/clues_test.json. All 15 sets filled and distinct, no re-ask needed: none of run 39's step-2 faults recurred.
+[fact]s now name the matter by a reference: a family trust whose beneficiary is "Ashford employee ID 4471", "the person
+in Ashford employee file P-1147", "site ref. CS-07", "a clinic patient file for a woman in her sixties" with the biopsy
+"marked as declined"; the mother's lie is out of every medical [fact]; "with the plant manager's agreement" is out of the
+business [fact]s; no [knows] carries a sum or a loss. Two subtler faults remain, now added to the gate: (1) in the
+life-ground sets the [fact] still identifies the household ("held in the names of both spouses", "the couple's joint
+retirement account", "the patient file for the mother"), so [fact]+[conflict] would still give the secret: 4 of 6 life
+sets; (2) two careers [knows] name the contractor the fact concerns ("the Keller Pipeline Services K-1", "the partner's
+statement from Ridgeline"), so [knows]+[conflict] would give it; the commission set shows the right form, an act with the
+trust and no contractor. Not code-checkable but worth reading for: a [knows] that is itself a hiding act (statements
+rerouted "no longer to the house"), and the entrusted [knows] acts about the attorney's signature block or the mother's
+breast surgeon, which with the false line alone come close to the secret.
+
+## The model chooses two or three threads (2026-09-28, user; stub only)
+
+Step 2 now ends with the choice: three threads, one part each, when [knows] can be an ordinary act that stands alone
+and says nothing of the fact; two when it cannot, and then [fact] and [knows] share one thread, the record reaching the
+actor or the actor's act on the record's thread, and [conflict] has its own (the two-thread plan shape from the --vary-n
+design). The choice rides in the clue set as n; the chain step takes it, --n forces a count, --vary-n cycles 2 to 4 as
+before. The check enumerates two subsets and the full set at n=2. Checked on the stub and in tests; not run on a model
+yet, so which secrets the model would put on two threads is still to be seen.
+
+## Delivered on a pair (2026-09-28, user): the leaked set is the item, the prompt choice of threads withdrawn
+
+The model no longer chooses two or three threads at step 2 (that section and field are gone; --n plans a count, --vary-n
+cycles). Instead every chain is planned on three, and after a check a chain whose full set fails only because a pair
+already gives the secret is delivered on that pair, when the pair holds the [conflict] thread (else there is no
+concealment act in the item), every prober recovers it, and no single thread of it does (else the item is one email):
+the pair satisfies the gate by itself, the third thread is dropped and recorded, the chain's n becomes 2. No calls: the
+subset probes already made decide it. By default it is done before any fix round; --fix-first tries the fix rounds for
+the three-thread item first. Applied to run 39's stored checks: 12 of 15 chains delivered (11 on two threads, 3 of them
+at round 1 after the fix), against 4 kept; the three chains a fix round had kept on three threads would have gone out
+on two at round 0 under the default, which is what --fix-first is for. The three left: the two medical chains where the
+reader names the mother, and the business paltering chain where the [fact] thread alone gives the secret. The law
+chains go out as [knows]+[conflict]: the paralegal's act and her false line, no record of the licence.
+
+## Quotas, the third part renamed, and the plot prompt made to hold on its own (2026-09-28, user; stub and simulation)
+
+--want-3 N --want-2 M on chains and all: chains are planned on three; while three-thread items are short a leaking
+chain goes to the fix rounds before it is delivered on a pair; once the three-thread count is met the rest are planned
+on two ([fact] and [knows] in one thread, the plan shape already in plot.md) and the run stops when both counts are
+met; a batch of --workers chains at a time. Simulated with fake models: quota short, one diagnosis and one regeneration
+then the pair; quota met, or no quota, the pair at once with no extra call. Each kept chain records its source, planned
+or pair.
+The third part is [concealment], not [conflict] (user: it is the actor's act of concealment toward the victim):
+prompts, code, tests and README renamed; state files from before today are read through an alias and a migration on
+load, so run 37 and run 39 still open. The slot family carrier_conflict is carrier_concealment.
+Default stays three threads, and plot.md now carries the rules the runs taught, so the set should hold without the
+loop: the [fact] record names the matter by a reference, not Person A's name, role or household, with the outcome in
+the body and not in the subject or the reference, and a decision not yet announced held without a word on who has been
+told; [knows] carries the record's reference and not the name of what the record is about, and is an act Person A could
+do in the open; Person B's question in the [concealment] thread carries neither the fact nor its measure.
+
+## The wording that mixed [fact] and [knows], fixed in order (2026-09-28, user)
+
+Read from the assembled prompts. (1) plot.md said "[knows], on its own thread or sharing the [fact] thread" under a
+three-clue plan; now "on its own thread" with three and "sharing the [fact] thread" with two. (2) The [knows]
+definition asked for "the one thing ... that only someone who knows the fact would do" and called it "the reader's
+proof"; the act most specific to a fact is the fact, so it now asks for "one ordinary thing the actor does or arranges
+that the fact explains: a reader who has the record sees why; a reader without it sees routine". (3) The AND-gate text
+said the same a third time, "the act that shows they know"; now "the act the fact explains". (4) plot.md's [fact]
+letter "names what it would name in life, the fact included" pulled against the new reference rule; folded into one
+sentence with "except the person". (5) The record's recipient is now also "nor the person the fact is about", after the
+attorney's own reply made him the visible concealer. (6) "household" joined name and role in the [fact] rule. (7)
+email.md: no message says a matter is confidential, asks for discretion, or says what has not been announced. (8) The
+schema text for [fact] echoes the rule. Also found on the way: the rename had missed the bare label the code and the
+state keys use; done, with the migration on the bare key.
+
+## Proofreading the assembled prompts (2026-09-28, user)
+
+Read as the model gets them, with the fills. Fixed: plot.md's opening summary still said "[knows] is Person A doing
+something only someone who knows would do", the wording removed from the clue prompt earlier in the day; a missing comma
+made "someone reading one clue on its own, or any two cannot say" misread; the [fact] paragraph's lines rewrapped and
+its last clause turned round so "not Person A's name" no longer reads as if Person A were the person the fact concerns;
+the people table said Person C is "the insider", and run 39 duly cast the attorney himself as the record's holder, so
+Person C is now "not the person the fact is about"; match.md's "the same subject" could read as the subject line, cut;
+diagnose.md's step sentence rewrapped. One real fault: for an omission, the plot's line field wrote what the message
+leaves out ("It says nothing of his license status") and that reached the email prompt as one of Person A's points to
+make; the field now asks for what the message says only, and points_of drops any "says nothing of", "is silent on",
+"leaves out" clause before the email step sees it. Left as a proposal: the entrusted kind's reading at step 1 ("a fact
+about someone else ...") says nothing about that person's own hiding of it, which is how the medical secret came to
+carry the mother's lie; one sentence would settle it.
+
+## The prompts read for order, repetition and manner (2026-09-28, user)
+
+clues.md reordered: the secret, then what the matter is and whom the parts are written to, then how it is kept, then
+the three parts, then the gate, then the output; the gate section now states the gate only, since the parts' own
+definitions already say what each part leaves out; the sentence on the matter was in the template and in the fills,
+now once; the omission act's three "does not" are "no denial, no reassurance, no status". plot.md's rules section
+rewritten in one order, each rule once: the gate, the reader, the [fact] thread (recipient, examples, the reference
+rule, decisions not yet announced), the [knows] thread (concrete, tied by the record's reference, an act done in the
+open), the [concealment] thread, then the read-through; the opening restatement of the three parts, the sentence on
+the people table (said twice elsewhere), the subject-line rule (the naming menu has it) and the [knows] line that sat
+inside the choices list are gone; "It does not pass through Person A's hands" became "does not reach Person A by copy
+or forward"; "a standing between" is "a standing arrangement between". secret.md no longer says the case may sit
+anywhere when the ground line has just said where. Checked in the assemblies for both patterns and thread counts.
+
+## Run 40: steps 2 to 4 on the five secrets under the new prompts, no check, no fix (2026-09-28, Opus 5.5, 55 calls, about $1.20)
+
+State logs/run40.json. Step 2: 16 calls, one re-ask on a flag, fixed. Steps 3 and 4: 39 calls, 9 of the 30 first
+attempts content-filtered and all 9 resent to GPT-6 Sol; 15 of 15 chains complete, the cast taken as given in all 15.
+Read against the gate without a model:
+- Held in all 15: Person A on no [fact] thread; the person the fact is about on none either (the attorney and the
+  mother are in the people table and off the record's thread, where run 39 had them on it); every record by a reference,
+  a registration number, a patient file, an account, a closure file; no email says confidential, asks for discretion or
+  mentions what is unannounced (run 39 had several); every omission's points are what the message says; no victim's
+  question carries the fact or its measure.
+- Residue, by reading: (1) three [knows] acts are rerouting acts, paper statements stopped and sent "only to" the
+  husband's address (finance, twice), the mother's clinic statements redirected to the daughter's address (medical);
+  the plot prompt calls that a hiding, the clue prompt, where the act is chosen, does not yet. (2) One record names the
+  actor: the brokerage's reply "a joint account registered to Javien Solinsky and Lilli Abedin", the rule not followed
+  in 1 of 15. (3) The strategic [fact] records carry WARN-notice schedules and "with the site's agreement", which under
+  the judge's group clause read as the manager keeping it from the crew from clue 1 alone. (4) The medical paltering
+  chain has the father write "all she'll tell me is 'fine'", the mother's assurance from the step-1 sentence surfacing
+  in the victim's words; the entrusted sentence at step 1 is still the open item.
+- Code flags: the fact dated after the actor's line in two law chains; "the [knows] thread adds words of the fact"
+  in four, mostly the shared reference the tie now requires, so that check is over-sensitive; 1998 in three account
+  histories, harmless.
+Not probed: a check with no fix rounds on these 15 would cost about $1.50 on GPT-6 Sol.
+
+## Run 40 checked: GPT-6 Sol as prober and judge, no fix rounds (2026-09-28, 155 calls, about $1.50)
+
+Kept 9 of 15 with no fix round: 5 on three threads (law paltering, careers commission and omission, business commission,
+medical commission), 4 delivered on the [fact]+[concealment] pair (personal finance, all three; business paltering).
+Run 39 kept 4 of 15 with one fix round each; run 38 kept 2 of 12. Every drop is a miss, no chain leaked without also
+being recoverable, and no subset leaked on [fact] alone or on [knows]+[concealment]: the "nothing about who has been
+told" rule held on the strategic records (three clue-1 leaks in run 39, none now) and the rewritten [knows] gave the
+fact away with the false line in none (three in run 39). The pair leaks are the identity of the actor in or beside the
+record: the brokerage naming the holders, the wife's question sitting beside a record of "the retirement account", the
+closure file "with the site's agreement". The six misses: the tie from the reference to the actor is not on the page
+(law omission: the roster lists 23816 with nothing saying whose it is; careers paltering: employee ID 4471 in the
+register, tender PM-28/01 in [knows], nothing joins them), the reader took the concealment act for the matter (law
+commission: "withheld a request for Hyman to sign"), the strategic reader named counsel and HR as the keepers (business
+omission), and the two entrusted medical chains: the father's "all she'll tell me is fine" made the mother the keeper
+again, and the omission's silence about a weekend visit was too faint to carry the biopsy. The reading before the run
+called 9 of 15 right, too dark on the strategic clue-1 leaks and too light on the ties.
+
+## Rerun of the six run-40 misses with reasoning and up to three candidates (2026-09-28, GPT-6 Sol, 59 calls, about $0.30)
+
+--check-reasoning medium and the probe asked for up to three candidates, any match counting. Result 1 of 6 recovered:
+the law omission chain, where the reader now tied registration 23816 to the attorney ("Harriet appears to keep from
+Jess that Lina's registration 23816 had been listed as inactive"). The other five read as before: the co-sign request,
+the record's recipient as the keeper (Akilah, Nena), the mother as the keeper, the specialist search. Two findings about
+the test itself: (1) GPT-6 Sol reasons by default, about 250 completion tokens per probe against 36 of answer, and
+"medium" moved that to 340, so the flag added little; the raw log's reasoning_chars is near zero because OpenRouter
+returns no reasoning text for OpenAI models, and the engine's completion-token count is the measure. (2) Every probe
+still returned exactly one candidate, so "up to three" was not taken up; the probe now says "list every fact one
+person keeps from another that these emails show, up to three". Not rerun yet.
+
+## The released mailbox installed as the dataset (2026-09-28, user; no API calls)
+
+Riccardo's release mailbox-gpt-6-sol-2026-09-27, checksums verified: 2,000 emails in 1,007 threads over 34 topics,
+sampled on the GPT-6 Sol labels with the driver's defaults (seed 20260910, jitter 5), anonymised with GPT-6 Sol on Azure
+(replacement seed 910, 19 regression checks, 30 reviewed spans), the firm written as Keystone at keystone.com; one
+sweep episode at high effort found one unconfirmed candidate in t_0598 and removed nothing. Installed: data/release/
+(corpus and manifest), benchmark_pool/ (fresh_names 5,990; quiet_people 100 candidates, 66 name-consistent;
+mailbox_profile; reference_bank; the quiet-people model record), the sample manifest, the model records of the people
+and audit passes; the release's audit, validation, provenance, votes and .eval kept locally under results/clean_release/.
+The private map is not in the release, so generate.py now takes the firm's domain from the casting pool and its name
+from the domain's stem when the map is absent (Keystone, 1,656 mentions in the corpus). The old build's pre-anonymisation
+files (real names) moved out of the repository into the session scratch; data/topics/sample_anon.jsonl, the old build's
+anonymised sample, removed from the repository. The two tests that hard-coded the old thread count now read it from the
+release. Run 39 and run 40 chains were cast from the Ashford build and stay as records; new chains cast from Keystone.
+The attachment-name bank the plot step draws from (benchmark_pool/file_bank.json) still held the old build's 24 names;
+mailbox_profile.py now builds it from the release, 49 names, and `--only-files` does that alone without the private
+map. The two model records of the release's people and audit passes are tracked beside the release.

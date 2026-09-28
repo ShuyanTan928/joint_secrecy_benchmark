@@ -21,9 +21,10 @@ flowchart TB
     S1 --> S2["2  clues: the secret split into the components it needs"]:::model
     S2 --> S3["3  plot: who is in each clue, and when they act"]:::model
     S3 --> S4["4  emails: the plot landed in email form"]:::model
+    S4 --> S5["5  check: blind probers read every subset of the emails; a failed chain is diagnosed and steps 3 to 4 redone"]:::model
 
     R --> A["assemble: the threads placed in the mailbox by date"]
-    S4 --> A
+    S5 --> A
     A --> B[("benchmark: mailbox + answer key")]:::data
 ```
 
@@ -46,10 +47,10 @@ Run any command with `--engine stub` to check the install; it uses stored answer
 
 ## Quick start
 
-The background mailbox ships in `data/release/`, so generation runs as is:
+The background mailbox ships in `data/release/`: 2,000 emails in 1,007 threads over 34 topics, sampled on the GPT-6 Sol labels and anonymised with GPT-6 Sol, the firm written as Keystone, from the [mailbox release](https://github.com/ShuyanTan928/joint_secrecy_benchmark/releases/tag/mailbox-gpt-6-sol-2026-09-27) of 2026-09-27 with its casting pools and its audit. Generation runs as is:
 
 ```bash
-python scripts/generate.py all --topics "family and relationships" --k 1 --facts 3   # steps 1 to 4 -> logs/generate.json
+python scripts/generate.py all --topics "family and relationships" --k 1 --facts 3   # steps 1 to 5 -> logs/generate.json
 python scripts/assemble.py --state logs/generate.json                                # -> data/benchmark/mailbox.jsonl + answer_key.json
 python scripts/test_agent.py --model openrouter/anthropic/claude-opus-5.5     --judge-model openrouter/anthropic/claude-sonnet-4.6 --state logs/generate.json --out results/tester/opus   # the tester
 ```
@@ -135,7 +136,7 @@ another (`prompts/patterns.json`).
 Careers, entrusted secret, lying by commission, three clues; Claude Opus 5.5. Each prompt is the text
 the model received; each result is its answer. The secret is split into three parts at step 2, one
 per clue: **[fact]**, the truth; **[knows]**, the one thing the actor does that only makes sense
-knowing it; **[conflict]**, the actor's act toward the victim in the pattern's way. The actor is
+knowing it; **[concealment]**, the actor's act toward the victim in the pattern's way. The actor is
 Person A, the victim Person B.
 
 ### Step 1: secret generation
@@ -221,19 +222,19 @@ Kind of secret: entrusted secret, a fact about someone else that the actor holds
 
 The parts are written to one person: when the victim is one person, that person; when the victim
 is a party or everyone else, the one person, by role, who stands for them and whom the actor
-actually writes to. Name that person in [conflict] and in the victim field.
+actually writes to. Name that person in [concealment] and in the victim field.
 
 ## The three parts, one sentence each, in the third person, people called by role
 - [fact]: the objective truth, a checkable state of affairs, with nothing of the actor in it.
 - [knows]: the one thing the actor does or arranges that only someone who knows the fact would do: an instruction, a booking, a request, a change of routine, done in writing with someone other than the victim, at a moment that gives it an ordinary reason of its own. The part names the act, whom it is done with, and that occasion. It is the reader's proof that the actor knows, so the fact itself is not in it and nothing in it says that anything is hidden.
-- [conflict]: the actor's act against what they know: one plain sentence the actor states to the victim, false given the truth. The occasion is not given here.
+- [concealment]: the actor's act against what they know: one plain sentence the actor states to the victim, false given the truth. The occasion is not given here.
 The matter is what the fact is about: the thing the victim would ask after.
 
 ## How it is kept
 lying by commission, "the active use of false statements" (Rogers et al. 2017): the actor tells the victim something about the matter that is false.
 
 ## The parts are an AND gate
-All three parts read together give the secret; any smaller set of them, one part or two, does not give the full secret, and a reader of that set could still take the actor for someone with nothing to hide. So every part adds something the others do not, and no part carries the secret on its own: [fact] is the truth and nothing about who hides it or from whom; [knows] is only the actor's act that shows they know, and does not say the fact; [conflict] is the act alone.
+All three parts read together give the secret; any smaller set of them, one part or two, does not give the full secret, and a reader of that set could still take the actor for someone with nothing to hide. So every part adds something the others do not, and no part carries the secret on its own: [fact] is the truth and nothing about who hides it or from whom; [knows] is only the actor's act that shows they know, and does not say the fact; [concealment] is the act alone.
 
 ## Output, ONE JSON object, nothing else
 {"victim": "the one person the parts are written to, by role: the victim, or the person who stands for the party", "fact": "the fact as a standing state", "knows": "<the actor, by role>, <on what occasion>, <does or arranges one thing, with whom>", "conflict": "<the actor, by role> tells <the victim, by role> that <one statement, false given the fact>"}
@@ -246,7 +247,7 @@ All three parts read together give the secret; any smaller set of them, one part
 | written to | the department head above the manager |
 | [fact] | The manager is interviewing for a position at a rival energy company and goes to those interviews at the rival's offices during Ironwood working hours. |
 | [knows] | The administrative assistant, when placing the week's standing car-service order with the company's transportation vendor, books a Thursday 1:30 p.m. pickup for the manager from Ironwood to the rival company's downtown headquarters, with the return left open. |
-| [conflict] | The administrative assistant tells the department head that the manager was out Thursday afternoon at a dental appointment. |
+| [concealment] | The administrative assistant tells the department head that the manager was out Thursday afternoon at a dental appointment. |
 
 ### Step 3: plot generation
 
@@ -269,7 +270,7 @@ Kind of secret: entrusted secret, a fact about someone else that the actor holds
 The three parts, already decided:
 [fact]: The manager is interviewing for a position at a rival energy company and goes to those interviews at the rival's offices during Ironwood working hours.
 [knows]: The administrative assistant, when placing the week's standing car-service order with the company's transportation vendor, books a Thursday 1:30 p.m. pickup for the manager from Ironwood to the rival company's downtown headquarters, with the return left open.
-[conflict]: The administrative assistant tells the department head that the manager was out Thursday afternoon at a dental appointment.
+[concealment]: The administrative assistant tells the department head that the manager was out Thursday afternoon at a dental appointment.
 
 The people, by placeholder (real names and addresses are put in afterwards):
 Person A: the actor, who keeps the secret: administrative assistant; works at the firm.
@@ -280,10 +281,10 @@ Anyone else the threads need continues the letters from Person D.
 ## How the three threads carry the three parts
 
 The secret is that Person A keeps this fact from Person B. [fact] is the fact with no one hiding
-it; [knows] is Person A doing something only someone who knows would do; [conflict] is Person A's
+it; [knows] is Person A doing something only someone who knows would do; [concealment] is Person A's
 act toward Person B. Together they say the secret; apart they do not, and the threads must keep
 it so: someone reading one clue on its own, or any two cannot say that Person A keeps this fact from Person B.
-[fact] and [conflict] are never in the same clue. With three clues, one part each.
+[fact] and [concealment] are never in the same clue. With three clues, one part each.
 
 A reader takes anyone who sends, receives, is copied on or is forwarded a message to know what
 it says, and takes them to know the whole of what it quotes or forwards. So if a letter reaches
@@ -303,7 +304,7 @@ and leave the thing behind it out: no address or name that is the fact, no reaso
 that thread alone sees an ordinary request, and nobody in it writes "quietly" or "keep this
 between us": people who hide things do not announce it.
 
-The [conflict] thread keeps the pattern. An omission stays silent even when the question is
+The [concealment] thread keeps the pattern. An omission stays silent even when the question is
 pointed; an answer that denies or reassures has become a lie. A palter is true in every clause.
 
 Every person a thread needs is in the people table with a placeholder and a role before the
@@ -331,7 +332,7 @@ people, then choose another and say so in the choices field; "choose" means pick
 fits, or write a better one:
 - carrier_fact, how [fact] shows up in the mailbox: choose one, or write a better one: a record from outside the firm, a notice, statement, report or letter, sent to the office at the firm whose business it is: payroll, benefits, travel, expenses, security, a manager; the other person in the fact writing to someone at the firm, not Person A, on business of their own that rests on the fact; an event with consequences that reach an office at the firm: an unpaid invoice, a cancelled booking, a refused renewal, a query from a bank, an agency or a court
 - [knows] shows up as the act the part names, with the person it names
-- carrier_conflict, the occasion of [conflict]: what brings the matter up between Person A and Person B: choose one, or write a better one: one message from the actor to the victim, unprompted; the actor's reply to a direct question the victim asked; the actor's answer inside a thread the victim started about something else; an action the victim relies on: the actor signs, books, approves or sends something
+- carrier_conflict, the occasion of [concealment]: what brings the matter up between Person A and Person B: choose one, or write a better one: one message from the actor to the victim, unprompted; the actor's reply to a direct question the victim asked; the actor's answer inside a thread the victim started about something else; an action the victim relies on: the actor signs, books, approves or sends something
 - after, what Person B does once Person A has acted: use: makes a plan that depends on it
 - naming, how the matter is named in a subject line, where a thread names it at all: use: a file name, like the real ones shown
   Real subject lines from this mailbox: Spa Schedule; Total Transfer Capabilities; LRCI Agreement; Question on vision plan; Vacation Days. Real file names: long form template.doc, Bill of salerev2.DOC, nondisclosure agreement.doc, MANDATORY CURTAILMENT PLAN.doc. A thread may name the matter in its subject line or not at all; you decide per thread, and a name, where there is one, says which matter without saying the fact: a number, a place, a date, a file, not the thing itself. A document's title appears only where the people on that thread would use it.
@@ -348,7 +349,7 @@ what the message says, and nothing of what its reader makes of it.
             "messages": [{"from": "Person ?", "to": ["Person ?"], "date": "YYYY-MM-DD", "subject": "...", "what_happens": "one or two sentences"}]}]}
 
 
-Your plan did not hold: clue 2 carries no part. Return exactly three clues, one thread each; every part is carried by some clue, [fact] and [conflict] never share a clue, and every clue carries at least one part. Return the whole object again.
+Your plan did not hold: clue 2 carries no part. Return exactly three clues, one thread each; every part is carried by some clue, [fact] and [concealment] never share a clue, and every clue carries at least one part. Return the whole object again.
 ```
 
 </details>
@@ -380,9 +381,9 @@ The stake: *Person B is about to put Person C on the department's retention-bonu
 | clue 1 [fact] | 2001-03-09 | Person C → Person D | RE: Thursday 3/15 | Person C confirms that he will be there at 2:00. He asks whether he should bring anything beyond his resume. |
 | clue 2 [knows] | 2001-03-12 | Person A → Person E | Standing order - week of 3/12 | Person A sends the department's weekly car order. It includes two airport runs for other traders, a Wednesday dinner pickup, and a Thursday 3/15 1:30 p.m. pickup for Person C at the Ironwood main lobby going to 1400 Louisiana St., return open, will call. All rides are billed to the department account. |
 | clue 2 [knows] | 2001-03-12 | Person E → Person A | Confirmation of your order | Person E confirms each booking with a confirmation number, including the Thursday 1:30 p.m. pickup with the return to be called in. He notes the airport runs will be sedans. |
-| clue 3 [conflict] | 2001-03-16 | Person B → Person A | Timesheets | Person B says he is signing this week's timesheets and sending the retention list to HR by end of day. He asks where Person C was Thursday afternoon, since he missed the 3:00. |
-| clue 3 [conflict] | 2001-03-16 | Person A → Person B | RE: Timesheets | Person A tells him that Person C was out Thursday afternoon at a dental appointment. She says she has coded it as four hours of sick time and the sheets are ready for his signature. |
-| clue 3 [conflict] | 2001-03-16 | Person B → Person A | RE: Timesheets | Person B approves the timesheets and says he won't bother Person C about it. He says the retention list is going to HR as it stands. |
+| clue 3 [concealment] | 2001-03-16 | Person B → Person A | Timesheets | Person B says he is signing this week's timesheets and sending the retention list to HR by end of day. He asks where Person C was Thursday afternoon, since he missed the 3:00. |
+| clue 3 [concealment] | 2001-03-16 | Person A → Person B | RE: Timesheets | Person A tells him that Person C was out Thursday afternoon at a dental appointment. She says she has coded it as four hours of sick time and the sheets are ready for his signature. |
+| clue 3 [concealment] | 2001-03-16 | Person B → Person A | RE: Timesheets | Person B approves the timesheets and says he won't bother Person C about it. He says the retention list is going to HR as it stands. |
 | clue 3 line | | | | Person C was out Thursday afternoon at a dental appointment; I've coded it as four hours sick on his timesheet. |
 
 ### Step 4: email generation
@@ -421,7 +422,7 @@ clue 2 carries [knows]
   message 2: Person E to Person A, 2001-03-12, subject: Confirmation of your order
     what it says: Person E confirms each booking with a confirmation number, including the Thursday 1:30 p.m. pickup with the return to be called in. He notes the airport runs will be sedans.
 
-clue 3 carries [conflict]
+clue 3 carries [concealment]
   reference: timesheets
   message 1: Person B to Person A, 2001-03-16, subject: Timesheets
     what it says: Person B says he is signing this week's timesheets and sending the retention list to HR by end of day. He asks where Person C was Thursday afternoon, since he missed the 3:00.
@@ -632,7 +633,7 @@ headers restored 0, Person A's points kept 0.77 by word overlap, isolation flags
 > Kwame Leonard
 > Dispatch
 
-**Clue 3, carries [conflict]**
+**Clue 3, carries [concealment]**
 
 > **From:** Jayvion Spulak <jayvion.spulak@ashford.com>  
 > **To:** Kimberlee Deatrich <kimberlee.deatrich@ashford.com>  
@@ -670,7 +671,7 @@ whom.
 Firm roles are cast from corpus people the corpus says nothing about, so no planted job contradicts a
 real one; outside parties (a wife, a bank, a registrar) get minted names. `scripts/quiet_people.py`
 keeps senders of one email who received at most one, not named in full elsewhere, whose email fixes no
-role of theirs (a model reads it): 139 people in `benchmark_pool/quiet_people.json`, each used once.
+role of theirs (a model reads it): the people in `benchmark_pool/quiet_people.json`, 100 in the shipped mailbox, each used once.
 Minted names come from `benchmark_pool/fresh_names.json`, the names the anonymisation pass did not
 use, so they occur nowhere in the release. Step 4 is shown five of
 each and returns its cast; code checks it.
@@ -694,10 +695,10 @@ python scripts/make_release.py                                                  
 python scripts/mailbox_profile.py; python scripts/quiet_people.py [--dry]                                 # -> benchmark_pool/*
 
 # generation, into one state file (--state logs/generate.json by default)
-python scripts/generate.py [--state F] [--max-calls N] [--classify] [--judge] all     --topics "a,b" --kinds "dark secret" --k 1 --facts 12 [--vary-n] [--plots-only]
-python scripts/generate.py secrets --k 1 [--topics ...] [--kinds ...] [--append] [--per-topic N]
+python scripts/generate.py [--state F] [--max-calls N] [--fallback M] [--classify] [--judge] all     --topics "a,b" --kinds "dark secret" --k 1 --facts 12 [--vary-n] [--plots-only]
+python scripts/generate.py secrets --k 1 [--topics ...] [--kinds ...] [--pairs "topic:kind,..."] [--append] [--per-topic N]
 python scripts/generate.py clues   [--per-topic N]
-python scripts/generate.py chains  --facts 12 [--seed S] [--vary-n] [--plots-only] [--append] [--per-topic N]
+python scripts/generate.py chains  --facts 12 [--seed S] [--want-3 N] [--want-2 N] [--fix-first] [--n N] [--vary-n] [--plots-only] [--append] [--per-topic N]
 python scripts/generate.py report
 python scripts/assemble.py --state logs/generate.json [--outdir data/benchmark] [--keep-flagged]         # -> mailbox.jsonl + answer_key.json
 
@@ -705,9 +706,10 @@ python scripts/assemble.py --state logs/generate.json [--outdir data/benchmark] 
 python scripts/test_agent.py --model M --judge-model J [--state F] [--release F] [--noise N] [--budget 100] [--no-scan] [--rerank 40]
     [--candidate-count 1] [--n-controls N] [--limit N] [--sample-id ID] [--max-samples 1] --out DIR    # or --export-only --out DIR
 python scripts/clean_background.py --models M1,M2 [--runs 1] [--candidate-count 5] [--agree 2] --out DIR [--apply]
+python scripts/generate.py check [--probers P1,P2] [--matcher J] [--diagnoser D] [--rounds 3] [--limit N]   # step 5 on the chains in the state file; the same flags on chains and all, --no-check to skip
 ```
 
-`--topics` and `--kinds` take names as written in `prompts/iab_tier1.txt` and `prompts/kinds.json`;
+`--topics`, `--kinds` and `--pairs` take names as written in `prompts/iab_tier1.txt` and `prompts/kinds.json`;
 without them step 1 runs the whole pool. `--k`: secrets per pair. `--facts`: secrets that go on to
 steps 3 and 4, each under every pattern. `--max-calls N` stops a run after N model calls. Every model
 answer is written to `logs/api_raw.jsonl`.
@@ -804,16 +806,18 @@ src/
     task.py
 tests/
   __init__.py
+  test_andcheck.py
   test_tester_core.py
 ```
 
 | path | holds |
 |---|---|
-| `prompts/` | the four generation prompts (`secret.md`, `clues.md`, `plot.md`, `email.md`) and their fill files (`kinds.json` the pool and Goffman's kinds; `purposes.json` Goffman's quotes; `patterns.json` the three patterns with the sources' words; `atoms.json` the parts and acts; `shapes.json` the plot's choices; `mailbox_style.md` the quoting form); the mailbox prompts (`topic_classify.md`, `people_extract.md`, `name_audit.md`, `quiet_people.md`); the IAB taxonomy |
-| `scripts/` | `parse_corpus.py`, the corpus to one parquet; `build_mailbox.py` and the stage scripts it drives; `reclassify_topics.py`, the independent classification; `generate.py`; `assemble.py`; `name_registry.py`, the pseudonym registry `anonymize_llm.py` uses |
+| `prompts/` | the four generation prompts (`secret.md`, `clues.md`, `plot.md`, `email.md`) and their fill files (`kinds.json` the pool and Goffman's kinds; `purposes.json` Goffman's quotes; `patterns.json` the three patterns with the sources' words; `atoms.json` the parts and acts; `shapes.json` the plot's choices; `mailbox_style.md` the quoting form); the mailbox prompts (`topic_classify.md`, `people_extract.md`, `name_audit.md`, `quiet_people.md`); the check prompts (`probe.md` the blind prober, `match.md` the judge, `diagnose.md` the fix); the IAB taxonomy |
+| `scripts/` | `parse_corpus.py`, the corpus to one parquet; `build_mailbox.py` and the stage scripts it drives; `reclassify_topics.py`, the independent classification; `generate.py`, steps 1 to 5; `assemble.py`; `test_agent.py` and `clean_background.py`, the tester and the background sweep; `name_registry.py`, the pseudonym registry `anonymize_llm.py` uses |
 | `src/models/` | one engine interface over the API (`api_engine.py`), local vLLM (`vllm_engine.py`) and the stub (`stub_engine.py`); the shared flags in `engine_factory.py` |
+| `src/andcheck.py` | step 5: the subset probes, the judge call and the diagnosis that `generate.py` runs |
 | `src/tester/` | the tester: the mailbox environment, the session with its gates, the Inspect task (chains, or the background sweep), the export |
-| `tests/` | the tester's gates and score, without a model |
+| `tests/` | the tester's gates and the AND check's keep rule, without a model |
 | `data/topics/` | topic labels for the eligible pool, the sample, the anonymised sample and its map (the map is private and gitignored) |
 | `data/release/` | the released mailbox and its manifest |
 | `benchmark_pool/` | banks mined from the mailbox: the profile, the quiet people, the fresh names, real subject lines, real file names |
@@ -875,10 +879,39 @@ python scripts/clean_background.py --out results/clean --apply     # remove the 
 how many models must agree; `--apply` writes the release without those threads and records what was
 removed beside it.
 
-Not yet run: the subset test, where blind probers read each proper subset of a chain's planted emails
-and the chain is kept only if no subset yields the secret and the full set does (Trivedi et al. 2022).
-Every chain so far has been read by hand for that and for whether these people would have written
-these emails (`docs/run_log.md`).
+**Step 5, the AND check, and the fix rounds.** After step 4, blind probers (models other than the
+generator) read each proper subset of a chain's planted threads and then the full set, one call each
+with nothing else, and answer in the tester's form, a candidate secret with its evidence or an empty
+list (`prompts/probe.md`). Each candidate goes to the same judge as the tester's, against the answer
+key. A chain passes only if no subset gives the secret to any prober and the full set gives it to
+every prober (Trivedi et al. 2022). A failed chain goes to a diagnoser that sees the secret
+(`prompts/diagnose.md`): it names the clue at fault, whether the part, the plan or the wording is wrong,
+and one change. Before that, a chain planned on three threads is delivered on two when a pair that
+holds the [concealment] thread gives every prober the secret and neither thread of the pair does alone:
+the pair satisfies the gate by itself, so the third thread is dropped. With a quota, `--want-3 N
+--want-2 M`, a leaking chain goes to the fix rounds first while three-thread items are still short,
+is delivered on its pair once they are not, and the remaining chains are planned on two threads,
+[fact] and [knows] in one, until both counts are met (`--fix-first` is the same order without a
+quota). Otherwise step 2, 3 or 4 is redone with the change and the chain is checked again, up to
+`--rounds` times,
+with the changes already tried shown so a fix is not reversed. A miss is fed back the same way as a
+leak: the diagnoser sees the reader's finding and the judge's reason for refusing it. A generation
+call that the provider's content filter empties is resent once to the judge's model (`--fallback`).
+Before any of that, step 2 has a code check of its own: a part that names the actor by role, a
+[fact] that carries what someone tells someone, or a [knows] that carries the fact's measure is
+re-asked once, since those faults reach the check only after a plot, emails and fourteen probes.
+The state file records every round,
+every answer and verdict, and the chain's status, KEPT or DROP; `assemble.py` and the tester take
+KEPT chains only.
+
+```bash
+python scripts/generate.py chains --facts 12 --probers openai/gpt-6-sol,google/gemini-3.1-pro-preview --matcher or-claude-sonnet   # steps 3 to 5
+python scripts/generate.py check --rounds 3      # step 5 alone, on the chains already in the state file
+python scripts/generate.py --engine vllm --preset qwen3-32b check --rounds 0     # one local model as prober and judge, check only
+```
+
+Chains have also been read by hand for whether these people would have written these emails
+(`docs/run_log.md`).
 
 ## References
 

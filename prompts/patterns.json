@@ -161,9 +161,9 @@
   ],
   "quote": "\"the passive omission of relevant information\" (Rogers et al. 2017)",
   "plain": "the actor writes to the victim where the fact belonged and leaves it out.",
-  "plot_rule": "Where the fact is a standing between Person A and someone else, an affair, a side arrangement, a second household: Person A's thread with that person and Person A's thread with Person B run through the same weeks and touch the same days, money or place, and neither names the other."
+  "plot_rule": "Where the fact is a standing arrangement between Person A and someone else, an affair, a side arrangement, a second household: Person A's thread with that person and Person A's thread with Person B run through the same weeks and touch the same days, money or place, and neither names the other."
  },
  "and_gate": {
-  "record": "All three parts read together give the secret; any smaller set of them, one part or two, does not give the full secret, and a reader of that set could still take the actor for someone with nothing to hide. So every part adds something the others do not, and no part carries the secret on its own: [fact] is the truth and nothing about who hides it or from whom; [knows] is only the actor's act that shows they know, and does not say the fact; [conflict] is the act alone."
+  "record": "All three parts read together give the secret; any one or two do not, and a reader of one or two could still take the actor for someone with nothing to hide."
  }
 }

@@ -1,0 +1,15 @@
+{
+ "engine": "azure",
+ "preset": "gpt-6-sol",
+ "model": "gpt-6-sol",
+ "provider": "Azure OpenAI",
+ "api": "Responses",
+ "reasoning_effort": "medium",
+ "checkpoint": "results/azure_cache/quiet_people.json.jsonl",
+ "usage": {
+  "calls": 689,
+  "input_tokens": 571264,
+  "output_tokens": 99071,
+  "estimated_standard_usd": 2.1332
+ }
+}
