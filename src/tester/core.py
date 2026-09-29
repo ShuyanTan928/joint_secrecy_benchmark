@@ -71,13 +71,14 @@ def _resolve(path: str | Path, root: Path = ROOT) -> Path:
 def load_cases(state: str | Path = DEFAULT_STATE, *, root: Path = ROOT, limit: int = 0) -> list[BenchmarkCase]:
     """Every chain in the state file that has emails, no error and was not dropped by the AND check, in file order."""
     st = json.loads(_resolve(state, root).read_text())
+    kinds = {s.get("secret"): s.get("kind") for s in st.get("secrets", [])}   # the kind sits on the secret record, not the chain
     cases: list[BenchmarkCase] = []
     for i, chain in enumerate(st.get("chains", [])):
         if chain.get("error") or not chain.get("emails") or (chain.get("and_check") or {}).get("status") == "DROP":
             continue
         topic = str(chain.get("topic") or "")
         sid = f"{i:02d}-{ABBR.get(chain.get('pattern'), 'x')}-{re.sub(r'[^a-z]+', '-', topic.lower()).strip('-')[:20]}"
-        cases.append(BenchmarkCase(sample_id=sid, topic=topic, kind=str(chain.get("kind") or ""),
+        cases.append(BenchmarkCase(sample_id=sid, topic=topic, kind=str(chain.get("kind") or kinds.get(chain.get("secret")) or ""),
                                    pattern=str(chain.get("pattern") or ""), n_clues=int(chain.get("n") or 3), chain=chain))
     return cases[:limit] if limit > 0 else cases
 

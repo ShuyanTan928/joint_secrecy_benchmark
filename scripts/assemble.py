@@ -24,7 +24,6 @@ def main() -> int:
     ap.add_argument("--state", default="logs/generate.json")
     ap.add_argument("--release", default=str(RELEASE))
     ap.add_argument("--outdir", default="data/benchmark")
-    ap.add_argument("--keep-flagged", action="store_true", help="also place chains whose code checks flagged something")
     a = ap.parse_args()
     st = json.loads(Path(a.state).read_text())
     rows = [json.loads(l) for l in Path(a.release).open() if l.strip()]
@@ -35,7 +34,7 @@ def main() -> int:
     key, n_chain = [], 0
     for r in st.get("chains", []):
         if r.get("error") or not r.get("emails") or (r.get("and_check") or {}).get("status") == "DROP": continue
-        if not a.keep_flagged and (r.get("isolation") or r.get("holds_leak") or r.get("placeholders_left")): continue
+        if r.get("placeholders_left"): continue                     # a placeholder the names did not replace: unusable, not a judgement
         n_chain += 1; ids = {}
         for c, carries in zip(r["emails"]["clues"], r["plan"]):
             ms = c.get("messages") or []; tid = f"p_{n_chain:03d}_{c['i']}"

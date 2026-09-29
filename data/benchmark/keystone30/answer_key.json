@@ -1,0 +1,915 @@
+{
+ "state": "data/benchmark/keystone30/state.json",
+ "release": "data/release/background_2000.jsonl",
+ "chains": [
+  {
+   "chain": 1,
+   "topic": "family and relationships",
+   "kind": null,
+   "pattern": "lying by commission",
+   "secret": "She is still legally married to a first husband she never divorced, and she keeps this from the man she is engaged to, who believes she has never been married.",
+   "stake": "pay a nonrefundable deposit for a wedding that cannot legally marry them",
+   "n": 3,
+   "planted": {
+    "1": [
+     "p_001_1_1"
+    ],
+    "2": [
+     "p_001_2_1"
+    ],
+    "3": [
+     "p_001_3_1",
+     "p_001_3_2",
+     "p_001_3_3"
+    ]
+   },
+   "names": {
+    "Person A": "Emberlynn Hardin",
+    "Person B": "Colt Adamczak",
+    "Person C": "Cassius Faigen",
+    "Person D": "Kassandra Abal",
+    "Person E": "Lashawnda Alcoran"
+   }
+  },
+  {
+   "chain": 2,
+   "topic": "family and relationships",
+   "kind": null,
+   "pattern": "paltering",
+   "secret": "She is still legally married to a first husband she never divorced, and she keeps this from the man she is engaged to, who believes she has never been married.",
+   "stake": "Person B pays a nonrefundable deposit for a June ceremony he expects will make them legally married",
+   "n": 3,
+   "planted": {
+    "1": [
+     "p_002_1_1"
+    ],
+    "2": [
+     "p_002_2_1"
+    ],
+    "3": [
+     "p_002_3_1",
+     "p_002_3_2",
+     "p_002_3_3"
+    ]
+   },
+   "names": {
+    "Person A": "Kandice Corna",
+    "Person B": "Preston Ambrosio",
+    "Person C": "Madden Staege",
+    "Person D": "Adriana Acklen",
+    "Person E": "Khloie Addair"
+   }
+  },
+  {
+   "chain": 3,
+   "topic": "family and relationships",
+   "kind": null,
+   "pattern": "lying by omission",
+   "secret": "She is still legally married to a first husband she never divorced, and she keeps this from the man she is engaged to, who believes she has never been married.",
+   "stake": "Person B is about to file a marriage-license application for a wedding that cannot lawfully proceed while Person A remains married",
+   "n": 3,
+   "planted": {
+    "1": [
+     "p_003_1_1",
+     "p_003_1_2"
+    ],
+    "2": [
+     "p_003_2_1",
+     "p_003_2_2"
+    ],
+    "3": [
+     "p_003_3_1",
+     "p_003_3_2",
+     "p_003_3_3"
+    ]
+   },
+   "names": {
+    "Person A": "Kristi Aguillen",
+    "Person B": "Jacquez Ananthakrishnan",
+    "Person C": "Lidia Koleszar",
+    "Person D": "Shianne Aikawa",
+    "Person E": "Citlali Ackerson"
+   }
+  },
+  {
+   "chain": 4,
+   "topic": "family and relationships",
+   "kind": null,
+   "pattern": "lying by commission",
+   "secret": "The woman knows that her older brother is out of work and keeps it from his wife.",
+   "stake": "Person B is about to sign a $14,000 kitchen remodeling contract that she and her husband will pay for out of his wages",
+   "n": 3,
+   "planted": {
+    "1": [
+     "p_004_1_1",
+     "p_004_1_2"
+    ],
+    "2": [
+     "p_004_2_1",
+     "p_004_2_2"
+    ],
+    "3": [
+     "p_004_3_1",
+     "p_004_3_2",
+     "p_004_3_3"
+    ]
+   },
+   "names": {
+    "Person A": "Roselyn Chennault",
+    "Person B": "Deidre Andric",
+    "Person C": "Mordechai Abrecht",
+    "Person D": "Santos Varo",
+    "Person E": "Aksel Amons"
+   }
+  },
+  {
+   "chain": 5,
+   "topic": "family and relationships",
+   "kind": null,
+   "pattern": "paltering",
+   "secret": "The woman knows that her older brother is out of work and keeps it from his wife.",
+   "stake": "Person B is about to sign a twelve-month lease she cannot afford on her income alone",
+   "n": 3,
+   "planted": {
+    "1": [
+     "p_005_1_1"
+    ],
+    "2": [
+     "p_005_2_1"
+    ],
+    "3": [
+     "p_005_3_1",
+     "p_005_3_2",
+     "p_005_3_3"
+    ]
+   },
+   "names": {
+    "Person A": "Lidia Koleszar",
+    "Person B": "Yesica Anstead",
+    "Person C": "Ilan Polino",
+    "Person D": "Maxton Agnor",
+    "Person E": "Natanael Alhalabi",
+    "Person F": "Kamiah Ambler"
+   }
+  },
+  {
+   "chain": 6,
+   "topic": "family and relationships",
+   "kind": null,
+   "pattern": "lying by omission",
+   "secret": "The woman knows that her older brother is out of work and keeps it from his wife.",
+   "stake": "Person B is about to sign a five-year financing contract on a new minivan, with the monthly payments counted against her husband's salary.",
+   "n": 3,
+   "planted": {
+    "1": [
+     "p_006_1_1",
+     "p_006_1_2"
+    ],
+    "2": [
+     "p_006_2_1",
+     "p_006_2_2"
+    ],
+    "3": [
+     "p_006_3_1",
+     "p_006_3_2",
+     "p_006_3_3"
+    ]
+   },
+   "names": {
+    "Person A": "Terese Deloch",
+    "Person B": "Marilee Ahearn",
+    "Person C": "Lailah Howlin",
+    "Person D": "Verne Agis",
+    "Person E": "Damya Abdelqader"
+   }
+  },
+  {
+   "chain": 7,
+   "topic": "law",
+   "kind": null,
+   "pattern": "lying by commission",
+   "secret": "The legal secretary knows that the associate general counsel she works for is not currently licensed to practice law in the state where he advises the company, and she keeps it to herself.",
+   "stake": "the chief operating officer is about to sign Keystone's purchase of the Harlan gas storage field on the associate general counsel's legal opinion alone, with no outside counsel review",
+   "n": 3,
+   "planted": {
+    "1": [
+     "p_007_1_1",
+     "p_007_1_2"
+    ],
+    "2": [
+     "p_007_2_1",
+     "p_007_2_2"
+    ],
+    "3": [
+     "p_007_3_1",
+     "p_007_3_2",
+     "p_007_3_3"
+    ]
+   },
+   "names": {
+    "Person A": "Delia Bexley",
+    "Person B": "Roselyn Chennault",
+    "Person C": "Jenna Mizerek",
+    "Person D": "Shelby Gebremeskel",
+    "Person E": "Kristal Alvelo",
+    "Person F": "Emmanuel Adelstein"
+   }
+  },
+  {
+   "chain": 8,
+   "topic": "law",
+   "kind": null,
+   "pattern": "paltering",
+   "secret": "The legal secretary knows that the associate general counsel she works for is not currently licensed to practice law in the state where he advises the company, and she keeps it to herself.",
+   "stake": "The chief operating officer is about to sign a memo that ends the outside law firm's retainer for state regulatory work and makes the associate general counsel sole counsel of record for the company's 2001 pipeline rate case.",
+   "n": 3,
+   "planted": {
+    "1": [
+     "p_008_1_1",
+     "p_008_1_2"
+    ],
+    "2": [
+     "p_008_2_1",
+     "p_008_2_2"
+    ],
+    "3": [
+     "p_008_3_1",
+     "p_008_3_2"
+    ]
+   },
+   "names": {
+    "Person A": "Mariya Schuchmann",
+    "Person B": "Paul Belete",
+    "Person C": "Rod Frankenfeld",
+    "Person D": "Davian Conser",
+    "Person E": "Gabe Allegro",
+    "Person F": "Nanci Almasmari"
+   }
+  },
+  {
+   "chain": 9,
+   "topic": "law",
+   "kind": null,
+   "pattern": "lying by omission",
+   "secret": "The legal secretary knows that the associate general counsel she works for is not currently licensed to practice law in the state where he advises the company, and she keeps it to herself.",
+   "stake": "The chief operating officer is about to sign and submit Keystone's officers' liability insurance renewal application, which states that all in-house counsel are licensed and in good standing.",
+   "n": 3,
+   "planted": {
+    "1": [
+     "p_009_1_1",
+     "p_009_1_2"
+    ],
+    "2": [
+     "p_009_2_1",
+     "p_009_2_2"
+    ],
+    "3": [
+     "p_009_3_1",
+     "p_009_3_2",
+     "p_009_3_3"
+    ]
+   },
+   "names": {
+    "Person A": "Edna Lickfelt",
+    "Person B": "Adriane Polintan",
+    "Person C": "Aeden Andria",
+    "Person D": "Taliyah Becvar",
+    "Person E": "Yariel Seward",
+    "Person F": "Zaynab Abrahams",
+    "Person G": "Kathey Angrisani"
+   }
+  },
+  {
+   "chain": 10,
+   "topic": "personal finance",
+   "kind": null,
+   "pattern": "lying by commission",
+   "secret": "The husband, whom his wife takes to be the careful one who keeps the family out of debt, carries heavy debt on credit cards held in his name alone, and he keeps this from her.",
+   "stake": "Person B is about to sign an offer on a larger house and put down $5,000 in earnest money, believing the couple carries no card debt that the mortgage lender will find",
+   "n": 3,
+   "planted": {
+    "1": [
+     "p_010_1_1",
+     "p_010_1_2"
+    ],
+    "2": [
+     "p_010_2_1",
+     "p_010_2_2",
+     "p_010_2_3"
+    ],
+    "3": [
+     "p_010_3_1",
+     "p_010_3_2",
+     "p_010_3_3"
+    ]
+   },
+   "names": {
+    "Person A": "Witten Livak",
+    "Person B": "Regina Allem",
+    "Person C": "Lexi Akery",
+    "Person D": "Kathie Davy",
+    "Person E": "Edna Lickfelt"
+   }
+  },
+  {
+   "chain": 11,
+   "topic": "personal finance",
+   "kind": null,
+   "pattern": "paltering",
+   "secret": "The husband, whom his wife takes to be the careful one who keeps the family out of debt, carries heavy debt on credit cards held in his name alone, and he keeps this from her.",
+   "stake": "Person B is about to sign, as co-owner, the cash-out refinance on the house the two of them own jointly, putting her share of the equity toward paying off debt she does not know exists.",
+   "n": 2,
+   "planted": {
+    "2": [
+     "p_011_2_1",
+     "p_011_2_2"
+    ],
+    "3": [
+     "p_011_3_1",
+     "p_011_3_2",
+     "p_011_3_3"
+    ]
+   },
+   "names": {
+    "Person A": "Marcus Gannaway",
+    "Person B": "Sia Allemon",
+    "Person C": "Karlee Zent",
+    "Person D": "Johnna Andregg",
+    "Person E": "Shania Aasheim"
+   }
+  },
+  {
+   "chain": 12,
+   "topic": "personal finance",
+   "kind": null,
+   "pattern": "lying by omission",
+   "secret": "The husband, whom his wife takes to be the careful one who keeps the family out of debt, carries heavy debt on credit cards held in his name alone, and he keeps this from her.",
+   "stake": "Person B is about to sign a refinance application without listing the credit-card debt",
+   "n": 2,
+   "planted": {
+    "2": [
+     "p_012_2_1"
+    ],
+    "3": [
+     "p_012_3_1",
+     "p_012_3_2"
+    ]
+   },
+   "names": {
+    "Person A": "Yariel Seward",
+    "Person B": "Imelda Akiba",
+    "Person C": "Taliyah Becvar",
+    "Person D": "Raymon Anagnostis",
+    "Person E": "Howard Aldis"
+   }
+  },
+  {
+   "chain": 13,
+   "topic": "careers",
+   "kind": null,
+   "pattern": "lying by commission",
+   "secret": "The junior bid engineer's own mentor, the senior bid manager, has accepted a job at the rival energy company that Keystone is bidding against while still leading Keystone's bid, and the engineer keeps this to himself.",
+   "stake": "approve the T-07 bid with the senior bid manager as its sole post-award negotiator",
+   "n": 3,
+   "planted": {
+    "1": [
+     "p_013_1_1"
+    ],
+    "2": [
+     "p_013_2_1",
+     "p_013_2_2"
+    ],
+    "3": [
+     "p_013_3_1",
+     "p_013_3_2",
+     "p_013_3_3"
+    ]
+   },
+   "names": {
+    "Person A": "Arnold Lintner",
+    "Person B": "Harleigh Gennuso",
+    "Person C": "Antoni Aldave",
+    "Person D": "Kathie Davy",
+    "Person F": "Jan Marantz",
+    "Person G": "Ansley Dziuban"
+   }
+  },
+  {
+   "chain": 14,
+   "topic": "careers",
+   "kind": null,
+   "pattern": "paltering",
+   "secret": "The junior bid engineer's own mentor, the senior bid manager, has accepted a job at the rival energy company that Keystone is bidding against while still leading Keystone's bid, and the engineer keeps this to himself.",
+   "stake": "Person B is about to sign Keystone's final bid and bid bond on the Commonwealth Power tender, trusting pricing run by a lead who has already agreed to join the rival bidder.",
+   "n": 3,
+   "planted": {
+    "1": [
+     "p_014_1_1",
+     "p_014_1_2"
+    ],
+    "2": [
+     "p_014_2_1",
+     "p_014_2_2"
+    ],
+    "3": [
+     "p_014_3_1",
+     "p_014_3_2"
+    ]
+   },
+   "names": {
+    "Person A": "Ansley Dziuban",
+    "Person B": "Ryker Dolan",
+    "Person C": "Cheyanne Alvarracin",
+    "Person D": "Maribeth Matuz",
+    "Person E": "Sapphire Bartish",
+    "Person F": "Kathie Davy",
+    "Person G": "Girl Ankenbrandt"
+   }
+  },
+  {
+   "chain": 15,
+   "topic": "careers",
+   "kind": null,
+   "pattern": "lying by omission",
+   "secret": "The junior bid engineer's own mentor, the senior bid manager, has accepted a job at the rival energy company that Keystone is bidding against while still leading Keystone's bid, and the engineer keeps this to himself.",
+   "stake": "Person B is about to sign off the bid security and give Person F final pricing authority on Keystone's Hartwell County tender, trusting that Keystone's lead will still be Keystone's through submission, when in fact he has already signed on with the rival Carrow Energy.",
+   "n": 3,
+   "planted": {
+    "1": [
+     "p_015_1_1",
+     "p_015_1_2"
+    ],
+    "2": [
+     "p_015_2_1",
+     "p_015_2_2",
+     "p_015_2_3"
+    ],
+    "3": [
+     "p_015_3_1",
+     "p_015_3_2",
+     "p_015_3_3"
+    ]
+   },
+   "names": {
+    "Person A": "Jan Marantz",
+    "Person B": "Sapphire Bartish",
+    "Person C": "Kathie Davy",
+    "Person D": "Belva Abuhadba",
+    "Person E": "Maribeth Matuz",
+    "Person F": "Ryker Dolan",
+    "Person G": "Finnigan Recla"
+   }
+  },
+  {
+   "chain": 16,
+   "topic": "careers",
+   "kind": null,
+   "pattern": "lying by commission",
+   "secret": "The natural gas trading desk manager has agreed to join a rival trading firm and is quietly lining up several of his traders to leave with him, and he keeps this from the company's head of trading.",
+   "stake": "Person B is about to take the gas desk off the firm's retention-bonus list for next year and tell the board that desk leadership is stable through 2002",
+   "n": 2,
+   "planted": {
+    "1": [
+     "p_016_1_1",
+     "p_016_1_2"
+    ],
+    "3": [
+     "p_016_3_1",
+     "p_016_3_2",
+     "p_016_3_3"
+    ]
+   },
+   "names": {
+    "Person A": "Ryker Dolan",
+    "Person B": "Ansley Dziuban",
+    "Person C": "Edna Lickfelt",
+    "Person D": "Madeline Allegar",
+    "Person E": "Maribeth Matuz",
+    "Person F": "Kathie Davy"
+   }
+  },
+  {
+   "chain": 17,
+   "topic": "careers",
+   "kind": null,
+   "pattern": "paltering",
+   "secret": "The natural gas trading desk manager has agreed to join a rival trading firm and is quietly lining up several of his traders to leave with him, and he keeps this from the company's head of trading.",
+   "stake": "Person B is about to hand Person A's desk the raised May-to-September position limits for the summer gas book, on the belief that the desk and its traders are staying put.",
+   "n": 3,
+   "planted": {
+    "1": [
+     "p_017_1_1",
+     "p_017_1_2"
+    ],
+    "2": [
+     "p_017_2_1",
+     "p_017_2_2"
+    ],
+    "3": [
+     "p_017_3_1",
+     "p_017_3_2"
+    ]
+   },
+   "names": {
+    "Person A": "Shepherd Straka",
+    "Person B": "Paul Noveron",
+    "Person C": "Sarabeth Turkett",
+    "Person D": "Leann Akesson",
+    "Person E": "Lizette Tuer"
+   }
+  },
+  {
+   "chain": 18,
+   "topic": "careers",
+   "kind": null,
+   "pattern": "lying by omission",
+   "secret": "The natural gas trading desk manager has agreed to join a rival trading firm and is quietly lining up several of his traders to leave with him, and he keeps this from the company's head of trading.",
+   "stake": "sign a summer gas-hedging commitment that depends on the current desk remaining staffed",
+   "n": 3,
+   "planted": {
+    "1": [
+     "p_018_1_1"
+    ],
+    "2": [
+     "p_018_2_1"
+    ],
+    "3": [
+     "p_018_3_1",
+     "p_018_3_2"
+    ]
+   },
+   "names": {
+    "Person A": "Denita Hensel",
+    "Person B": "Sarabeth Turkett",
+    "Person C": "Elayne Piskorowski",
+    "Person D": "Yessica Albee",
+    "Person E": "Celeste Lorah"
+   }
+  },
+  {
+   "chain": 19,
+   "topic": "careers",
+   "kind": null,
+   "pattern": "lying by commission",
+   "secret": "The reservoir engineer lacks the engineering degree listed on the résumé the company hired them on, and keeps this to themself.",
+   "stake": "Person B is about to send the final engineering staff bios to the outside reserves auditor for Keystone's annual reserves report, listing Person A as holding a petroleum engineering degree.",
+   "n": 3,
+   "planted": {
+    "1": [
+     "p_019_1_1",
+     "p_019_1_2"
+    ],
+    "2": [
+     "p_019_2_1",
+     "p_019_2_2",
+     "p_019_2_3"
+    ],
+    "3": [
+     "p_019_3_1",
+     "p_019_3_2",
+     "p_019_3_3"
+    ]
+   },
+   "names": {
+    "Person A": "Tatum Combee",
+    "Person B": "Celeste Lorah",
+    "Person C": "Maci Ansaldi",
+    "Person D": "Quebral Quebral",
+    "Person E": "Leyton Aarsvold"
+   }
+  },
+  {
+   "chain": 20,
+   "topic": "careers",
+   "kind": null,
+   "pattern": "paltering",
+   "secret": "The reservoir engineer lacks the engineering degree listed on the résumé the company hired them on, and keeps this to themself.",
+   "stake": "Person B is about to certify to the company's lending bank that Person A is a degreed petroleum engineer qualified to sign Keystone's borrowing-base reserve report, and the bank will set the credit line on that report.",
+   "n": 3,
+   "planted": {
+    "1": [
+     "p_020_1_1",
+     "p_020_1_2"
+    ],
+    "2": [
+     "p_020_2_1",
+     "p_020_2_2",
+     "p_020_2_3"
+    ],
+    "3": [
+     "p_020_3_1",
+     "p_020_3_2",
+     "p_020_3_3"
+    ]
+   },
+   "names": {
+    "Person A": "Cartland Aldana",
+    "Person B": "Kenna Grygier",
+    "Person C": "Jazmin Abogado",
+    "Person D": "Tatum Combee",
+    "Person E": "Travon Abuel"
+   }
+  },
+  {
+   "chain": 21,
+   "topic": "careers",
+   "kind": null,
+   "pattern": "lying by omission",
+   "secret": "The reservoir engineer lacks the engineering degree listed on the résumé the company hired them on, and keeps this to themself.",
+   "stake": "Person B is about to sign and send the 2001 field-development proposal to the state oil and gas commission, with a staff qualifications summary that lists Person A as holding a petroleum engineering B.S.",
+   "n": 3,
+   "planted": {
+    "1": [
+     "p_021_1_1",
+     "p_021_1_2"
+    ],
+    "2": [
+     "p_021_2_1",
+     "p_021_2_2"
+    ],
+    "3": [
+     "p_021_3_1",
+     "p_021_3_2",
+     "p_021_3_3"
+    ]
+   },
+   "names": {
+    "Person A": "Khaleesi Teyssier",
+    "Person B": "Kacey Titter",
+    "Person C": "Alyana Pantazis",
+    "Person D": "Georgianna Ankers",
+    "Person E": "Carolyn Aikin",
+    "Person F": "Lizette Tuer"
+   }
+  },
+  {
+   "chain": 22,
+   "topic": "law",
+   "kind": null,
+   "pattern": "lying by commission",
+   "secret": "The staff attorney's law license is suspended, and the attorney keeps this from the general counsel while going on reviewing contracts and advising on regulatory filings as a lawyer.",
+   "stake": "the general counsel is about to name the staff attorney counsel of record on the company's rate case filing and certify to the department's professional liability insurer that every attorney in the department holds an active license",
+   "n": 2,
+   "planted": {
+    "2": [
+     "p_022_2_1",
+     "p_022_2_2",
+     "p_022_2_3"
+    ],
+    "3": [
+     "p_022_3_1",
+     "p_022_3_2",
+     "p_022_3_3"
+    ]
+   },
+   "names": {
+    "Person A": "Kacey Titter",
+    "Person B": "Maddix Chafins",
+    "Person C": "Denita Hensel",
+    "Person D": "Adah Alagna",
+    "Person E": "Quebral Quebral",
+    "Person F": "Paul Noveron",
+    "Person G": "Dannielle Alamilla"
+   }
+  },
+  {
+   "chain": 23,
+   "topic": "law",
+   "kind": null,
+   "pattern": "paltering",
+   "secret": "The staff attorney's law license is suspended, and the attorney keeps this from the general counsel while going on reviewing contracts and advising on regulatory filings as a lawyer.",
+   "stake": "the general counsel is about to name the staff attorney lead counsel of record for the company in the summer rate case before the state utility commission, and to release outside counsel from it",
+   "n": 3,
+   "planted": {
+    "1": [
+     "p_023_1_1",
+     "p_023_1_2"
+    ],
+    "2": [
+     "p_023_2_1",
+     "p_023_2_2"
+    ],
+    "3": [
+     "p_023_3_1",
+     "p_023_3_2"
+    ]
+   },
+   "names": {
+    "Person A": "Quebral Quebral",
+    "Person B": "Tatum Combee",
+    "Person C": "Kinleigh Alatalo",
+    "Person D": "Celeste Lorah",
+    "Person E": "Kenna Grygier",
+    "Person F": "Maddix Chafins"
+   }
+  },
+  {
+   "chain": 24,
+   "topic": "law",
+   "kind": null,
+   "pattern": "lying by omission",
+   "secret": "The staff attorney's law license is suspended, and the attorney keeps this from the general counsel while going on reviewing contracts and advising on regulatory filings as a lawyer.",
+   "stake": "sign the professional liability insurance renewal certifying that the department’s listed lawyers are in good standing",
+   "n": 3,
+   "planted": {
+    "1": [
+     "p_024_1_1",
+     "p_024_1_2"
+    ],
+    "2": [
+     "p_024_2_1"
+    ],
+    "3": [
+     "p_024_3_1",
+     "p_024_3_2"
+    ]
+   },
+   "names": {
+    "Person A": "Shepherd Straka",
+    "Person B": "Jeanine Lono",
+    "Person C": "Kain Whan",
+    "Person D": "Avary Calladine",
+    "Person E": "Granville Adewusi",
+    "Person F": "Tommie Adly"
+   }
+  },
+  {
+   "chain": 25,
+   "topic": "family and relationships",
+   "kind": null,
+   "pattern": "lying by commission",
+   "secret": "A married woman has decided to divorce her husband and has a lawyer preparing the filing, and she keeps this from him while carrying on at home as usual.",
+   "stake": "Person B is about to pay a nonrefundable deposit from their shared savings for a renovation of their home",
+   "n": 3,
+   "planted": {
+    "1": [
+     "p_025_1_1"
+    ],
+    "2": [
+     "p_025_2_1"
+    ],
+    "3": [
+     "p_025_3_1",
+     "p_025_3_2",
+     "p_025_3_3"
+    ]
+   },
+   "names": {
+    "Person A": "Rosann Polosky",
+    "Person B": "Rogan Acciavatti",
+    "Person C": "Savion Pakzad",
+    "Person D": "Lenora Abuzahra",
+    "Person E": "Tamiko Alver"
+   }
+  },
+  {
+   "chain": 26,
+   "topic": "family and relationships",
+   "kind": null,
+   "pattern": "paltering",
+   "secret": "A married woman has decided to divorce her husband and has a lawyer preparing the filing, and she keeps this from him while carrying on at home as usual.",
+   "stake": "Person B is about to sign a contractor's contract for a kitchen remodel on the house, paid from the couple's joint home-equity line, believing the marriage and the household finances will go on as they are.",
+   "n": 2,
+   "planted": {
+    "2": [
+     "p_026_2_1",
+     "p_026_2_2"
+    ],
+    "3": [
+     "p_026_3_1",
+     "p_026_3_2",
+     "p_026_3_3"
+    ]
+   },
+   "names": {
+    "Person A": "Rosann Polosky",
+    "Person B": "Ishan Alpin",
+    "Person C": "Savion Pakzad",
+    "Person D": "Makaylee Amack",
+    "Person E": "Antwain Allgaier"
+   }
+  },
+  {
+   "chain": 27,
+   "topic": "family and relationships",
+   "kind": null,
+   "pattern": "lying by omission",
+   "secret": "A married woman has decided to divorce her husband and has a lawyer preparing the filing, and she keeps this from him while carrying on at home as usual.",
+   "stake": "Person B is about to pay a nonrefundable deposit for a July trip for both spouses",
+   "n": 3,
+   "planted": {
+    "1": [
+     "p_027_1_1"
+    ],
+    "2": [
+     "p_027_2_1"
+    ],
+    "3": [
+     "p_027_3_1",
+     "p_027_3_2",
+     "p_027_3_3"
+    ]
+   },
+   "names": {
+    "Person A": "Destany Bratrud",
+    "Person B": "Vincenzo Abowitz",
+    "Person C": "Kamryn Kouch",
+    "Person D": "Rosita Albeck"
+   }
+  },
+  {
+   "chain": 28,
+   "topic": "personal finance",
+   "kind": null,
+   "pattern": "lying by commission",
+   "secret": "She keeps it to herself that her brother is deep in credit card debt he cannot pay down.",
+   "stake": "Person B is about to sign a joint apartment lease expecting her fiancé to pay half the rent",
+   "n": 3,
+   "planted": {
+    "1": [
+     "p_028_1_1"
+    ],
+    "2": [
+     "p_028_2_1",
+     "p_028_2_2"
+    ],
+    "3": [
+     "p_028_3_1",
+     "p_028_3_2",
+     "p_028_3_3"
+    ]
+   },
+   "names": {
+    "Person A": "Iona Shuffler",
+    "Person B": "Cherri Adamian",
+    "Person C": "Kalyn Redick",
+    "Person D": "Tyrel Alesci",
+    "Person E": "Kristofer Anesi",
+    "Person F": "Lexis Abughannam"
+   }
+  },
+  {
+   "chain": 29,
+   "topic": "personal finance",
+   "kind": null,
+   "pattern": "paltering",
+   "secret": "She keeps it to herself that her brother is deep in credit card debt he cannot pay down.",
+   "stake": "Relying on his finances being sound, the fiancée is about to sign a joint mortgage application with the brother and put her own savings into the down payment.",
+   "n": 3,
+   "planted": {
+    "1": [
+     "p_029_1_1",
+     "p_029_1_2"
+    ],
+    "2": [
+     "p_029_2_1",
+     "p_029_2_2",
+     "p_029_2_3"
+    ],
+    "3": [
+     "p_029_3_1",
+     "p_029_3_2",
+     "p_029_3_3"
+    ]
+   },
+   "names": {
+    "Person A": "Savion Pakzad",
+    "Person B": "Kia Adeniyi",
+    "Person C": "Percy Payan",
+    "Person D": "Sean Anthon",
+    "Person E": "Emogene Ahlbrand",
+    "Person F": "King Kahm"
+   }
+  },
+  {
+   "chain": 30,
+   "topic": "personal finance",
+   "kind": null,
+   "pattern": "lying by omission",
+   "secret": "She keeps it to herself that her brother is deep in credit card debt he cannot pay down.",
+   "stake": "Person B is about to sign a wedding-venue contract using a budget that leaves out debt payments the couple cannot afford",
+   "n": 3,
+   "planted": {
+    "1": [
+     "p_030_1_1"
+    ],
+    "2": [
+     "p_030_2_1"
+    ],
+    "3": [
+     "p_030_3_1",
+     "p_030_3_2",
+     "p_030_3_3"
+    ]
+   },
+   "names": {
+    "Person A": "Rosann Polosky",
+    "Person B": "Tayla Acebo",
+    "Person C": "Savion Pakzad",
+    "Person D": "Geoffrey Akel",
+    "Person E": "Micah Abedian",
+    "Person F": "Floyd Anguino"
+   }
+  }
+ ]
+}

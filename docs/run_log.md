@@ -1668,3 +1668,32 @@ palter's single thread that Sol took. So a strong reader takes the pairs Sol lea
 to that is the pair delivery. Put together with Sol's round: 8 on three threads by Sol, 2 on three and 4 on pairs by
 Gemini, 1 drop, though Gemini did not re-read Sol's eight, where it may find pairs too (the law paltering and finance
 commission risks). The check should run both probers from the start, with --full-any.
+
+## Run 44: the first dataset run, 10 secrets, 30 chains, three readers (2026-09-29, 614 calls, about $10)
+
+`all --topics "law,careers,personal finance,family and relationships" --k 1 --facts 12 --rounds 1 --probers openai/gpt-6-sol
+--full-probers anthropic/claude-opus-5.5,google/gemini-3.7-flash --matcher openai/gpt-6-sol --full-any`, state
+logs/run44.json. Step 1 gave 10 secrets, not 12: the graded pool holds strategic secrets for careers and family and
+relationships only, so law and personal finance have two kinds each (5 work, 5 life). Steps 2 to 4: 173 calls, 21
+content-filtered and resent to the fallback (3 of 30 at step 2, which had never been filtered before; 18 of 62 at
+steps 3 and 4), the invented-world sentence making no visible difference. The check: 441 calls, Sol on the seven
+subsets, Opus and Gemini on the full set only (--full-probers, new), the any-rule. Kept 30 of 30: 25 on three threads,
+5 on pairs; two fix rounds, both misses, both redone at the emails and kept. Full set read by Opus 29 of 30, Gemini 28,
+Sol 21, so the full-set readers decided 9 chains. No [knows] part reroutes mail; no strategic record names its site.
+The five pairs: one is [fact]+[concealment] (careers commission, the countersigned offer against "committed to
+staying"); four are [knows]+[concealment] (finance paltering and omission, law commission, family paltering), where
+Sol read the matter from the actor's act and the concealment together and the judge took it as the matter (a cash-out
+refinance and a palter about debts; a filing sent over another's signature and "my license is in good standing"; a
+car policy reissued in her name alone and attorney meetings called will updates). Those four items carry no record
+thread. The fix rounds: careers commission, "the emails do not establish that he knows about the record", one line
+added; careers paltering, "our company" instead of the rival's name and a name mismatch, the emails rewritten.
+Cost: generation about $2.50, the check about $7.50.
+
+## keystone30 (2026-09-29)
+
+Run 44's state, mailbox and answer key installed as data/benchmark/keystone30/ (state.json, mailbox.jsonl, answer_key.json,
+README.md). assemble.py now places every chain the check kept; the passive records (isolation, holds_leak) no longer
+keep a chain out, since the check's readers found no leak where the heuristic saw one (family paltering, chain 1); a
+chain with a placeholder left unreplaced is still skipped as unusable. scripts/run_testers.py runs one or more tested
+models over a state file with one judge and writes results/tester/table.md; the tester's samples take their kind from
+the secret record.
