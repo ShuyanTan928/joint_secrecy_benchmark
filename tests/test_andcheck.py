@@ -104,7 +104,8 @@ def test_the_mail_client_form_wraps_and_keeps_each_writers_habit():
     import generate as g
     saved = g.RELEASE_BY_ID
     try:
-        g.RELEASE_BY_ID = {"s1": {"own_body": "We met on Friday.  The draft is attached.  Call me."}, "s2": {"own_body": "Got it. Will do. Thanks."}}
+        g.RELEASE_BY_ID = {"s1": {"own_body": "We met on Friday.  The draft is attached and the figures are in the second tab.\nCall me."},
+                           "s2": {"own_body": "Got it. Will do. Thanks, and I will send the revised schedule to the whole group as soon as the numbers from the plant come back."}}
         draw = {"firm": [{"addr": "a.one@keystone.com", "email_id": "s1"}, {"addr": "b.two@keystone.com", "email_id": "s2"}], "outside": []}
         long = "No. I told Mr. Varo the U.S. office would wait. " * 4
         quoted = "\n\n    B Two <b.two@keystone.com>\n    03/12/2001 10:00 AM\n         To: A One <a.one@keystone.com>\n\nFirst point. Second point."
@@ -114,5 +115,7 @@ def test_the_mail_client_form_wraps_and_keeps_each_writers_habit():
         assert all(len(l) <= 76 for l in own.split("\n"))
         assert "No.  I told Mr. Varo the U.S. office" in own.replace("\n", " ")      # a sentence end doubled; a title and a dotted form not
         assert "First point. Second point." in rest                                   # the quoted writer types one space
+        em2 = {"clues": [{"i": 1, "messages": [{"from": "B Two <b.two@keystone.com>", "body": long}]}]}
+        assert max(len(l) for l in g.mailbox_form(em2, draw)["clues"][0]["messages"][0]["body"].split("\n")) > 100   # B's client does not wrap
     finally:
         g.RELEASE_BY_ID = saved

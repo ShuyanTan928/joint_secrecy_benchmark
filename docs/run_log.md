@@ -1757,3 +1757,9 @@ cleared, for trying the email prompt alone. keystone30 is left as generated.
 The review page: the prompts as they stand, and after each step an example from keystone30 (three secrets, one per
 kind; chain 9's secret under the three patterns; chain 9's plot, emails and check; chain 15 delivered on a pair; chain
 12's fix round with its real diagnosis and revision block); every placeholder fill from chain 9, the fix's from chain 12.
+Addendum, same day: wrapping at 76 for every body overcorrected (no planted line over 100 characters against 33% of the
+release's emails, whose clients differ), so the wrap is a per-sender habit like the spacing: a firm sender whose own
+email has a line over 100 characters is not wrapped, one whose lines stop short of it is; others two in three, fixed per
+address. On a stub run of steps 3 and 4 over keystone30's parts: a line over 100 characters 32% (release 33%), two
+spaces after a sentence 72% (release 73%). logs/restyle_k30.json holds keystone30's 10 secrets with their parts and no
+chains, ready for `chains --facts 10 --no-check` under the new prompts.

@@ -711,16 +711,23 @@ def two_spaces(text):
 
 
 def mailbox_form(em, draw):
-    """The mail client's form, put on by code like the headers: paragraphs wrapped at 76 columns as the release's mail is (an
-    indented, quoted or list line is left alone), and two spaces after a period for the senders who type that way. A firm
-    sender follows the sentence ends of their own email in the mailbox; a sender with none to go by, two in three, fixed
-    per address, the release's rate. A quoted or forwarded message keeps the habit of the one who wrote it."""
+    """The mail client's form, put on by code like the headers, per sender as the release's writers differ: paragraphs wrapped
+    at 76 columns for the senders whose client wraps (an indented, quoted or list line is left alone), and two spaces after
+    a period for the senders who type that way. A firm sender follows their own email in the mailbox; a sender with none to
+    go by, two in three for each habit, fixed per address, about the release's rates. A quoted or forwarded message keeps
+    the habits of the one who wrote it."""
     samples = {c["addr"].lower(): RELEASE_BY_ID.get(c.get("email_id"), {}).get("own_body") or "" for c in draw.get("firm", [])}
     def spaced(addr):
         ends = [sp for w, sp in re.findall(r"(\S+)\.( {1,2})[A-Z]", samples.get(addr, "")) if _sentence_end(w)]
         return sum(sp == "  " for sp in ends) * 2 >= len(ends) if ends else sum(map(ord, addr)) % 3 != 0
+    def wraps(addr):
+        lines = [l for l in samples.get(addr, "").split("\n") if l.strip()]
+        if any(len(l) > 100 for l in lines): return False                   # their client leaves paragraphs whole
+        if any(len(l) > 60 for l in lines): return True                     # long lines that stop short: their client wraps
+        return sum(map(ord, addr)) * 7 % 3 != 1
     def form(text, addr):
         text = two_spaces(text) if spaced(addr) else text
+        if not wraps(addr): return text
         out = []
         for line in text.split("\n"):
             if len(line) <= 76 or line[:1] in (" ", "\t", ">", "-"): out.append(line)
