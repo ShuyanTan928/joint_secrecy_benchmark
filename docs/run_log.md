@@ -1708,3 +1708,24 @@ but not the debt, refused; the full set by all three). The earlier example follo
 before the rewrite of 2026-09-28", with a note on what it came from and what it shows. The user's reading of it:
 clues 1 and 3 give the matter, clue 2 settles who keeps it; the tester scores found, correct and false positive, and
 records the cited handles without scoring them.
+
+## What marks the planted emails as generated, and the step-4 changes (2026-09-29)
+
+keystone30's 181 planted emails against the release's 2,000, the sender's own text only. Form: 86% have a line over
+100 characters against 33% (the release is wrapped at about 76; its longest line has a median of 79); none has two
+spaces after a period against 69% of the release's multi-sentence mail. Shape: greeting 80% against 52%, sign-off word
+41% against 22%, a title block 9% against 2%, "Thanks," alone on a line 19% against 6%; median 42 words against 77
+and none over 150 against 21%; exclamation 11% against 28%, dots and dashes 6% against 31%. Wording: "This is in
+response to" and "I'm writing" 4% against 0%; the reference spoken as a label ("DR-2001-0417 is my file", "under my
+student ID, 4471-203") 6% against 0%, the tie condition's artefact; the victim reporting the stake ("I told the realtor
+to go ahead with the offer", "it's nonrefundable, so we're officially getting a new kitchen") 5% against 1%; proper
+names of schools, towns and firms avoided ("the state university under the professor who wrote the standard waterflood
+textbook"). The record-thread openers from outside writers are the most uniform: self-introduction, the finding, an
+offer of a certified copy, a title block.
+Changes. email.md: one paragraph on the register (a line dashed off with no greeting, long mail with other business,
+two spaces after a period, dashes and dots and a slip, schools and shops named) and three conditions (a message does
+not introduce its sender or explain why it writes; a reference appears where and as the people on the thread would
+write it, never as a label; Person B's next step in passing, not reported). Code, the mail client's form put on like
+the headers (mailbox_form): bodies wrapped at 76 columns, quoted and indented lines untouched; two spaces after a
+period for firm senders whose own sample has them and for two outside senders in three, fixed per address. keystone30
+is left as generated; the form applies from the next set.

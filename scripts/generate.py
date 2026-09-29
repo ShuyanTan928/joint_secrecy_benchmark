@@ -32,7 +32,7 @@ empties goes once to --fallback, the judge's model by default.
 Every model answer is written verbatim to logs/api_raw.jsonl with its finish reason.
 """
 from __future__ import annotations
-import argparse, json, random, re, sys, threading, time
+import argparse, json, random, re, sys, textwrap, threading, time
 from collections import Counter, defaultdict
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
@@ -695,6 +695,26 @@ def substitute(text, names):
     return text
 
 
+def mailbox_form(em, draw):
+    """The mail client's form, put on by code like the headers: paragraphs wrapped at 76 columns as the release's mail is (a
+    quoted block, an indented line or a list line is left alone), and two spaces after a period for the senders whose own
+    sample in the mailbox has them, a habit of about two thirds of the release's writers."""
+    habit = {c["addr"].lower(): bool(re.search(r"\.  [A-Z]", RELEASE_BY_ID.get(c.get("email_id"), {}).get("own_body") or "")) for c in draw.get("firm", [])}
+    for c in em.get("clues") or []:
+        for m in c.get("messages") or []:
+            addr = (re.search(r"[\w.+-]+@[\w.-]+", str(m.get("from", ""))) or [None])
+            addr = addr.group(0).lower() if addr else ""
+            spaced = habit.get(addr, sum(ord(ch) for ch in addr) % 3 != 0)          # outside senders: two in three, fixed per address
+            out = []
+            for line in str(m.get("body", "")).split("\n"):
+                if len(line) <= 76 or line[:1] in (" ", "\t", ">", "-") or line.startswith("-----"):
+                    out.append(line); continue
+                text = re.sub(r"\. ([A-Z])", r".  \1", line) if spaced else line
+                out.extend(textwrap.wrap(text, 76, break_long_words=False, break_on_hyphens=False) or [""])
+            m["body"] = "\n".join(out)
+    return em
+
+
 def name_forms(text, names, plan=None):
     """Placeholders -> names after the email is written: full name and address in headers, first name where a person is
     addressed or signs."""
@@ -957,7 +977,7 @@ def emails_for(rec, s, rng, prompt_file=None, keep_label=None, revise="", keep_c
         more, _ = cast_from({}, {"firm": [], "outside": []}, extra, set(extra), rng)
         for lab, v in more.items(): USED["people"][v["addr"]] += 1
         names.update(more); rec["names"] = names
-    em = name_forms(em, names, rec["plan"]); rec["emails"] = em
+    em = name_forms(em, names, rec["plan"]); mailbox_form(em, draw); rec["emails"] = em
     bodies = " ".join(str(m.get("body", "")) for e in em["clues"] for m in e.get("messages", []))
     heads = " ".join(str(m.get("from", "")) + " " + " ".join(m.get("to") or []) for e in em["clues"] for m in e.get("messages", []))
     keys = list(rec["reported"].values()) or [l for l in (keep_line(rec["lines"], c, rec["pattern"]) for c in rec["plan"]) if l]   # the answer key: reported, or the plot's line
