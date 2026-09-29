@@ -98,3 +98,21 @@ def test_a_full_set_only_reader_reads_nothing_but_the_full_set():
     rep = check(threads, {"secret": "s", "actor": "A", "victim": "B"}, {"a": a, "b": b}, a, ask, full_only=frozenset({"b"}))
     assert seen.count("a") == 7 and seen.count("b") == 1
     assert [c["threads"] for c in rep["calls"] if c["prober"] == "b"] == [[0, 1, 2]]
+
+
+def test_the_mail_client_form_wraps_and_keeps_each_writers_habit():
+    import generate as g
+    saved = g.RELEASE_BY_ID
+    try:
+        g.RELEASE_BY_ID = {"s1": {"own_body": "We met on Friday.  The draft is attached.  Call me."}, "s2": {"own_body": "Got it. Will do. Thanks."}}
+        draw = {"firm": [{"addr": "a.one@keystone.com", "email_id": "s1"}, {"addr": "b.two@keystone.com", "email_id": "s2"}], "outside": []}
+        long = "No. I told Mr. Varo the U.S. office would wait. " * 4
+        quoted = "\n\n    B Two <b.two@keystone.com>\n    03/12/2001 10:00 AM\n         To: A One <a.one@keystone.com>\n\nFirst point. Second point."
+        em = {"clues": [{"i": 1, "messages": [{"from": "A One <a.one@keystone.com>", "body": long + quoted}]}]}
+        body = g.mailbox_form(em, draw)["clues"][0]["messages"][0]["body"]
+        own, rest = body.split("    B Two", 1)
+        assert all(len(l) <= 76 for l in own.split("\n"))
+        assert "No.  I told Mr. Varo the U.S. office" in own.replace("\n", " ")      # a sentence end doubled; a title and a dotted form not
+        assert "First point. Second point." in rest                                   # the quoted writer types one space
+    finally:
+        g.RELEASE_BY_ID = saved

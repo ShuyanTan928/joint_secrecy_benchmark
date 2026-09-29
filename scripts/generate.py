@@ -25,6 +25,7 @@ The model is chosen with --engine/--preset (default Claude Opus 5.5 through Open
   python scripts/generate.py chains --facts 12      # steps 3 to 5 on 12 secrets (--plots-only for step 3 alone, --no-check for 3 and 4)
   python scripts/generate.py chains --facts 31 --want-3 20 --want-2 20   # a quota: fix leaks while three-thread items are short, then plan on two
   python scripts/generate.py check --rounds 3       # step 5 on the chains already in the state file
+  python scripts/generate.py emails                 # step 4 again on the chains in the state file, their plots and draw of names kept
   python scripts/generate.py report
 The probers, the judge and the diagnoser are --probers, --matcher and --diagnoser (API presets or slugs);
 with --engine vllm or stub the one engine plays every part. A generation call the provider's content filter
@@ -695,23 +696,42 @@ def substitute(text, names):
     return text
 
 
+ABBREV = {"mr", "mrs", "ms", "dr", "st", "jr", "sr", "co", "inc", "corp", "ltd", "vs", "etc", "dept", "ave", "blvd", "approx"}
+MAIL_QUOTE = re.compile(r"^(?:-{3,}.*(?:Forwarded by|Original Message).*|[ \t]{2,}\S.*<[\w.+-]+@[\w.-]+>.*|\s*From:\s.*@.*)$", re.M)
+
+
+def _sentence_end(word):
+    """A full stop that ends a sentence: not after a title or company abbreviation, an initial or a dotted form like U.S."""
+    return word.lower() not in ABBREV and not re.fullmatch(r"[A-Z]|(?:[A-Za-z]\.)+[A-Za-z]", word)
+
+
+def two_spaces(text):
+    """Two spaces after each sentence's full stop, the typewriter habit."""
+    return re.sub(r"(\S+)\. ([A-Z])", lambda m: m.group(1) + (".  " if _sentence_end(m.group(1)) else ". ") + m.group(2), text)
+
+
 def mailbox_form(em, draw):
-    """The mail client's form, put on by code like the headers: paragraphs wrapped at 76 columns as the release's mail is (a
-    quoted block, an indented line or a list line is left alone), and two spaces after a period for the senders whose own
-    sample in the mailbox has them, a habit of about two thirds of the release's writers."""
-    habit = {c["addr"].lower(): bool(re.search(r"\.  [A-Z]", RELEASE_BY_ID.get(c.get("email_id"), {}).get("own_body") or "")) for c in draw.get("firm", [])}
+    """The mail client's form, put on by code like the headers: paragraphs wrapped at 76 columns as the release's mail is (an
+    indented, quoted or list line is left alone), and two spaces after a period for the senders who type that way. A firm
+    sender follows the sentence ends of their own email in the mailbox; a sender with none to go by, two in three, fixed
+    per address, the release's rate. A quoted or forwarded message keeps the habit of the one who wrote it."""
+    samples = {c["addr"].lower(): RELEASE_BY_ID.get(c.get("email_id"), {}).get("own_body") or "" for c in draw.get("firm", [])}
+    def spaced(addr):
+        ends = [sp for w, sp in re.findall(r"(\S+)\.( {1,2})[A-Z]", samples.get(addr, "")) if _sentence_end(w)]
+        return sum(sp == "  " for sp in ends) * 2 >= len(ends) if ends else sum(map(ord, addr)) % 3 != 0
+    def form(text, addr):
+        text = two_spaces(text) if spaced(addr) else text
+        out = []
+        for line in text.split("\n"):
+            if len(line) <= 76 or line[:1] in (" ", "\t", ">", "-"): out.append(line)
+            else: out.extend(textwrap.wrap(line, 76, break_long_words=False, break_on_hyphens=False) or [""])
+        return "\n".join(out)
+    addr_of = lambda t: (lambda m: m.group(0).lower() if m else "")(re.search(r"[\w.+-]+@[\w.-]+", str(t or "")))
     for c in em.get("clues") or []:
         for m in c.get("messages") or []:
-            addr = (re.search(r"[\w.+-]+@[\w.-]+", str(m.get("from", ""))) or [None])
-            addr = addr.group(0).lower() if addr else ""
-            spaced = habit.get(addr, sum(ord(ch) for ch in addr) % 3 != 0)          # outside senders: two in three, fixed per address
-            out = []
-            for line in str(m.get("body", "")).split("\n"):
-                if len(line) <= 76 or line[:1] in (" ", "\t", ">", "-") or line.startswith("-----"):
-                    out.append(line); continue
-                text = re.sub(r"\. ([A-Z])", r".  \1", line) if spaced else line
-                out.extend(textwrap.wrap(text, 76, break_long_words=False, break_on_hyphens=False) or [""])
-            m["body"] = "\n".join(out)
+            body = str(m.get("body", "")); q = MAIL_QUOTE.search(body)
+            own, quoted = (body[:q.start()], body[q.start():]) if q else (body, "")
+            m["body"] = form(own, addr_of(m.get("from"))) + (form(quoted, addr_of(quoted)) if quoted else "")
     return em
 
 
@@ -984,7 +1004,7 @@ def emails_for(rec, s, rng, prompt_file=None, keep_label=None, revise="", keep_c
     rec["email_verbatim"] = verbatim_in(bodies, [substitute(l, names) for l in keys])
     rec["line_kept"] = line_kept(bodies, [substitute(l, names) for l in keys])          # drift measure; no retry, the email step writes freely
     rec["keys"] = keys
-    rec["placeholders_left"] = bool(re.search(r"Person [A-J]\b", bodies + " " + heads))
+    rec["placeholders_left"] = bool(re.search(r"Person\s+[A-J]\b", bodies + " " + heads))
     rec["names_used"] = all(nm["name"].split()[0].lower() in (bodies + " " + heads).lower() for nm in names.values())
     rec["email_topic"] = classify(bodies[:3000]); rec["email_topic_ok"] = rec["email_topic"] == s.get("label")
     rec["holds_leak"] = holds_leak(rec); rec["isolation"] = isolation(rec); rec["fact_stated"] = fact_stated(rec)
@@ -1291,6 +1311,31 @@ def run_chain(job):
     return rec
 
 
+def cmd_emails(a):
+    """Step 4 again on the chains in the state file, each chain's plot and its draw of names kept, so the email prompt can be
+    tried alone. The chain's check is cleared, since it judged the old emails; run check afterwards."""
+    st = load(); rng = random.Random(a.seed)
+    by = {(x.get("label"), x.get("secret")): x for x in st.get("secrets", [])}
+    todo = [r for r in st.get("chains", []) if r.get("plots") and r.get("emails") and not r.get("error")]
+    if a.limit: todo = todo[:a.limit]
+    print(f"step 4 again on {len(todo)} chain(s), their plots and draw of names kept", flush=True)
+    def job(pair):
+        r, seed = pair
+        s = by.get((r.get("topic"), r.get("secret")))
+        if s is None: r["error"] = "no secret record for this chain"; return r
+        TL.rec = r
+        try:
+            r.pop("and_check", None)
+            emails_for(r, s, random.Random(seed), keep_cast=True)
+        except Exception as e:
+            r["error"] = f"exception: {e}"
+        return r
+    with ThreadPoolExecutor(a.workers) as ex:
+        list(ex.map(job, [(r, rng.random()) for r in todo]))
+    st.setdefault("calls", {})["emails"] = dict(CALLS); save(st)
+    print(f"done: {sum(bool(r.get('emails')) and not r.get('error') for r in todo)} of {len(todo)}; calls:", CALLS)
+
+
 def cmd_check(a):
     """Step 5 over the chains already in the state file."""
     st = load(); rng = random.Random(a.seed)
@@ -1439,6 +1484,8 @@ if __name__ == "__main__":
     s6 = sub.add_parser("check", help="step 5 on the chains in the state file"); step5(s6); s6.add_argument("--workers", type=int, default=8)
     s6.add_argument("--limit", type=int, default=0, help="first N chains only"); s6.add_argument("--seed", type=int, default=0)
     s6.add_argument("--dropped", action="store_true", help="only the chains an earlier check dropped")
+    s7 = sub.add_parser("emails", help="step 4 again on the chains in the state file, their plots and draw of names kept"); s7.add_argument("--workers", type=int, default=8)
+    s7.add_argument("--limit", type=int, default=0, help="first N chains only"); s7.add_argument("--seed", type=int, default=0)
     a = ap.parse_args()
     STATE = Path(a.state); JUDGE = a.judge; NOCLASS = not a.classify; PLOTS_ONLY = getattr(a, "plots_only", False); GEN_KIND = a.engine; MAX_CALLS = a.max_calls
     GEN = engine_from_args(a)
@@ -1461,7 +1508,7 @@ if __name__ == "__main__":
                      "diagnoser": build_engine(a.engine, a.diagnoser, reasoning=think) if a.diagnoser else next(iter(probers.values()))}
         print(f"step 5: full set by {'any prober' if getattr(a, 'full_any', False) else 'every prober'}; probers {list(CHECK['probers'])}, judge {a.preset if a.engine == 'vllm' else a.matcher}, diagnoser {a.preset if a.engine == 'vllm' else (a.diagnoser or next(iter(CHECK['probers'])))}, fix rounds {ROUNDS}, reasoning {a.check_reasoning or 'default'}", flush=True)
     try:
-        {"secrets": cmd_secrets, "clues": cmd_clues, "chains": cmd_chains, "report": cmd_report, "all": cmd_all, "check": cmd_check}[a.cmd](a)
+        {"secrets": cmd_secrets, "clues": cmd_clues, "chains": cmd_chains, "report": cmd_report, "all": cmd_all, "check": cmd_check, "emails": cmd_emails}[a.cmd](a)
     except RuntimeError as e:
         if "max-calls" not in str(e): raise
         print(f"\nstopped: {e}; what was finished is in {STATE}")

@@ -14,8 +14,8 @@ The threads:
 Everything but Person A's points is yours to write, in the voice of whoever sends it and in the way
 that person would write to the person they are writing to. This is office and home mail of 2001, and
 it reads like the samples below: some messages are a line dashed off with no greeting, some run long
-and carry other business; two spaces after a period, dashes, dots and a slip left in are ordinary;
-schools, towns, shops, products and other firms are named, as people name them.
+and carry other business, dashes and dots are common, and people name the places, schools and shops
+they mean.
 
 Give each person one of the names below: people at the firm a firm name, the others an outside name.
 Write the messages with those names, greeting and signing as the person whose name it is would.
@@ -28,13 +28,11 @@ Before you answer, check the messages against these conditions:
 - no message says a matter is confidential, asks for discretion, or says what has not been announced;
 - where a message gives Person A's points, they are in Person A's own words with their meaning kept,
   and the message says nothing on the matter beyond them;
-- a reply reads as a reply: often a line or two, answering what was asked, without restating the
-  question or announcing what the message does;
-- a message says what it is for and no more: it does not introduce its sender, explain why it is
-  written, or tell the reader what the reader already knows;
-- a reference appears where and as the people on that thread would write it, in a subject line, a
-  form or a passing mention, never spoken as a label;
-- what Person B goes on to do is mentioned in passing, as a person would, not reported;
+- a message gets to its point: a reply answers what was asked, often in a line or two; a sender
+  introduces themself only to a stranger; nobody tells a reader what the reader already knows;
+- a reference appears where and as the people on the thread would write it: in a subject line, on a
+  form, beside a name, in passing;
+- what Person B goes on to do comes up in passing, as it would between these two people;
 - the record's thread names neither Person A nor Person B by any name, first or last, nor anyone of
   their household;
 - each placeholder has one name from the lists, and no name is used twice;

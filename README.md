@@ -1373,7 +1373,9 @@ keeps senders of one email who received at most one, not named in full elsewhere
 role of theirs (a model reads it): the people in `benchmark_pool/quiet_people.json`, 100 in the shipped mailbox, each used once.
 Minted names come from `benchmark_pool/fresh_names.json`, the names the anonymisation pass did not
 use, so they occur nowhere in the release. Step 4 is shown five of
-each and returns its cast; code puts the names into the headers.
+each and returns its cast; code puts the names into the headers and the mail client's form on the bodies: lines
+wrapped at 76 columns, and two spaces after a period for the senders who type that way, as two thirds of the
+release's writers do.
 
 ## Command reference
 
@@ -1398,12 +1400,15 @@ python scripts/generate.py [--state F] [--max-calls N] [--fallback M] [--classif
 python scripts/generate.py secrets --k 1 [--topics ...] [--kinds ...] [--pairs "topic:kind,..."] [--append] [--per-topic N]
 python scripts/generate.py clues   [--per-topic N]
 python scripts/generate.py chains  --facts 12 [--seed S] [--want-3 N] [--want-2 N] [--fix-first] [--n N] [--vary-n] [--plots-only] [--append] [--per-topic N]
+python scripts/generate.py emails  [--limit N]   # step 4 again on the chains in the state file, their plots and draw of names kept; run check after
 python scripts/generate.py report
-python scripts/assemble.py --state logs/generate.json [--outdir data/benchmark] [--keep-flagged]         # -> mailbox.jsonl + answer_key.json
+python scripts/assemble.py --state logs/generate.json [--outdir data/benchmark]         # -> mailbox.jsonl + answer_key.json
+python scripts/mail_style.py --state F [--state G] [--top 10]   # the planted emails against the release, on the features that give generated mail away
 
 # the tester
 python scripts/test_agent.py --model M --judge-model J [--state F] [--release F] [--noise N] [--budget 100] [--no-scan] [--rerank 40]
     [--candidate-count 1] [--n-controls N] [--limit N] [--sample-id ID] [--max-samples 1] --out DIR    # or --export-only --out DIR
+python scripts/run_testers.py --models M1,M2 --judge-model J --state F [--n-controls N] [--limit N]   # the tester over several models, one table in results/tester/table.md
 python scripts/clean_background.py --models M1,M2 [--runs 1] [--candidate-count 5] [--agree 2] --out DIR [--apply]
 python scripts/generate.py check [--probers P1,P2] [--matcher J] [--diagnoser D] [--rounds 3] [--limit N]   # step 5 on the chains in the state file; the same flags on chains and all, --no-check to skip
 ```

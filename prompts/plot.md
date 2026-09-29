@@ -38,8 +38,8 @@ Before you answer, check the answer against these conditions:
 - every message is dated on an event of the timeline, and every date is in <<ERA>>;
 - the [fact] thread names whom it concerns by the reference only, not Person A, Person B or Person A's
   household, and Person A is not on it;
-- the [knows] thread carries the record's reference, in its tie field and in a message, and says in
-  Person A's words whom or what it belongs to;
+- the [knows] thread carries the record's reference, in its tie field and in a message, and makes
+  plain whom or what it belongs to, as these people would write it;
 - the [concealment] thread carries neither the record's reference nor its particulars, and names the
   matter as an outsider would.
 <<CASE_RULES>>

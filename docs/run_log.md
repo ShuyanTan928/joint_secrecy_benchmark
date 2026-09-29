@@ -1729,3 +1729,31 @@ write it, never as a label; Person B's next step in passing, not reported). Code
 the headers (mailbox_form): bodies wrapped at 76 columns, quoted and indented lines untouched; two spaces after a
 period for firm senders whose own sample has them and for two outside senders in three, fixed per address. keystone30
 is left as generated; the form applies from the next set.
+
+## Step 4 toward 2001 mail; the review page with keystone30 examples (2026-09-29)
+
+scripts/mail_style.py measures a set's planted emails against the release (the sender's own text) and lists the planted
+emails with the most tells. On keystone30: median 42 words against 77, none over 150 against 21%; a line over 100
+characters 86% against 33%; two spaces after a sentence 0% against 73%; a greeting line 77% against 34%; "Thanks,"
+alone 19% against 4%; exclamation 11% against 28%, dots or a spaced dash 8% against 33%; the wording tells, rare but
+absent from the release: an opening that introduces itself or its purpose 6%, a reference said as a label 4% ("W-07 is
+my brother's wedding budget", "I'm employee 4612, and HOU-04 is Keystone's Houston gas desk"), the next step reported
+7% ("It's nonrefundable, so I guess we're really doing this!"), a title block 8%. The plot-level tells, for step 3:
+23 of 30 [fact] threads are a record from outside the firm (the menu), so the record threads are formal letters from
+registrars, clerks and examiners, a genre the release barely has; 20 of 30 chains end with Person B committing money
+or signing, which puts a report of the stake in the [concealment] thread; three-message threads are 34% of the planted
+threads against 11% of the release's.
+Changes. email.md: the register paragraph trimmed to what the model does (messages dashed off with no greeting or long
+with other business, dashes and dots, places, schools and shops named); the reply condition and the new ones merged
+into three positive conditions (a message gets to its point, a sender introduces themself only to a stranger; a
+reference appears where and as the people would write it; Person B's next step comes up in passing). plot.md: the
+[knows] thread "makes plain whom or what [the reference] belongs to, as these people would write it" instead of
+saying it in Person A's words, which produced the labels; diagnose.md to match. Code: mailbox_form puts the mail
+client's form on the bodies after the names: 76-column wrap; two spaces after a sentence end (not after a title, an
+initial or a dotted form) for firm senders whose own email has them and for two outside senders in three, fixed per
+address; a quoted or forwarded message keeps its writer's habit. placeholders_left reads across a wrapped line. New:
+`generate.py emails`, step 4 again on the chains of a state file with their plots and draw of names kept, the old check
+cleared, for trying the email prompt alone. keystone30 is left as generated.
+The review page: the prompts as they stand, and after each step an example from keystone30 (three secrets, one per
+kind; chain 9's secret under the three patterns; chain 9's plot, emails and check; chain 15 delivered on a pair; chain
+12's fix round with its real diagnosis and revision block); every placeholder fill from chain 9, the fix's from chain 12.

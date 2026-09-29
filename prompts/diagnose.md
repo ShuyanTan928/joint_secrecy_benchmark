@@ -30,7 +30,7 @@ Already tried:
 Each clue carries its own part and nothing of the others. A leak: a clue also carries another part,
 its subject, reference or a name spells the outcome, or the [concealment] thread carries the record's
 reference or its particulars. A miss: a part is not shown, the [knows] thread does not carry the
-record's reference or say whose it is, or the reader saw the matter but not who keeps it or from
+record's reference or make plain whose it is, or the reader saw the matter but not who keeps it or from
 whom. Name the clue, the failure, and one change after which all clues together give the secret and
 no smaller set does. The step is "clues" when a part itself carries more than its piece: [fact]
 naming whom it concerns or what someone says about the matter, [knows] stating the fact or its
