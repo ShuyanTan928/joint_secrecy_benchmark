@@ -1697,3 +1697,14 @@ keep a chain out, since the check's readers found no leak where the heuristic sa
 chain with a placeholder left unreplaced is still skipped as unusable. scripts/run_testers.py runs one or more tested
 models over a state file with one judge and writes results/tester/table.md; the tester's samples take their kind from
 the secret record.
+
+## README: a worked example from keystone30, the earlier one kept (2026-09-29)
+
+User: keep the old example, marked as old, and add a new one. The README's "A worked example, every step" is now chain 9
+of keystone30 (personal finance, dark secret, lying by commission: the husband's card debt), built from the set's state
+file: every prompt as assembled by the current pipeline, every answer, the item as it sits in the mailbox, and the
+check with the readers' findings and the judge's reasons per subset (the [knows]+[concealment] pair names the card
+but not the debt, refused; the full set by all three). The earlier example follows under "The earlier worked example,
+before the rewrite of 2026-09-28", with a note on what it came from and what it shows. The user's reading of it:
+clues 1 and 3 give the matter, clue 2 settles who keeps it; the tester scores found, correct and false positive, and
+records the cited handles without scoring them.

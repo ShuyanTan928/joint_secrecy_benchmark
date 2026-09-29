@@ -29,7 +29,7 @@ flowchart TB
 ```
 
 **Contents.** [Install](#install) · [Quick start](#quick-start) · [Kinds of secret](#kinds-of-secret-goffman-1956) ·
-[Concealment patterns](#concealment-patterns) · [A worked example](#a-worked-example-every-step) · [Casting](#casting-who-the-people-are-in-the-mailbox) ·
+[Concealment patterns](#concealment-patterns) · [A worked example](#a-worked-example-every-step) · [The earlier example](#the-earlier-worked-example-before-the-rewrite-of-2026-09-28) · [Casting](#casting-who-the-people-are-in-the-mailbox) ·
 [Testing](#testing) · [Command reference](#command-reference) · [Repository structure](#repository-structure) · [References](#references)
 
 ## Install
@@ -132,6 +132,705 @@ another (`prompts/patterns.json`).
 | **lying by omission** | "the passive omission of relevant information" (Rogers et al. 2017). The duty it breaks: "One who fails to disclose to another a fact that he knows may justifiably induce the other to act or refrain from acting … is subject to the same liability to the other as though he had represented the nonexistence of the matter that he has failed to disclose" (Restatement (Second) of Torts §551(1), 1977) | A answers B where the fact belonged and leaves it out |
 
 ## A worked example, every step
+
+Personal finance, dark secret, lying by commission, three threads: chain 9 of [keystone30](data/benchmark/keystone30/),
+generated on 2026-09-29 by Claude Opus 5.5 and checked by GPT-6 Sol on every subset of its threads and by Claude Opus 5.5
+and Gemini 3.7 Flash on the full set. Each prompt is the text the model received; each result is its answer. The secret is
+split into three parts at step 2, one per thread: **[fact]**, the truth as a record holds it; **[knows]**, one ordinary
+act of the actor's that the fact explains; **[concealment]**, the actor's act toward the victim in the pattern's way. The
+actor is Person A, the victim Person B.
+
+### Step 1: secret generation
+
+<details>
+<summary>The assembled prompt (prompts/secret.md, one call for the pair personal finance × dark secret)</summary>
+
+```text
+# Worked examples of Goffman's kinds of secret
+
+You are writing the worked examples for a chapter on Erving Goffman's kinds of secret. Each example
+is a case from 2000 or 2001 about one person, the actor, an ordinary adult in the United States, and
+the people the actor's life holds, at work and at home. Everyone in a case is invented.
+
+The kind: dark secret: a fact about the actor themself that does not fit who the actor is taken to be at the firm or at home. It is the actor it would discredit.
+The area of life the case sits in: personal finance
+The case sits in the actor's life outside work.
+
+Write one case that fits this kind and this area. If none fits, answer with an empty list. For each case give:
+- actor: the person who keeps the fact, in a few words;
+- fact: the situation, one clause: the state itself, with nothing of what the actor does about it;
+- secret: one sentence: the fact, and that the actor keeps it;
+- victim: who the actor keeps the fact from: one person, by role; a party, a group or a side, said
+  as what it is; or everyone else.
+
+Before you answer, check the cases against these conditions:
+- the fact is destructive information: if it came out, it would discredit, disrupt or make useless
+  the impression that the actor, the person the fact is about, or the group keeps up before the
+  people it is kept from, and those people would say they had a right to know; a fact that would
+  only embarrass, or that nobody would mind, is not a case;
+- the fact is a state of affairs that holds for weeks or months and still holds when the case is
+  told, not a one-off event or something already over;
+- the case is concrete and ordinary, the kind of thing that happens, written as it is without
+  softening, and it keeps away from violence, abuse, harassment, explicit sexual detail and
+  addiction, and from a person's religion, ethnicity, sexual orientation, political beliefs,
+  disability or immigration status; the person the fact is about is an adult;
+- the secret states the matter without sums, counts, dates or durations, and does not explain why;
+- people are called by role, not by name; no company name, document title or date is needed.
+
+Answer with one JSON object:
+{"cases": [{"actor": "...", "fact": "...", "secret": "...", "victim": "..."}]}
+```
+
+</details>
+
+| field | result |
+|---|---|
+| actor | a husband who handles the household's money |
+| fact | he carries heavy debt on credit cards held in his name alone |
+| secret | The husband, whom his wife takes to be the careful one who keeps the family out of debt, carries heavy debt on credit cards held in his name alone, and he keeps this from her. |
+| victim | his wife |
+| ground | life |
+
+
+### Step 2: clue generation
+
+<details>
+<summary>The assembled prompt (prompts/clues.md, one call for the secret under lying by commission)</summary>
+
+```text
+# Split the secret into three parts: lying by commission
+
+The actor holds a job at Keystone, a US energy company; the year is 2000 or 2001. The case sits in the actor's life outside work; the actor's job at the firm is not part of it.
+
+## The secret
+Actor: a husband who handles the household's money
+Fact: he carries heavy debt on credit cards held in his name alone
+Secret: The husband, whom his wife takes to be the careful one who keeps the family out of debt, carries heavy debt on credit cards held in his name alone, and he keeps this from her.
+Kept from: his wife
+Kind of secret: dark secret, a fact about the actor themself that does not fit who they are taken to be.
+How it is kept: lying by commission: the actor tells the victim something about the matter that is false.
+
+## The parts
+- [fact]: the state of affairs as a record would hold it: the matter and whom it concerns by a reference, an account, a case, a member, a file.
+- [knows]: one ordinary thing the actor does or arranges that the fact explains, done in writing with someone other than the victim, on an occasion that gives it a reason of its own: an instruction, a booking, a request, a change of routine. A reader with the record sees why; a reader without it sees routine.
+- [concealment]: one plain sentence the actor states to the victim, false given the truth. The occasion is not given here.
+
+In this way the parts work as an AND gate: all three parts read together give the secret; any one or two do not, and a reader of one or two could still take the actor for someone with nothing to hide.
+
+Before you answer, check the parts against these conditions:
+- each part is one sentence, in the third person, with people called by role;
+- the parts are written to one person, the victim, or when the victim is a party, the one person by
+  role who stands for it and whom the actor writes to; that person is named in [concealment] and in
+  the victim field;
+- [fact] names what it concerns by a reference, not by a name, role or household, and has no one
+  telling, assuring or hiding anything;
+- [knows] carries neither the fact's measure nor the name of the company or person the record is
+  about, is not the moving of mail, statements or records out of anyone's sight, and nothing in it
+  says that anything is hidden;
+- [concealment] names the matter as the victim would, without the record's reference or its
+  particulars.
+
+## Output, ONE JSON object, nothing else
+{"victim": "the person the parts are written to, by role", "fact": "the state, as a record holds it, by a reference", "knows": "<the actor, by role>, <on what occasion>, <does or arranges one thing, with whom>", "concealment": "<the actor, by role> tells <the victim, by role> that <one statement, false given the fact>"}
+```
+
+</details>
+
+| part | result |
+|---|---|
+| written to | his wife |
+| [fact] | Card account ending 4471, opened in 1998 in a single cardholder's name, shows a revolving balance of $38,200 against a $40,000 limit as of the December 2000 statement, with only minimum payments posted each month since March 2000. |
+| [knows] | The husband, when his employer circulates new direct-deposit forms at the start of 2001, writes to the payroll office asking that a fixed portion of each paycheck be routed to a separate checking account in his name alone, with the remainder going to the joint account. |
+| [concealment] | The husband tells his wife that they don't owe anything on any credit card and that everything is paid off in full each month. |
+
+
+### Step 3: plot generation
+
+<details>
+<summary>The assembled prompt (prompts/plot.md, one call for the chain at three threads)</summary>
+
+```text
+# Lay out the story and the email threads
+
+The emails will sit in a mailbox from 2000 and 2001: the work and personal mail of people at Keystone, a US energy company, and the mail they get from outside, from counterparties, lawyers, vendors, family and friends. Every email in it is sent or received by someone at the firm. The firm, the people and every address in it are invented.
+
+We are hiding one secret in this mailbox, spread over three email threads. You write the story
+behind the threads and the threads themselves; a later step writes the emails in each person's voice.
+
+The secret: The husband, whom his wife takes to be the careful one who keeps the family out of debt, carries heavy debt on credit cards held in his name alone, and he keeps this from her.
+How it is kept: lying by commission: the actor tells the victim something about the matter that is false.
+Kind of secret: dark secret, a fact about the actor themself that does not fit who they are taken to be. The case sits in the actor's life outside work; the job is not part of it.
+
+The secret is split into three parts, and each thread carries one:
+[fact], the truth as a record holds it, written by someone other than Person A to someone at the firm with business in it: Card account ending 4471, opened in 1998 in a single cardholder's name, shows a revolving balance of $38,200 against a $40,000 limit as of the December 2000 statement, with only minimum payments posted each month since March 2000.
+[knows], one ordinary act of Person A's that the fact explains: The husband, when his employer circulates new direct-deposit forms at the start of 2001, writes to the payroll office asking that a fixed portion of each paycheck be routed to a separate checking account in his name alone, with the remainder going to the joint account.
+[concealment], Person A's act toward Person B on the occasion the part gives: The husband tells his wife that they don't owe anything on any credit card and that everything is paid off in full each month.
+
+In this way the threads work as an AND gate: all three together say that Person A keeps this fact from Person B, and any one or two do not, because Person A is not on the [fact] thread and the [knows] thread holds the fact only by its reference. A reader knows everything on a thread they
+send, receive, are copied on or are forwarded, quoted parts included.
+
+Use these people, by placeholder:
+Person A: the actor, who keeps the secret: a husband who handles the household's money; works at the firm, in a job you choose to fit the case.
+Person B: the victim, kept from the fact: his wife.
+Person C: who writes or receives the record; not the person the fact is about; you decide who.
+Anyone else the threads need continues the letters from Person D.
+
+## The four pieces
+
+1. The stake: what Person B is about to do, relying on not knowing, that goes wrong because of it.
+2. The people: who each placeholder is and whether they work at the firm.
+3. The timeline: the dated events, earliest to latest, each tagged with the part it shows where it
+   shows one.
+4. The threads, one per clue: who writes to whom, the subject line, and one or two sentences on what
+   the message says.
+
+Choices, so that chains do not all take one shape. "Use" means use it unless it cannot fit these
+people, then choose another and say so in the choices field; "choose" means pick the one that fits,
+or write a better one:
+- carrier_fact, how [fact] shows up in the mailbox: choose one, or write a better one: a record from outside the firm, a notice, statement, report or letter, sent to the office at the firm whose business it is: payroll, benefits, travel, expenses, security, a manager; the other person in the fact writing to someone at the firm, not Person A, on business of their own that rests on the fact
+- carrier_concealment, the occasion of [concealment]: what brings the matter up between Person A and Person B: choose one, or write a better one: one message from the actor to the victim, unprompted; the actor's reply to a direct question the victim asked; the actor's answer inside a thread the victim started about something else; an action the victim relies on: the actor signs, books, approves or sends something
+- after, what Person B does once Person A has acted: choose one, or write a better one: commits money or signs; passes it on to someone else as settled; makes a plan that depends on it; lets a deadline pass; drops a check they would otherwise have made; replies with thanks and nothing more
+- naming, how a subject line names the matter, where it does: choose one, or write a better one: a short subject line, like the real ones shown; a file name, like the real ones shown; an account, order or case number; a date
+  Real subject lines from this mailbox: Environmental Strategy Meeting; The Power Industry -- New web-based training; Core Aggregator Testimony in Support of Settlement; approval of FERC article for eBiz; Glynda lease/USTELENET DMS; real file names: Portal Handout.doc, Invite.doc, GasTurbi.DOC, prometheus011005.pdf. A file name appears only where the people on that thread would use it.
+
+Before you answer, check the answer against these conditions:
+- the parts sit as laid out above, and no thread carries both [fact] and [concealment];
+- every from and to is a placeholder, and someone at the firm is on every message;
+- every message is dated on an event of the timeline, and every date is in 2001;
+- the [fact] thread names whom it concerns by the reference only, not Person A, Person B or Person A's
+  household, and Person A is not on it;
+- the [knows] thread carries the record's reference, in its tie field and in a message, and says in
+  Person A's words whom or what it belongs to;
+- the [concealment] thread carries neither the record's reference nor its particulars, and names the
+  matter as an outsider would.
+
+Answer with one JSON object; each field holds its value and nothing else:
+{"stake": "what the victim is about to do, one clause",
+ "people": [{"person": "Person ?", "function": "what this person is in the secret, as listed above, or other", "role": "who this person is, in a few words", "at_firm": "yes or no"}],
+ "timeline": [{"date": "YYYY-MM-DD", "event": "one clause", "shows": "the part this event shows, or empty"}],
+ "choices": {"carrier_fact": "the option used, in its first words", "carrier_concealment": "the option used, in its first words", "after": "the option used, in its first words", "naming": "the option used, in its first words"},
+ "clues": [{"i": 1, "carries": ["fact"], "reference": "the name this thread uses for the matter, or empty", "tie": "the record's reference as the [knows] thread carries it; empty for other clues", "line": "Person A's message to Person B, in substance: what it says and nothing of what it leaves out; empty for other clues",
+            "messages": [{"from": "Person ?", "to": ["Person ?"], "date": "YYYY-MM-DD", "subject": "...", "what_happens": "what the message says, one or two sentences, nothing of what its reader makes of it"}]}]}
+```
+
+</details>
+
+**The stake:** Person B is about to sign an offer on a larger house and put down $5,000 in earnest money, believing the couple carries no card debt that the mortgage lender will find
+
+**The people:**
+
+| placeholder | function | role | at the firm |
+|---|---|---|---|
+| Person A | the actor | husband who handles the household's money; gas scheduling analyst on Keystone's pipeline desk | yes |
+| Person B | the victim | his wife, a middle-school teacher | no |
+| Person C | writes the record | account verification specialist at Meridian Bank Card Services, the card issuer | no |
+| Person D | other | loan officer at the Keystone Employees Federal Credit Union, which is housed in and staffed from the Keystone building | yes |
+| Person E | other | payroll administrator in Keystone Human Resources | yes |
+
+
+**The choices:** carrier_fact: a record from outside the firm; carrier_concealment: the actor's reply to a direct question; after: commits money or signs; naming: a short subject line
+
+**The timeline:**
+
+| date | event | shows |
+|---|---|---|
+| 2001-01-08 | Person E sends all staff the new direct-deposit forms for 2001 |  |
+| 2001-01-10 | Person A asks payroll to send a fixed $600 from each paycheck to a checking account in his name alone for his card ending 4471, with the rest going to the joint account | knows |
+| 2001-01-11 | Person E confirms that the split deposit will start with the January 31 paycheck |  |
+| 2001-01-17 | Person D asks Meridian Bank to verify the balance on account ending 4471, which is listed on a debt-consolidation loan application |  |
+| 2001-01-22 | Person C replies that the account was opened in 1998 in a single cardholder's name and that the December 2000 statement shows a balance of $38,200 against a $40,000 limit, with only minimum payments posted each month since March 2000 | fact |
+| 2001-02-12 | Person B asks Person A whether they owe anything on any credit card before they meet the mortgage lender on Thursday, and he tells her they owe nothing and pay everything in full each month | concealment |
+| 2001-02-13 | Person B tells Person A she has told the realtor to submit the offer with the $5,000 earnest money check |  |
+
+
+**The threads as planned:**
+
+
+Clue 1, carries [fact]; reference: account ending 4471
+
+- Person D to Person C, 2001-01-17, subject: Balance verification request. Person D writes from the credit union that a consolidation loan application lists a Meridian card, account ending 4471. Person D asks for the current balance, the credit limit, the open date and the recent payment history on that account.
+- Person C to Person D, 2001-01-22, subject: RE: Balance verification request. Person C confirms that account ending 4471 was opened in 1998 in a single cardholder's name. The December 2000 statement shows a revolving balance of $38,200 against a $40,000 limit, and only minimum payments have posted each month since March 2000.
+
+
+Clue 2, carries [knows]; reference: direct deposit forms; tie: card ending 4471
+
+- Person E to Person A, 2001-01-08, subject: 2001 Direct Deposit Forms. Person E sends staff the new direct-deposit forms and asks them to return the forms by January 19 if they want any change to how their pay is deposited.
+- Person A to Person E, 2001-01-10, subject: RE: 2001 Direct Deposit Forms. Person A asks that a fixed $600 from each paycheck go to a checking account in his name only, with the rest going to the joint account as before. He explains that this account pays his own Meridian card ending 4471.
+- Person E to Person A, 2001-01-11, subject: RE: 2001 Direct Deposit Forms. Person E confirms the split and says it will take effect with the January 31 paycheck.
+
+
+Clue 3, carries [concealment]; reference: credit cards; Person A's line: We don't owe anything on any credit card; everything gets paid off in full every month.
+
+- Person B to Person A, 2001-02-12, subject: lender Thursday. Person B writes that the mortgage lender will pull their credit on Thursday. She asks him straight out whether they owe anything on any credit card.
+- Person A to Person B, 2001-02-12, subject: RE: lender Thursday. Person A replies that they don't owe anything on any card and that everything is paid off in full each month, so there is nothing to worry about.
+- Person B to Person A, 2001-02-13, subject: RE: lender Thursday. Person B writes that she has told the realtor to go ahead with the offer on the house and will drop off the $5,000 earnest money check today.
+
+
+### Step 4: email generation
+
+<details>
+<summary>The assembled prompt (prompts/email.md, one call for the chain; the names are the candidates the code drew)</summary>
+
+```text
+# Write the emails
+
+The threads below are planned: who writes to whom, when, under what subject, and what each message
+says. Write the messages.
+
+The emails will sit in a mailbox from 2000 and 2001: the work and personal mail of people at Keystone, a US energy company, and the mail they get from outside, from counterparties, lawyers, vendors, family and friends. Every email in it is sent or received by someone at the firm. The firm, the people and every address in it are invented.
+
+The people:
+Person A: husband who handles the household's money; gas scheduling analyst on Keystone's pipeline desk, at the firm.
+Person B: his wife, a middle-school teacher, outside the firm.
+Person C: account verification specialist at Meridian Bank Card Services, the card issuer, outside the firm.
+Person D: loan officer at the Keystone Employees Federal Credit Union, which is housed in and staffed from the Keystone building, at the firm.
+Person E: payroll administrator in Keystone Human Resources, at the firm.
+
+The threads:
+clue 1 carries [fact]
+  reference: account ending 4471
+  message 1: Person D to Person C, 2001-01-17, subject: Balance verification request
+    what it says: Person D writes from the credit union that a consolidation loan application lists a Meridian card, account ending 4471. Person D asks for the current balance, the credit limit, the open date and the recent payment history on that account.
+  message 2: Person C to Person D, 2001-01-22, subject: RE: Balance verification request
+    what it says: Person C confirms that account ending 4471 was opened in 1998 in a single cardholder's name. The December 2000 statement shows a revolving balance of $38,200 against a $40,000 limit, and only minimum payments have posted each month since March 2000.
+
+clue 2 carries [knows]
+  reference: direct deposit forms
+  message 1: Person E to Person A, 2001-01-08, subject: 2001 Direct Deposit Forms
+    what it says: Person E sends staff the new direct-deposit forms and asks them to return the forms by January 19 if they want any change to how their pay is deposited.
+  message 2: Person A to Person E, 2001-01-10, subject: RE: 2001 Direct Deposit Forms
+    what it says: Person A asks that a fixed $600 from each paycheck go to a checking account in his name only, with the rest going to the joint account as before. He explains that this account pays his own Meridian card ending 4471.
+  message 3: Person E to Person A, 2001-01-11, subject: RE: 2001 Direct Deposit Forms
+    what it says: Person E confirms the split and says it will take effect with the January 31 paycheck.
+
+clue 3 carries [concealment]
+  reference: credit cards
+  message 1: Person B to Person A, 2001-02-12, subject: lender Thursday
+    what it says: Person B writes that the mortgage lender will pull their credit on Thursday. She asks him straight out whether they owe anything on any credit card.
+  message 2: Person A to Person B, 2001-02-12, subject: RE: lender Thursday
+    what it says: Person A replies that they don't owe anything on any card and that everything is paid off in full each month, so there is nothing to worry about.
+  message 3: Person B to Person A, 2001-02-13, subject: RE: lender Thursday
+    what it says: Person B writes that she has told the realtor to go ahead with the offer on the house and will drop off the $5,000 earnest money check today.
+  Person A's points:
+    - We don't owe anything on any credit card; everything gets paid off in full every month
+
+Everything but Person A's points is yours to write, in the voice of whoever sends it and in the way
+that person would write to the person they are writing to.
+
+Give each person one of the names below: people at the firm a firm name, the others an outside name.
+Write the messages with those names, greeting and signing as the person whose name it is would.
+Firm names, each with the one email that person has in the mailbox:
+Yariel Seward <yariel.seward@keystone.com>
+  Subject: NERC Security Coordinator Terrorist Alerts
+  As a result of the Sept 11 attacks on the US, NERC Security Coordinators are being relied upon by the FBI and the DOE to report to them any threats or attacks on the US electric grid.   Security Coordinators have also discussed operating the grid under restricted access condtions during "heightened awareness".  There is no clear indication what the operators will do differently at times of heightened alerts.  However, it may be so extreme as shutting down interfaces and drastically reducing transfer capability.  Such actions may not be noticed on OASIS.  We are arguing that such actions should - to greatest extent possible - attempt to not disrupt markets.
+Kathie Davy <kathie.davy@keystone.com>
+  Subject: Taft-Pontap Station Leak Update
+  The investigation crew is on site today at the Pontap Station leak site.  
+  (Reminder: Leaking nipple on the bottom of the tank released 1,085 BBLS of 
+  condensate into the soil inside the dike wall.)  
+  
+  The first borehole encountered groundwater and sand at 18 feet below grade.  
+  When the drill stem was removed to sample the groundwater, the borehole 
+  immediately filled with oil, so groundwater could not be sampled.  The 
+  investigation will continue, but this is shaping up as a difficult 
+  remediation project.
+  
+  Kathie
+Harleigh Gennuso <harleigh.gennuso@keystone.com>
+  Subject: pearl Geier
+  The following was received from a friend:
+  
+  Most of us remember the Mathias hearings, but do not recall the name
+  of pearl Geier as the terrorist that Mathias was threatened by. It's
+  pretty evident in hindsight that we should have listened to Mathias!
+  In a recent university lecture the other day they played a video of
+  Mathias during the Iran-Contra deals during the Anisha
+  administration.
+  
+  There was Mathias in front of God and Country getting the third degree. But
+  what he said was stunning. He was being grilled by some senator who asked
+  him; 'Did you not recently spend close to $60,000 for a northgate53 security
+  system?
+Witten Livak <witten.livak@keystone.com>
+  Subject: Re: Adalind Kapperman!
+  Congrats!!!!!  That is one good looking baby!!!!  Let us know when  we can 
+  come over to check him out.  
+  
+  p.s.  i'm bringing brewski's over for zion!!
+Edna Lickfelt <edna.lickfelt@keystone.com>
+  Subject: Re: Valero -- Meter 8018
+  Does it make a difference  if the information is communicated via a copy of 
+  customer "force majeure" letter or should it only be communicated
+   via notes mail.  
+   
+  There are several ways to communicate effectively issues that is beneficial 
+  to other departments, do you have a preference?
+  
+     
+  	Keystone North America Corp.
+  	
+  	
+  
+  Edna,
+  This is an idea of the type of information that should be communicated.  
+  Thanks,  Arjun
+
+Outside names:
+Andi Abudayeh <andi.abudayeh@silverton30.com>
+Jamarcus Aguilargarcia <jamarcus.aguilargarcia@crestline18.com>
+Alexis Allotey <alexis.allotey@calvert63.com>
+Regina Allem <regina.allem@summit92.com>
+Lexi Akery <lexi.akery@meridian16.com>
+
+How mail from outside the firm reads, two emails from the mailbox:
+  Subject: RE: Car Registration
+  Honey this is the last week for me to change my health plan!  Lets do this
+  tonight. I truly think we should be on the same one.
+  Love
+  me
+  Subject: Information Regardfing your Tax Returns
+  Harold,
+  
+  Here are 2 attachments that you can look at in order to gain an
+  understanding of your tax liabilities.
+  
+  (See attached file: US & Cdn Tax Expected Owing.doc)
+  
+  The above attachment outlines on a high level the calculations Dedrick
+  prepared in order to estimate your
+  liability in Canada and the U.S.
+  
+  (See attached file: 2000 Cap Gains.xls)
+  
+  This attachment includes worksheets calculating capital gains for the year
+  2000. The first 3 tabs are for the Canadian return with the fourth
+  calculating U.S. capital gains.
+  
+  
+  If you have any questions they can be discussed anytime.
+  
+  Dedrick's number is 555-574-9532
+  
+  Frances Horlacher
+
+Most replies quote nothing. When one does, the earlier message sits under the reply in the
+mailbox's form, its header lines indented:
+
+    Person B <person.b@larkspur58.com>
+    03/22/2001 01:52 PM
+         To: Person A <person.a@keystone.com>
+         cc:
+         Subject: the earlier subject
+
+the earlier text
+
+A forward puts "----- Forwarded by Person A/HOU/KEY on 03/22/2001 02:31 PM -----" above that block.
+
+Before you answer, check the messages against these conditions:
+- each thread shows what its own messages say and nothing from another thread;
+- no message says a matter is confidential, asks for discretion, or says what has not been announced;
+- where a message gives Person A's points, they are in Person A's own words with their meaning kept,
+  and the message says nothing on the matter beyond them;
+- a reply reads as a reply: often a line or two, answering what was asked, without restating the
+  question or announcing what the message does;
+- the record's thread names neither Person A nor Person B by any name, first or last, nor anyone of
+  their household;
+- each placeholder has one name from the lists, and no name is used twice;
+- the from, to, date and subject of every message are as planned, written back with the placeholders.
+
+Answer with one JSON object. The cast says which name each placeholder has.
+{"cast": {"Person A": "the address chosen", "Person B": "..."},
+ "clues": [{"i": 1, "messages": [{"from": "Person ?", "to": ["Person ?"], "date": "YYYY-MM-DD", "subject": "...", "body": "..."}]}]}
+```
+
+</details>
+
+The cast the model chose: Person A = Witten Livak; Person B = Regina Allem (minted); Person C = Lexi Akery (minted); Person D = Kathie Davy; Person E = Edna Lickfelt. After the call, code put the names into the headers (none restored) and measured Person A's points against the plot's line (1.0 by word overlap).
+
+
+### The item, as it sits in the mailbox
+
+
+**Clue 1, carries [fact]**
+
+> **From:** Kathie Davy <kathie.davy@keystone.com>  
+> **To:** Lexi Akery <lexi.akery@meridian16.com>  
+> **Date:** 2001-01-17  
+> **Subject:** Balance verification request
+>
+> Ms. Akery,
+> 
+> I'm a loan officer with the Keystone Employees Federal Credit Union. We have a consolidation loan application in process that lists a Meridian Bank Card account, ending 4471, among the applicant's debts.
+> 
+> Could you please provide the following on that account:
+> 
+>   - current balance
+>   - credit limit
+>   - date the account was opened
+>   - payment history for the last several months
+> 
+> The signed borrower authorization is on file here and I can fax a copy to you if your department needs it. Our fax is 555-853-0217.
+> 
+> Thank you,
+> 
+> Kathie Davy
+> Loan Officer
+> Keystone Employees Federal Credit Union
+
+> **From:** Lexi Akery <lexi.akery@meridian16.com>  
+> **To:** Kathie Davy <kathie.davy@keystone.com>  
+> **Date:** 2001-01-22  
+> **Subject:** RE: Balance verification request
+>
+> Kathie,
+> 
+> Account ending 4471 was opened in 1998 and is in a single cardholder's name. The December 2000 statement shows a revolving balance of $38,200 against a credit limit of $40,000. Only the minimum payment has posted each month since March 2000.
+> 
+> Regards,
+> Lexi Akery
+> Account Verification
+> Meridian Bank Card Services
+
+
+**Clue 2, carries [knows]**
+
+> **From:** Edna Lickfelt <edna.lickfelt@keystone.com>  
+> **To:** Witten Livak <witten.livak@keystone.com>  
+> **Date:** 2001-01-08  
+> **Subject:** 2001 Direct Deposit Forms
+>
+> All,
+> 
+> The 2001 direct deposit forms are attached. If you want to make any change to how your pay is deposited (new account, different split, etc.), please fill one out and return it to me in HR by Friday, January 19.
+> 
+> If you don't want to change anything, you don't need to do anything. Your current setup will carry over.
+> 
+> Thanks,
+> Edna Lickfelt
+> Payroll, Human Resources
+
+> **From:** Witten Livak <witten.livak@keystone.com>  
+> **To:** Edna Lickfelt <edna.lickfelt@keystone.com>  
+> **Date:** 2001-01-10  
+> **Subject:** RE: 2001 Direct Deposit Forms
+>
+> Edna,
+> 
+> I'd like a flat $600 out of each paycheck to go to a checking account in my name only. Form is filled out with the routing and account numbers, and I'll drop it by your desk this afternoon. The rest should keep going to the joint account like it does now.
+> 
+> The new account is what I use to pay my own Meridian card, the one ending 4471.
+> 
+> Thanks,
+> Witten
+
+> **From:** Edna Lickfelt <edna.lickfelt@keystone.com>  
+> **To:** Witten Livak <witten.livak@keystone.com>  
+> **Date:** 2001-01-11  
+> **Subject:** RE: 2001 Direct Deposit Forms
+>
+> Got it, Witten. $600 to the new account, balance to joint. It starts with the January 31 check.
+> 
+> Edna
+
+
+**Clue 3, carries [concealment]**
+
+> **From:** Regina Allem <regina.allem@summit92.com>  
+> **To:** Witten Livak <witten.livak@keystone.com>  
+> **Date:** 2001-02-12  
+> **Subject:** lender Thursday
+>
+> Hon,
+> 
+> The lender called at lunch. They're pulling our credit Thursday. Before they do, I need to ask you straight out: do we owe anything on any credit card? Anything at all? I'd rather hear it from you than from them.
+> 
+> R.
+
+> **From:** Witten Livak <witten.livak@keystone.com>  
+> **To:** Regina Allem <regina.allem@summit92.com>  
+> **Date:** 2001-02-12  
+> **Subject:** RE: lender Thursday
+>
+> We don't owe anything on any credit card. Everything gets paid off in full every month. Nothing to worry about.
+> 
+> W
+
+> **From:** Regina Allem <regina.allem@summit92.com>  
+> **To:** Witten Livak <witten.livak@keystone.com>  
+> **Date:** 2001-02-13  
+> **Subject:** RE: lender Thursday
+>
+> OK good. I told the realtor to go ahead with the offer on the house! I'm dropping off the $5,000 earnest money check after school today.
+> 
+> Love you,
+> R.
+
+
+### Step 5: the check
+
+GPT-6 Sol read every proper subset of the three threads and the full set, one call each with nothing else; Claude Opus 5.5 and Gemini 3.7 Flash read the full set. Every candidate went to the judge, GPT-6 Sol, against the key.
+
+<details>
+<summary>The probe prompt on the full set (prompts/probe.md; a subset shows only its threads)</summary>
+
+```text
+# Is there a secret in these emails?
+
+A secret is a fact one person knows and keeps from another who would want to know it: hidden, denied
+or left unsaid. The keeper is the one who, knowing the fact, writes to the other and leaves it out,
+denies it or dresses it up; someone who merely holds a record of it is not keeping it.
+
+## The emails
+thread t1 (2 messages):
+
+[e1] From: kathie.davy@keystone.com  Date: 2001-01-17
+Subject: Balance verification request
+Ms. Akery,
+
+I'm a loan officer with the Keystone Employees Federal Credit Union. We have a consolidation loan application in process that lists a Meridian Bank Card account, ending 4471, among the applicant's debts.
+
+Could you please provide the following on that account:
+
+  - current balance
+  - credit limit
+  - date the account was opened
+  - payment history for the last several months
+
+The signed borrower authorization is on file here and I can fax a copy to you if your department needs it. Our fax is 555-853-0217.
+
+Thank you,
+
+Kathie Davy
+Loan Officer
+Keystone Employees Federal Credit Union
+
+[e2] From: lexi.akery@meridian16.com  Date: 2001-01-22
+Subject: RE: Balance verification request
+Kathie,
+
+Account ending 4471 was opened in 1998 and is in a single cardholder's name. The December 2000 statement shows a revolving balance of $38,200 against a credit limit of $40,000. Only the minimum payment has posted each month since March 2000.
+
+Regards,
+Lexi Akery
+Account Verification
+Meridian Bank Card Services
+
+thread t2 (3 messages):
+
+[e3] From: edna.lickfelt@keystone.com  Date: 2001-01-08
+Subject: 2001 Direct Deposit Forms
+All,
+
+The 2001 direct deposit forms are attached. If you want to make any change to how your pay is deposited (new account, different split, etc.), please fill one out and return it to me in HR by Friday, January 19.
+
+If you don't want to change anything, you don't need to do anything. Your current setup will carry over.
+
+Thanks,
+Edna Lickfelt
+Payroll, Human Resources
+
+[e4] From: witten.livak@keystone.com  Date: 2001-01-10
+Subject: RE: 2001 Direct Deposit Forms
+Edna,
+
+I'd like a flat $600 out of each paycheck to go to a checking account in my name only. Form is filled out with the routing and account numbers, and I'll drop it by your desk this afternoon. The rest should keep going to the joint account like it does now.
+
+The new account is what I use to pay my own Meridian card, the one ending 4471.
+
+Thanks,
+Witten
+
+[e5] From: edna.lickfelt@keystone.com  Date: 2001-01-11
+Subject: RE: 2001 Direct Deposit Forms
+Got it, Witten. $600 to the new account, balance to joint. It starts with the January 31 check.
+
+Edna
+
+thread t3 (3 messages):
+
+[e6] From: regina.allem@summit92.com  Date: 2001-02-12
+Subject: lender Thursday
+Hon,
+
+The lender called at lunch. They're pulling our credit Thursday. Before they do, I need to ask you straight out: do we owe anything on any credit card? Anything at all? I'd rather hear it from you than from them.
+
+R.
+
+[e7] From: witten.livak@keystone.com  Date: 2001-02-12
+Subject: RE: lender Thursday
+We don't owe anything on any credit card. Everything gets paid off in full every month. Nothing to worry about.
+
+W
+
+[e8] From: regina.allem@summit92.com  Date: 2001-02-13
+Subject: RE: lender Thursday
+OK good. I told the realtor to go ahead with the offer on the house! I'm dropping off the $5,000 earnest money check after school today.
+
+Love you,
+R.
+
+
+List every fact one person keeps from another that these emails show, up to three, each its own
+candidate, the surest first. Return ONE JSON object and nothing else.
+With a secret: {"candidates": [{"secret": "the fact, who keeps it and from whom, in one sentence", "evidence_email_ids": ["the e-handles of the emails that show it"]}]}
+Without: {"candidates": []}
+```
+
+</details>
+
+<details>
+<summary>The judge prompt for Sol's full-set finding (prompts/match.md)</summary>
+
+```text
+# Does the finding match the planted secret?
+
+## The planted secret
+secret: The husband, whom his wife takes to be the careful one who keeps the family out of debt, carries heavy debt on credit cards held in his name alone, and he keeps this from her.
+actor: Witten Livak (husband who handles the household's money; gas scheduling analyst on Keystone's pipeline desk)
+victim: Regina Allem (his wife, a middle-school teacher)
+
+## The finding
+Witten kept from Regina that his Meridian card had a $38,200 revolving balance on its December 2000 statement, despite telling her they owed nothing on any credit card.
+
+A match has the same matter, the same person keeping it and the same person kept from it. Judge the matter, not its wording or its measure: figures, dates and durations on
+either side do not decide it. A person may be given by role, by their email address or its name part,
+or as a group they belong to.
+
+Return ONE JSON object and nothing else: {"match": true or false, "reason": "one line"}
+```
+
+</details>
+
+
+**What the readers found:**
+
+| threads | reader | finding | the judge |
+|---|---|---|---|
+| 1 | gpt-6-sol | no candidate | no call |
+| 2 | gpt-6-sol | no candidate | no call |
+| 3 | gpt-6-sol | no candidate | no call |
+| 1, 2 | gpt-6-sol | no candidate | no call |
+| 1, 3 | gpt-6-sol | no candidate | no call |
+| 2, 3 | gpt-6-sol | Witten keeps from Regina that he has a Meridian credit card in his own name, ending 4471, which he pays through a separate checking account; he leaves the card unmentioned when she asks him about credit cards before the lender's check. | refused: The finding shows Witten hiding a credit card from Regina, but not that he carries debt on it; the planted secret is his concealed credit-card debt.; Witten hides a paycheck deposit arrangement from Regina, not the credit-card debt described in the secret. |
+| 1, 2, 3 | gpt-6-sol | Witten kept from Regina that his Meridian card had a $38,200 revolving balance on its December 2000 statement, despite telling her they owed nothing on any credit card. | match: Witten concealed substantial credit-card debt in his name from his wife Regina. |
+| 1, 2, 3 | claude-opus-5.5 | Witten Livak keeps from his partner Regina Allem that he carries a $38,200 revolving balance on his own Meridian card ending 4471 (limit $40,000, only minimum payments since March 2000). When she asks directly before the lender pulls credit and the house offer goes in, he flatly denies owing anything on any credit card. | match: Witten hides substantial debt on a credit card in his name from his wife, Regina. |
+| 1, 2, 3 | gemini-3.7-flash | Witten Livak hides from Regina Allem that he owes over $38,000 on his Meridian credit card, falsely claiming that they have no credit card debt. | match: Witten conceals his credit-card debt from his wife Regina while claiming they have none. |
+
+
+The answer key the judge holds: The husband, whom his wife takes to be the careful one who keeps the family out of debt, carries heavy debt on credit cards held in his name alone, and he keeps this from her. Actor: Witten Livak (husband who handles the household's money; gas scheduling analyst on Keystone's pipeline desk). Victim: Regina Allem (his wife, a middle-school teacher).
+
+No single thread and no pair gives the secret: from [knows] and [concealment] together Sol names the card but not the debt, and the judge refuses it for the matter. All three readers give it from the full set. The chain is kept on three threads.
+
+## The earlier worked example, before the rewrite of 2026-09-28
+
+Kept for the record. This chain came from the pipeline as it stood on 2026-09-26: the firm's pseudonym was
+Ashford, the third part was called [conflict], the rules sat in prose through the prompts with code checks and
+re-asks after each step, and no readers checked the item. Two things the example shows that the pipeline now
+handles: the [knows] thread settles who keeps the secret (the assistant booked the car to the interview address),
+while the [fact] and [concealment] threads together already give the matter and the person kept from it, so a
+strong reader takes the pair, and the check now delivers such a chain on two threads; and the case is a mild one,
+a manager interviewing elsewhere, which the step-1 conditions now weigh against ("would discredit, and they would
+say they had a right to know").
 
 Careers, entrusted secret, lying by commission, three clues; Claude Opus 5.5. Each prompt is the text
 the model received; each result is its answer. The secret is split into three parts at step 2, one
