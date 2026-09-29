@@ -1402,3 +1402,269 @@ release. Run 39 and run 40 chains were cast from the Ashford build and stay as r
 The attachment-name bank the plot step draws from (benchmark_pool/file_bank.json) still held the old build's 24 names;
 mailbox_profile.py now builds it from the release, 49 names, and `--only-files` does that alone without the private
 map. The two model records of the release's people and audit passes are tracked beside the release.
+
+## Before the dataset run: the casting pool and the cleaning (2026-09-28)
+
+The release's casting pool is 100 people, 82 with a First Last name; run 40 cast 3.4 firm people per chain, so 30
+chains need about 100 and 93 about 316. "Each used once" would have emptied the pool inside a 30-chain run, so firm
+people may now be cast in more than one chain, the least cast first (USED["people"] is a count); never twice in one
+chain, and the tester plants one chain per mailbox, so a person in two chains never meets himself. Minted names and
+domains are still one chain each (5,990 names). Stub run of 9 chains: 18 firm castings over 16 people, at most 2 each.
+
+## Thread t_0598 replaced (2026-09-28, user; 4 calls on GPT-6 Sol, cents)
+
+Opus 5.5 and Gemini 3.7 Flash, shown thread t_0598 with the probe prompt, reported the same kept-back letter GPT-6 Sol's
+sweep had found (an assistant and a security officer deciding not to pass an ex-employee's angry letter to the CEO), so
+under the consensus rule it goes. scripts/replace_thread.py: draws a thread of the same topic and length from the corpus
+as the sampler would (labels, thread map, whole thread, two writers, not already in the release by a name-free body
+signature), runs the people pass, then the release's own anonymiser held to the release (--firm Keystone
+--firm-domain keystone.com, pseudonyms and outside domains from the reserve of unused names, --stats-from the release so
+ordinary-word surnames stay words; the first pass turned "on both sides" into "on both agliano" on two emails' worth of
+statistics), then the audit; swaps the thread in as t_1008, records the removal and the source ids in the manifest,
+keeps the removed thread beside the release, and drops from the reserve every name sharing a token with the new text.
+Result: e_002001 and e_002002, a two-message thread on "communication", audit clean, reserve 5,937 names. The private
+map of the release was not needed and not touched; the new thread's people are not linked to it, so a person of theirs
+who also appears elsewhere in the mailbox would carry two pseudonyms, which the sampler's choice of a quiet thread makes
+unlikely.
+
+## The five run-40 drops read by hand, and the fixes at their steps (2026-09-28, user)
+
+Read in full: business omission is recoverable and the reader missed it (the month-to-month coal renewal of CSA-AS07-98
+puts the manager in the know); careers paltering and medical paltering are recoverable by inference, with the tie from
+the record's reference (employee ID 4471, patient file 4471) to the actor never on the page, and the medical one also
+carrying the mother's "fine" through the father; medical omission is weak because the father asks about the weekend, not
+the mother's health, where the part had him ask about her appointment; law commission is not established, since nothing
+joins registration 48213 to the attorney the paralegal lies about. Fixes at the steps: (1) step 1, the entrusted
+reading now ends "The fact is that person's state; what they themselves say or hide about it is no part of the case".
+(2) step 3, the plot declares the tie in a `tie` field on the [knows] clue, the prompt names it as the reference by which
+the record names whom it concerns, and a code check with one re-ask fires when the [fact] part's reference (a
+registration, an id, a file, an account) recurs nowhere in the [knows] thread, or when the [fact] thread's text names
+Person A or Person B; skipped for strategic secrets, whose plan file cannot sit in the actor's thread. Replayed over
+run 40 it fires on four of the five drops and on the law omission chain, and passes the rest. (3) step 3, an omission's
+occasion is the one the part gives. (4) step 4, a re-ask when the [fact] thread's bodies carry the actor's or the
+victim's cast name (run 40's brokerage "registered to Javien Solinsky and Lilli Abedin"); replayed, it fires on that
+chain alone. (5) the keeper defined the same way in the probe and in the tester's system prompt: the one who, knowing
+the fact, writes to the other and leaves it out, denies it or dresses it up; a holder of the record is not keeping it.
+
+## Run 41: the five secrets from step 1 under the new checks, checked with GPT-6 Sol, no fix rounds (2026-09-28, about $3.20)
+
+State logs/run41.json, the Keystone mailbox. Fresh step-1 draws: an engineer's lapsed licence, a college fund lost on
+technology stocks, a suspended attorney, a sister's HSV-2 diagnosis kept from her fiancé, a plant closure. The entrusted
+sentence held: neither entrusted secret carries the subject's own concealment. 211 calls; 16 of the first plot and email
+attempts content-filtered, all resent to the fallback, no chain lost. Kept 10 of 15 (6 on three threads, 4 pairs), 5
+dropped, all misses. The step-3 tie check fired once (careers omission) and the re-ask satisfied it; every [knows] clue
+but the four pairs' declared a tie; the step-4 record check never fired; run 40's faults did not recur.
+The five drops read with Opus 5.5 and Gemini 3.7 Flash on the full set, judged by Sol: Opus recovers all five at its
+first candidate, Gemini three. So the drops are the reader's, three ways: (1) the law chains, where Sol reports the
+[knows] act (a replacement signer) as the secret and never joins the record's suspended registration to the attorney;
+(2) the two medical chains, where Sol returns no candidate at all on an explicit HSV-2 record and a flat lie, and both
+other readers find it at once; (3) careers, where Sol and Gemini name the victim by his address, lani.straka, while he
+signs Shepherd, and the key had only the signed name. The key now carries the address where it differs from the name,
+and the judge may take a person by address. The gate can now take the full set from any prober (--full-any, decide()
+FULL_RULE); leaks count from any prober as before. Sol alone as prober and judge is not a strong enough reader for the
+gate; the next check should run with a second reader and the any-rule.
+
+## The prompts rewritten for one definition and a reason (2026-09-28, user's review of the page)
+
+User: too many definitions, said twice, and no link from the segmentation to why. plot.md now: the secret, how it is
+kept, the kind; "The secret is split into three parts, and each thread carries one:" with the parts each carrying a
+one-clause meaning (atoms.json glosses, through parts_text, so diagnose.md gets the same); "In this way the threads
+work as an AND gate: ..."; the people; then one paragraph per thread on what it may carry, and the read-through. The
+paragraphs that defined the parts a second time, the list of example record writers, and the "four pieces" sentence on
+the line field are gone. clues.md the same way: the secret and how it is kept, "Split the secret into three parts ...",
+the parts, "In this way the parts work as an AND gate: ...", whom they are written to, the output; the [knows] rule cut
+to three sentences and the paltering act to its terms. email.md's opening no longer says where the mail sits, since the
+setting line does. diagnose.md no longer restates the parts. Assemblies checked for every pattern and both thread
+counts, no placeholder left; the review page rebuilt and republished.
+
+## plot.md: the thread rules folded into the parts, one gate sentence (2026-09-28, user's second review)
+
+User: the "The threads" section repeated what <<PARTS_TEXT>> already said, and the gate line assembled to the same
+thing three times ("each thread carries one", "[fact] and [concealment] are never in the same clue", "With three
+clues, one part each"). Read against a run-41 assembly: what the section added beyond the parts was the reader rule,
+Person A off the [fact] thread, the tie, and two case lines; its "rerouting mail ... is itself a hiding" sentence
+contradicted the [knows] part it sat under (the paralegal rerouting the bar's envelopes) and belongs to step 2, where
+atoms.json already has it. Now: each gloss carries its thread rule ([fact]: written by someone other than Person A to
+someone at the firm with business in it, by a reference; [knows]: carrying the record's reference and nothing else of
+the fact; [concealment]: on the occasion the part gives); <<SPLIT>> and <<GATE>> replace FEWER_CLUES, NEVER_TOGETHER,
+PLAN_SHAPE and KNOWS_THREAD, one sentence each per clue count, the gate giving the reason it holds; the reader rule is
+one sentence after it; <<CASE_RULES>> (case_rules()) shows the kind's plot_rule (kinds.json: the strategic
+not-yet-announced line) and the pattern's (patterns.json: the omission and paltering question line, the omission
+arrangement line) only to the chain they apply to, and <<PATTERN_RULE>> after the menus is gone. The "The threads"
+section and the read-through paragraph are deleted. n is 2 or 3: --n takes 2 or 3, --vary-n alternates them, the "4"
+templates and the four-clue plan check are gone. Stub run of 45 chains on both counts, no placeholder left; 19 tests.
+
+## Run 42: steps 2 to 4 on run 41's five secrets under the folded plot prompt, no check, read by hand (2026-09-28, about $1.10)
+
+State logs/run42.json, seeded with run 41's five step-1 secrets. 15 clue calls, no re-ask; 41 plot and email calls,
+8 of them content-filtered and resent to the fallback (one plot, seven email sets); one plot re-ask (nobody at the
+firm). Every [knows] clue declared a tie and every tie recurs in its thread; no record names Person A or B by first
+name. Read thread by thread and pair by pair as a prober would, with the judge's standard (same matter, keeper, kept
+from):
+- pass on three threads: law paltering, and all three careers chains, where the licence number sits only in the
+  record and the actor's thread and the concealment names the engineer without it;
+- pass with a miss risk: medical omission, where file 4471 is never tied to the sister by name, only by the actor
+  picking up its refills through the wedding;
+- [fact]+[concealment] gives it in nine: the record and the concealment share what links them without the [knows]
+  thread. The link is the matter's own name for the three strategic chains (Station 7, 12, 4 in both), the bar number
+  written into the roster (law omission), the credit-facility closing in both (law commission), the one college fund
+  (both finance commission and paltering), the children's surname Faigen in the record (finance omission), and the
+  drug acyclovir in the record and the fiancé's question (medical paltering);
+- [fact]+[knows] gives keeper and matter in three, where the [knows] act is mail rerouted away from home (finance
+  commission and paltering, medical commission): the act itself says something is hidden, and the victim follows from
+  "the house" or "the new apartment before her wedding". Five of the fifteen [knows] parts are mail rerouting.
+Under the quota policy none of these drops: the nine become pair deliveries. The gate's premise, that a record plus a
+false or evasive line does not show the actor knows, is not what the prober tests; a prober lists the pair as a kept
+fact whenever the two threads name the same matter and person. So the [concealment] thread must not carry what links
+it to the record, and for a strategic secret the record must name the site by reference as it names a person.
+Drift at step 4: the finance palter gained "The college account's fine" (a false sentence on a palter) and the
+strategic omission gained "That's the picture I have" (a reassurance on an omission), neither in the plot's line.
+Cast: the law paltering plot cast Maribeth twice, so one reply comes from another address signed Maribeth. The name
+pool holds "Girl Ankenbrandt". The actor-in-record check tests first names only, so the surname passed.
+Nothing changed after this run; the fixes it points to are at step 2 (a rerouting flag), step 3 (the reference and
+the matter's name kept out of [concealment]; the strategic record by reference, and its tie exemption removed),
+step 4 (a surname test; add nothing on the matter beyond Person A's points).
+
+## The code gates removed; the conditions are in the prompts (2026-09-28, user's decision)
+
+User: no code checks; write the conditions into the prompt as a list the model checks before it answers. Each step's
+prompt now ends with "Before you answer, check ... against these conditions", one line per condition, and the part
+definitions in atoms.json and the glosses are trimmed to definitions so nothing is said twice. Step 2: [fact] names
+no one by name, role or household and has no one telling or hiding; [knows] carries no measure, no company or
+person the record is about, is not mail, statements or records moved out of sight, and says nothing is hidden. Step
+3: the parts sit as laid out, no thread carries [fact] with [concealment]; placeholders and someone at the firm on
+every message; the record names whom it concerns by the reference only, not Person A or B or the household; the
+[knows] thread carries the reference in its tie field and a message; the [concealment] thread carries neither the
+reference nor the record's particulars and names the matter as an outsider would. Step 4: the record's thread has
+neither name, first or last, nor the household; a message with Person A's points adds nothing on the matter; one
+name per placeholder, none twice. The strategic plot_rule adds: the record names the site by a reference, the
+site's name sits in [knows]. Removed from generate.py: part_flags and its regexes and re-ask, the plot re-asks on
+the plan, invented names, nobody at the firm and record_faults (with _codes and _thread_text), actor_in_record and
+its re-ask. Kept: the plan read from the carries fields with the template when it does not hold (plan_fallback holds
+the reason), the clue-count re-ask at step 4, and the passive records (plot_invented, plot_undefined, holds_leak,
+isolation, fact_stated, line_kept, plot_checks). 17 tests; stub run of 45 chains on both counts, no placeholder left.
+
+## Every rule of steps 2, 3 and 4 in the check list (2026-09-28, user's request)
+
+User: the same rule-check style for all of steps 2, 3 and 4. The prose above each list now holds only the material
+(secret, parts, cast, threads, names, style), the definitions and the reason (the gate); every rule is one item of
+"Before you answer, check ... against these conditions". Step 2 adds: one sentence each, third person, people by
+role; written to one person, named in [concealment] and the victim field. Step 3 adds: every message dated on an
+event of the timeline, every date in the era; every field its value and nothing else (reference, choice,
+what_happens); and the case lines (kinds.json and patterns.json plot_rule) are the list's last items. Step 4 adds:
+a thread shows only its own messages; nothing confidential, no discretion asked, nothing unannounced said; Person
+A's points in Person A's words, meaning kept, nothing beyond them; a reply reads as a reply; headers as planned
+with the placeholders. Stub run on both counts, no placeholder left; 17 tests; page rebuilt.
+
+## Proofread of steps 2, 3 and 4 against run 42 (2026-09-28)
+
+User: every check the faults need, easy to follow, nothing twice or scattered, no definition that only confuses.
+Out: the source quotes and citations from the pattern line and the paltering act (they stay in patterns.json and
+atoms.json's act for the paper); the step-2 title's instruction repeated as a section; the definition of "the
+matter"; "the actor's act against what they know:" before the act; "add anyone the threads need" said twice at step
+3; the field descriptions said in the check list and again in the schema (the schema keeps them); "Who these people
+are in the mailbox"; the naming menu's four-line gloss (now: real subject lines, real file names, a file name only
+where the people would use it); "to make in Person A's own words" on the points label (the check says it); the
+forward line's old firm code (/HOU/KEY, as the release has it); runs of blank lines in the name samples. In: step
+2, [fact] names what it concerns by a reference and [concealment] names the matter as the victim would, without
+the record's reference or particulars (run 42's station, drug and college-fund links were made at step 2); step 3,
+Person A is not on the [fact] thread, and the [knows] thread says in Person A's words whom or what the reference
+belongs to (the medical omission's lost tie); the omission case line adds no denial, reassurance or status (the
+strategic omission's "that's the picture I have"). Person C's line: who writes or receives the record. 17 tests;
+stub run on both counts, no placeholder left; page rebuilt.
+
+## Run 43: steps 2 to 4 on the five secrets under the proofread prompts, no code gates, no check, read by hand (2026-09-28, about $1.10)
+
+State logs/run43.json, seeded like run 42. 15 clue calls; 38 plot and email calls, 8 content-filtered and resent to
+the fallback (three plots, five email sets). Against run 42, by reading: rerouting [knows] acts 7 to 0 (the [knows]
+acts are now a co-signer asked for, aid forms requested, a seal reused, a seal block dropped, a colleague asked to
+seal, an order cancelled, a short renewal term, a pickup authorisation, a spa booking changed, a refill collected);
+the strategic record names the site by a code in all three (G-07, GEN-0417, GS-114) against Station 7, 12, 4 in
+run 42; the record's reference in the [concealment] thread 1 to 0; the actor's surname in the record 1 to 0; every
+[knows] thread carries the reference and says whose it is (run 42 lost one). The record's dollar figures stay in
+the [fact] part, which is allowed.
+Verdicts, the judge's standard as before: 11 pass on three threads (law omission, careers omission and medical
+commission with no pair even guessable; the rest guessable only, the licence or file number in the record and the
+person in the concealment with nothing joining them). 4 carry a pair risk: finance commission and paltering, where
+the record's "custodial education account for two minor beneficiaries" and the wife's "kids' college fund" are the
+same matter under two names and the only college fund in the mailbox; medical omission, where the record is sent
+"ahead of the new coverage" and the concealment is the fiancé's spouse enrolment, the record carrying the
+concealment's occasion; law paltering, where the general counsel asks "anything outstanding on Shelby's license
+renewal?", closer than an outsider would. No [fact]+[knows] pair gives the victim any more. Run 42 had 5 pass,
+9 pair links and 3 [fact]+[knows] links.
+What the read turned up beyond the gate: (1) casting: 15 of the 32 firm people cast in this run hold different
+roles in different chains (Delia Bexley a paralegal, then general counsel, then benefits; Davian Conser a plant
+manager, then procurement; Ilan Polino a husband-accountant, then a pipeline engineer), which the assembled mailbox
+would contradict itself on; the pool is reused least-used-first with no role memory. (2) The tie sometimes lands
+where no one would write it: a clinic chart number given to a spa, "GEN-0417 is Millbrook Station" to purchasing,
+"that's us here at Millbrook" to a buyer. (3) The Sol-fallback plot for the strategic omission is thin: two
+single-message threads that restate the parts. (4) Chain 4's [knows] thread opens with a message addressed to both
+parents, so the victim is on it; the reply is the husband's alone. (5) The years-out-of-era stat counts phone
+number fragments (2046) and a past year in a sentence (since 1994).
+
+## The invented world said once; a test of the content filter prepared (2026-09-29)
+
+User: some Opus calls may be filtered because the prompt says names are put in afterwards, which can read as real people;
+say the people are placeholders and never imply a real person or company. The shared setting (patterns.json, steps 3 and
+4) now ends "The firm, the people and every address in it are invented."; plot.md's cast line is "Use these people, by
+placeholder:". What the two runs show: step 2, no names, 0 of 30 filtered; step 3, placeholders only, 4 of 30; step 4,
+names, addresses and sample emails, 12 of 30; by topic the plant-closure chains take 7 of the 16 (both runs' email calls
+and one plot), law 5, careers 2, finance 1, medical 1. So names raise the rate and the topic raises it more. The filter
+is on the output (empty answer, finish_reason content_filter), so wording changes it only through what the model writes.
+A test is ready in the scratchpad (filter_test.py): the eight run-43 prompts that were filtered, sent again as sent and
+in the new wording, three samples each, counting content_filter; dry-run on the stub. Not run: needs a yes.
+
+## Run 43 checked with GPT-6 Sol, no fix rounds (2026-09-29, 136 check calls, about $2.30)
+
+`check --rounds 0 --matcher openai/gpt-6-sol` on logs/run43.json. Kept 8 of 15, all on three threads; dropped 7: six
+misses on the full set (law omission, finance omission, careers commission and paltering, strategic paltering, medical
+paltering) and one single-thread leak (finance paltering: the palter's "with the whole market down this year nobody's
+statements look good" gave Sol "the college fund has lost value", which the judge took as the matter).
+Against the hand reading (11 pass, 4 pair risks): Sol never took a [fact]+[concealment] pair in any chain, so none of
+the four risks showed; the judge refused every [fact]+[knows] candidate for the wrong victim (the guidance counselor,
+the sealing colleague, the procurement clerk) and every [knows]+[concealment] candidate for the wrong matter (a refill,
+boiler tubes, a co-signature), as designed. Sol's failure is the full set: three chains with no candidate at all (the
+law omission, both careers chains, where the record's number sits in the actor's own thread as "my seal", "my number")
+and three with the [knows] act reported as the secret (the account's existence, the one-year coal term, the spa
+change). The same reader weakness as run 41, where Opus 5.5 recovered all five drops. Sol reads at medium reasoning.
+The check's reader, not the generation, decides these six; a second reader on the full set with --full-any, or Sol at
+high reasoning, is the next test.
+
+## The six run-43 misses read again on the full set by three readers (2026-09-29, 35 calls, about $1.50)
+
+Scratch script reprobe.py: the full set only, the probe prompt as in the check, Sol the judge. Sol at high reasoning
+recovers 2 of 6 (both careers chains); Opus 5.5 and Gemini 3.7 Flash recover 5 of 6 each, at their first candidate.
+All three miss the law omission: Opus reads Delia, the general counsel who forwards the roster with her warranty, as
+the one keeping the suspension from the insurer, and Kandice's co-signature request as nondisclosure to the outside
+firm; the judge refuses both for the people. Sol at high reasoning still reports the [knows] act on the finance and
+strategic chains and the spa change on the medical one. So five of Sol's six misses are the reader's, one is a chain
+whose victim reads as a participant. Gemini 3.7 Flash reads as well as Opus here at a fifth of the price and is not
+the generator; the check should run with Sol and Gemini 3.7 Flash as probers and --full-any.
+
+## Final pass over the pipeline and the fix loop (2026-09-29)
+
+User: a last check that every prompt has the latest fixes, the fix loop included. Step 1 (secret.md) had not: it now has
+the same shape as the others, the material, the four fields, then "Before you answer, check the cases against these
+conditions" (destructive information, a standing state, concrete and within bounds, no sums or dates in the secret,
+people by role); Goffman's quotes and pages leave the prompt (kind_line gives the name and the plain reading; the
+quotes stay in kinds.json for the paper). The fix loop: the revision block now sits before the conditions and the
+output of the redone step (with_revision), not after the schema; its closing line no longer restates the gate, since
+the conditions follow; diagnose.md's leak, miss and step definitions name the new conditions (the [concealment]
+thread carrying the record's reference or particulars, the [knows] thread's reference and whose it is, rerouting).
+The three redo paths (clues, plot, emails) exercised on the stub with a forced diagnosis: each redone prompt carries
+the readers' findings, the previous version and the change before its conditions, no placeholder left; a real
+diagnosis prompt assembled from run 43's dropped chain fills every field. README: the step-2 code check paragraph
+replaced by the conditions-in-the-prompt sentence; "code checks it" for the cast is now "code puts the names into
+the headers"; the dead "people retried" report field removed. 17 tests; stub run end to end on both counts.
+
+## The seven dropped chains of run 43 checked again with Gemini 3.7 Flash as prober, Sol as judge, the any-rule (2026-09-29, 63 calls, about $0.70)
+
+On a copy, logs/run43_gemini.json, so the Sol check stays in logs/run43.json. Kept 6 of 7: the strategic and medical
+paltering chains on three threads; the finance paltering and omission and both careers chains delivered on the
+[fact]+[concealment] pair, which Gemini reads by itself (the record's "custodial education account for two minor
+beneficiaries" against the wife's "kids' college fund"; a lapsed licence number against "my license is current"),
+the guess the hand reading called; the law omission still gives nobody anything. Gemini did not take the finance
+palter's single thread that Sol took. So a strong reader takes the pairs Sol leaves alone, and the pipeline's answer
+to that is the pair delivery. Put together with Sol's round: 8 on three threads by Sol, 2 on three and 4 on pairs by
+Gemini, 1 drop, though Gemini did not re-read Sol's eight, where it may find pairs too (the law paltering and finance
+commission risks). The check should run both probers from the start, with --full-any.

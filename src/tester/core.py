@@ -146,8 +146,9 @@ def answer_key(case: BenchmarkCase) -> dict:
     names = chain.get("names") or {}
     roles = {p.get("person"): p.get("role", "") for p in (chain.get("plots") or {}).get("people") or [] if isinstance(p, dict)}
     def who(label):
-        nm = (names.get(label) or {}).get("name", label)
-        return f"{nm} ({roles.get(label, '')})" if roles.get(label) else nm
+        v = names.get(label) or {}; nm = v.get("name", label); addr = v.get("addr", "")
+        head = f"{nm} <{addr}>" if addr and addr.split("@")[0].lower() not in nm.lower().replace(" ", ".") else nm   # the mailbox's signed names can differ from its addresses
+        return f"{head} ({roles.get(label, '')})" if roles.get(label) else head
     return {"secret": chain.get("secret", ""), "actor": who("Person A"), "victim": who("Person B"),
             "kind": case.kind, "pattern": case.pattern, "stake": chain.get("stake", "")}
 

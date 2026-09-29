@@ -174,6 +174,11 @@ def main() -> int:
     ap.add_argument("--out", default="data/topics/sample_anon.jsonl")
     ap.add_argument("--seed", type=int, default=7)
     ap.add_argument("--name-pool", choices=["census", "corpus"], default="census")
+    ap.add_argument("--firm", default="", help="the firm's pseudonym to keep, for emails added to a released mailbox")
+    ap.add_argument("--firm-domain", default="", help="the firm's domain to keep, with --firm")
+    ap.add_argument("--name-reserve", default="", help="draw pseudonyms and outside domains from this reserve of unused names (a fresh_names.json)")
+    ap.add_argument("--no-reserve-write", action="store_true", help="leave benchmark_pool/fresh_names.json alone")
+    ap.add_argument("--stats-from", default="", help="rows for the word statistics that keep ordinary-word surnames in place; default the input, which is too thin for a few emails")
     args = ap.parse_args()
 
     rows = [json.loads(l) for l in Path(args.inp).open()]
@@ -201,10 +206,25 @@ def main() -> int:
                 if p["addr"]:
                     addrs_of[r].add(p["addr"])
 
-    frac, lower_n = word_stats(rows)
+    frac, lower_n = word_stats([json.loads(l) for l in Path(args.stats_from).open() if l.strip()] if args.stats_from else rows)
     rng = random.Random(args.seed)
     reg = Registry(rng)
     load_name_vocab(reg)
+    if args.firm:                                     # a released mailbox's firm stays what the mailbox calls it
+        reg.company["enron"] = args.firm; reg.domain["enron.com"] = args.firm_domain or reg.domain.get("enron.com", "")
+    reserve = json.loads(Path(args.name_reserve).read_text()) if args.name_reserve else None
+    if reserve:                                       # outside domains from the reserve's stems, never one the mailbox has
+        taken, stems = set(reserve.get("corpus_domains", [])), list(reserve.get("domain_stems") or ["meridian"])
+        def fake_domain(self, dom):
+            dom = dom.lower()
+            if dom not in self.domain:
+                if dom.endswith("enron.com") or dom == "ect.com": self.domain[dom] = args.firm_domain or self.company_token("Enron").lower() + ".com"
+                else:
+                    while True:
+                        d = f"{rng.choice(stems)}{rng.randint(2, 99)}.{dom.split('.')[-1]}"
+                        if d not in taken: taken.add(d); self.domain[dom] = d; break
+            return self.domain[dom]
+        import types; reg.fake_domain = types.MethodType(fake_domain, reg)
 
     # Addresses are ground truth: first.last@ names a person, so the registry is seeded from them before the
     # model's clusters. Role accounts (health.center@) are refused.
@@ -308,6 +328,8 @@ def main() -> int:
     print(f"  company words from domains: {len(orgs):,}")
 
     load_name_pool(reg, args.name_pool)
+    if reserve:                                       # pseudonyms from names the mailbox does not have
+        reg.pool_first = sorted({n.split()[0] for n in reserve["names"]}); reg.pool_last = sorted({n.split()[-1] for n in reserve["names"]})
     reg.assign()
 
     used_first = {p["fake_first"].lower() for p in reg.person.values()}
@@ -488,7 +510,7 @@ def main() -> int:
     }, indent=1))
     print(f"WROTE {out}   ({changed:,} of {len(rows):,} emails changed)")
     print(f"WROTE {mp}   (private — never publish)")
-    write_unused_names(reg, out_rows, args.seed)
+    if not args.no_reserve_write: write_unused_names(reg, out_rows, args.seed)
     return 0
 
 

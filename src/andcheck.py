@@ -51,13 +51,17 @@ def candidates_of(ans: dict | None) -> list[dict]:
     return out
 
 
+FULL_RULE = "all"   # "all": every prober must recover the full set; "any": one strong reader is enough (leaks count from any prober either way)
+
+
 def decide(per_model: dict[str, dict[tuple[int, ...], bool]], n: int) -> dict:
-    """per_model[model][subset] = the judge matched. Keep: no proper subset matched for any model, the full set matched for every model."""
+    """per_model[model][subset] = the judge matched. Keep: no proper subset matched for any model, and the full set matched
+    for every model, or for any model under FULL_RULE 'any'."""
     full = tuple(range(n))
     leaks = sorted((m, s) for m, ms in per_model.items() for s, ok in ms.items() if ok and s != full)
     full_ok = {m: bool(ms.get(full)) for m, ms in per_model.items()}
-    return {"keep": not leaks and bool(full_ok) and all(full_ok.values()),
-            "leaks": [{"model": m, "threads": list(s)} for m, s in leaks], "full_set": full_ok}
+    recovered = bool(full_ok) and (any(full_ok.values()) if FULL_RULE == "any" else all(full_ok.values()))
+    return {"keep": not leaks and recovered, "leaks": [{"model": m, "threads": list(s)} for m, s in leaks], "full_set": full_ok}
 
 
 def reduce_to_subset(report: dict, n: int, conflict: int, fact: int = 0) -> list[int] | None:
@@ -68,11 +72,12 @@ def reduce_to_subset(report: dict, n: int, conflict: int, fact: int = 0) -> list
     for c in report["calls"]:
         if c["correct"]:
             matched.setdefault(tuple(c["threads"]), set()).add(c["prober"])
-    probers = {c["prober"] for c in report["calls"]}
+    probers = {c["prober"] for c in report["calls"] if not c["full_set"]}   # the readers that searched the subsets
     ok = []
     for size in range(2, n):
         for s in itertools.combinations(range(n), size):
-            if conflict not in s or matched.get(s, set()) != probers:
+            got = matched.get(s, set())
+            if conflict not in s or not got or (FULL_RULE != "any" and got != probers):
                 continue
             inner = [t for k in range(1, size) for t in itertools.combinations(s, k)]
             if any(matched.get(t) for t in inner):
@@ -87,14 +92,15 @@ def key_lines(key: dict) -> str:
     return "\n".join(f"{k}: {v}" for k, v in key.items() if k in ("secret", "actor", "victim") and v)
 
 
-def check(threads: list[list[dict]], key: dict, probers: dict[str, object], matcher: object, ask: Ask) -> dict:
-    """One check of a chain: every subset to every prober, every candidate to the judge; the keep decision and every call."""
+def check(threads: list[list[dict]], key: dict, probers: dict[str, object], matcher: object, ask: Ask, full_only: frozenset = frozenset()) -> dict:
+    """One check of a chain: every subset to every prober, every candidate to the judge; the keep decision and every call.
+    A prober named in full_only reads the full set only: a second opinion on whether all clues give the secret, no leak search."""
     n = len(threads); probe_shell, match_shell = PROBE.read_text(), MATCH.read_text()
     secret = key_lines(key)
     per_model: dict[str, dict[tuple[int, ...], bool]] = {}
     calls = []
     for name, eng in probers.items():
-        for s in subsets(n):
+        for s in ([tuple(range(n))] if name in full_only else subsets(n)):
             text, handles = render(threads, s)
             out = ask(eng, probe_shell.replace("<<EMAILS>>", text))
             cands = candidates_of(first_json(out))
@@ -159,5 +165,5 @@ def revise_block(diagnosis: dict, history: list[str], report: dict | None = None
     lines.append(f"Change: {diagnosis['change']}")
     if history:
         lines.append("Earlier changes, still in force: " + "; ".join(history))
-    lines.append("Make this change and keep everything else as it was. All clues together give the secret; no smaller set does.")
+    lines.append("Make this change and keep everything else as it was.")
     return "\n".join(lines)

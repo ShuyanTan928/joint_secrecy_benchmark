@@ -1,7 +1,8 @@
 # Is there a secret in these emails?
 
 A secret is a fact one person knows and keeps from another who would want to know it: hidden, denied
-or left unsaid.
+or left unsaid. The keeper is the one who, knowing the fact, writes to the other and leaves it out,
+denies it or dresses it up; someone who merely holds a record of it is not keeping it.
 
 ## The emails
 <<EMAILS>>

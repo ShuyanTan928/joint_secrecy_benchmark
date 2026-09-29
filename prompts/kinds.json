@@ -10,14 +10,15 @@
   "entrusted secret": {
    "page": 88,
    "quote": "the kind which the possessor is obliged to keep because of his relation to the team to which the secret refers",
-   "plain": "a fact about someone else, which the actor holds because of what the actor is to the person the fact is about. The fact names that person by role, and the secret sentence names the actor's relation to them. It is that other person it would discredit or expose, not the actor.",
+   "plain": "a fact about someone else, which the actor holds because of what the actor is to the person the fact is about. The fact names that person by role, and the secret sentence names the actor's relation to them. It is that other person it would discredit or expose, not the actor. The fact is that person's state; what they themselves say or hide about it is no part of the case.",
    "short": "a fact about someone else that the actor holds because of what the actor is to the person the fact is about"
   },
   "strategic secret": {
    "page": 87,
    "quote": "intentions and capacities of a team which it conceals from its audience in order to prevent them from adapting effectively to the state of affairs the team is planning to bring about",
    "plain": "something the actor, or a group the actor belongs to, has decided or is preparing to do, kept from the people it will land on so that they do not act on it first. The fact is the plan as it stands now: decided, under way, and still undisclosed when the case is told. The people kept from it are the ones it lands on, at work or at home, who would say they had a right to know.",
-   "short": "a decision or preparation of the actor's or their group's, kept from the people it lands on until it is done"
+   "short": "a decision or preparation of the actor's or their group's, kept from the people it lands on until it is done",
+   "plot_rule": "A decision not yet announced is held as the decision and its preparation, with nothing about who has been told. The record names the site it concerns by a reference, as it would a person; the site's name sits in the [knows] thread."
   }
  },
  "topics": {

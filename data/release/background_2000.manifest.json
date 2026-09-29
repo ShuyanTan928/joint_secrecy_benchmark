@@ -39,7 +39,7 @@
   "travel": 64,
   "war and conflicts": 61
  },
- "sha256": "55d9f70fd23d46d8d6475c0668a1814b4e24acb9503ec1026048d8e9a007c70a",
+ "sha256": "192e18bdffcacd7cd0c11c41bade5269f27186520f1f996ff3d3b7558dadc73b",
  "provenance": {
   "source": "Enron corpus (FERC 2003 release), 150 custodians, full parsed set",
   "sampled_by": "scripts/sample_dataset.py",
@@ -139,5 +139,21 @@
    "Native control-sample accuracy/false_positive metrics do not label these background findings."
   ]
  },
- "usage_record": "run_provenance.json"
+ "usage_record": "run_provenance.json",
+ "replacements": [
+  {
+   "removed": "t_0598",
+   "why": "cited as a kept-back letter by gpt-6-sol in the sweep and by claude-opus-5.5 and gemini-3.7-flash on the thread",
+   "added": "t_1008",
+   "topic": "communication",
+   "messages": 2,
+   "source_message_ids": [
+    "8502097.1075859677724.javamail.evans@thyme",
+    "9739029.1075859677674.javamail.evans@thyme"
+   ],
+   "anonymised": "locally with scripts/replace_thread.py: the firm as Keystone, pseudonyms and domains from the release's reserve; people not linked to the private map",
+   "people_pass": "api openai/gpt-6-sol",
+   "audit_flags": 0
+  }
+ ]
 }

@@ -36,7 +36,7 @@ class StubEngine:
         if self.chain is None: return "{}"
         if '"evidence_email_ids"' in prompt: return json.dumps({"candidates": [{"secret": self.secret["secret"], "evidence_email_ids": ["e1"]}]})
         if '"cases"' in prompt: return json.dumps({"cases": [{k: self.secret[k] for k in ("actor", "fact", "secret", "victim")}]})
-        if "## The secret to place" in prompt: return json.dumps(self.secret["clues"][self.chain["pattern"]])
+        if "Split the secret into three parts" in prompt: return json.dumps(self.secret["clues"][self.chain["pattern"]])
         if '"cast"' in prompt: return json.dumps(dict(self.chain["emails_placeholders"], cast=self.chain["cast_by_model"]))
         if '"stake"' in prompt: return json.dumps(self.chain["plots"])
         return "{}"

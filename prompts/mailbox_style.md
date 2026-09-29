@@ -9,4 +9,4 @@ mailbox's form, its header lines indented:
 
 the earlier text
 
-A forward puts "----- Forwarded by Person A/HOU/ASH on 03/22/2001 02:31 PM -----" above that block.
+A forward puts "----- Forwarded by Person A/HOU/KEY on 03/22/2001 02:31 PM -----" above that block.

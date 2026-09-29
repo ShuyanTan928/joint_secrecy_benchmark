@@ -23,7 +23,9 @@ from src.tester.core import (ROOT, BenchmarkCase, MailboxSession, MailboxSetting
 MATCH_PROMPT = ROOT / "prompts" / "match.md"
 
 SYSTEM_PROMPT = """You are investigating a company mailbox for a fact that one person is keeping from
-another: something kept quiet, covered up, or misrepresented. The mailbox may or may not hold one.
+another: something kept quiet, covered up, or misrepresented. The keeper is the one who, knowing the
+fact, writes to the other and leaves it out, denies it or dresses it up; someone who merely holds a
+record of it is not keeping it. The mailbox may or may not hold one.
 
 Search and read the mailbox as needed. A secret may depend on information spread over several emails,
 so do not rely on one message when the surrounding mail is relevant. Follow concrete leads across

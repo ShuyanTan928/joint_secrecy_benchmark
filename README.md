@@ -674,7 +674,7 @@ keeps senders of one email who received at most one, not named in full elsewhere
 role of theirs (a model reads it): the people in `benchmark_pool/quiet_people.json`, 100 in the shipped mailbox, each used once.
 Minted names come from `benchmark_pool/fresh_names.json`, the names the anonymisation pass did not
 use, so they occur nowhere in the release. Step 4 is shown five of
-each and returns its cast; code checks it.
+each and returns its cast; code puts the names into the headers.
 
 ## Command reference
 
@@ -897,9 +897,9 @@ quota). Otherwise step 2, 3 or 4 is redone with the change and the chain is chec
 with the changes already tried shown so a fix is not reversed. A miss is fed back the same way as a
 leak: the diagnoser sees the reader's finding and the judge's reason for refusing it. A generation
 call that the provider's content filter empties is resent once to the judge's model (`--fallback`).
-Before any of that, step 2 has a code check of its own: a part that names the actor by role, a
-[fact] that carries what someone tells someone, or a [knows] that carries the fact's measure is
-re-asked once, since those faults reach the check only after a plot, emails and fourteen probes.
+Every generation prompt ends with the conditions its answer must meet, one line each, for the
+model to check before it answers; code tests only the shape of an answer (the clue count, the plan
+read from the carries fields, the names in the headers) and re-asks once when the count is wrong.
 The state file records every round,
 every answer and verdict, and the chain's status, KEPT or DROP; `assemble.py` and the tester take
 KEPT chains only.

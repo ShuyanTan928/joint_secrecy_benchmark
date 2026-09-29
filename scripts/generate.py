@@ -8,7 +8,7 @@
   3 plots    one call per chain (secret, pattern, n): prompts/plot.md with the choices in prompts/shapes.json
              -> stake, people, timeline, plan, threads with what each message says
   4 emails   one call per chain: prompts/email.md, the cast drawn from benchmark_pool/quiet_people.json and
-             benchmark_pool/fresh_names.json -> the messages, checked and named by code
+             benchmark_pool/fresh_names.json -> the messages, named by code
   5 check    the AND check (src/andcheck.py): blind probers, models other than the generator, read every
              subset of the threads and answer as the tester does; the tester's judge scores each answer
              against the key. A chain planned on three threads is delivered on two when a pair with the [concealment]
@@ -54,11 +54,11 @@ def extract_json(text):
 GEN = None                     # the engine, built in main from --engine/--preset
 GEN_KIND = "api"
 EMAIL_PROMPT = "email.md"
-KEEP_LABEL = "Person A's points, to make in Person A's own words"
+KEEP_LABEL = "Person A's points"
 JUDGE = False                  # --judge turns on the kind judge; it is a measurement, never a pipeline step
 NOCLASS = True                 # --classify files each secret under the topic the model reads off its fact; otherwise the asked topic
 CALLS = {"gen": 0, "gen_chars_in": 0, "gen_chars_out": 0, "local": 0, "check": 0, "fallback": 0}
-CHECK = {"probers": {}, "matcher": None, "diagnoser": None}   # step 5's engines, built in main; empty = no check
+CHECK = {"probers": {}, "matcher": None, "diagnoser": None, "full_only": frozenset()}   # step 5's engines, built in main; empty = no check
 FALLBACK = None                # the model a content-filtered generation call goes to (--fallback; the judge's model by default); built in main
 TL = threading.local()         # TL.rec: the chain a call belongs to, so a fallback is recorded on it
 ROUNDS = 3                     # --rounds: fix rounds after a failed check
@@ -185,10 +185,11 @@ def avoid_block(header, items):
 
 
 def kind_line(kind, full=True):
-    """The kind of secret as the prompts state it: the name, Goffman's words with the 1956 page, and the plain reading; short form for the later steps."""
+    """The kind of secret as the prompts state it: the name and the plain reading (Goffman's words and page stay in kinds.json for the
+    paper); the short form for the later steps."""
     k = SECRET_KINDS["kinds"].get(kind)
     if not k: return "not given"
-    return f'{kind}. Goffman: "{k["quote"]}" (1956, p. {k["page"]}). Here: {k["plain"]}' if full else f'{kind}, {k["short"]}.'
+    return f'{kind}: {k["plain"]}' if full else f'{kind}, {k["short"]}.'
 
 
 def secrets_for(job, k, a=()):
@@ -287,12 +288,12 @@ def hybrid(options, rng, key):
 
 
 def pattern_line(pattern, placeholders=None):
-    """One sentence: the pattern's name, the source's words, then what it means in plain words. The people are the actor
-    and the victim in every step; the plot step's cast block says which placeholder is which."""
-    return f"{pattern}, {PAT[pattern]['quote']}: {PAT[pattern]['plain']}"
+    """One sentence: the pattern's name and what it means in plain words; the source's words stay in patterns.json for the
+    paper. The people are the actor and the victim in every step; the plot step's cast block says which placeholder is which."""
+    return f"{pattern}: {PAT[pattern]['plain']}"
 
 
-NUM = {2: "two", 3: "three", 4: "four"}
+NUM = {2: "two", 3: "three"}
 def kind_of(pattern):
     return "record"
 
@@ -309,7 +310,7 @@ def clue_prompt(s, pattern):
              "paltering": "<the actor, by role> tells <the victim, by role> <true statements on the matter that leave a false picture of it>",
              "lying by omission": "<the actor, by role>, <asked by the victim about the matter, or in the report, form or review the fact belonged in>, <answers or sends what was asked for> and is silent on <the fact>"}[pattern]
     facts = ["the state, as a record holds it, by a reference", "<the actor, by role>, <on what occasion>, <does or arranges one thing, with whom>", frame]
-    schema = '{"victim": "the one person the parts are written to, by role: the victim, or the person who stands for the party", ' + ", ".join(f'"{k}": "{f}"' for k, f in zip(lab, facts)) + '}'
+    schema = '{"victim": "the person the parts are written to, by role", ' + ", ".join(f'"{k}": "{f}"' for k, f in zip(lab, facts)) + '}'
     return ((V2 / "clues.md").read_text().replace("<<PATTERN_NAME>>", pattern).replace("<<SETTING>>", setting()).replace("<<FIRM>>", FIRM)
             .replace("<<PARTS>>", ATOMS["parts"][kind].replace("<<ACT>>", a["act"]))
             .replace("<<GROUND_LINE>>", "The case sits in the actor's work at the firm." if s.get("ground", "work") == "work" else "The case sits in the actor's life outside work; the actor's job at the firm is not part of it.")
@@ -319,34 +320,8 @@ def clue_prompt(s, pattern):
             .replace("<<AND_GATE>>", PAT["and_gate"][kind]).replace("<<SCHEMA>>", schema))
 
 
-TELLING = re.compile(r"\b(told|tells|telling|assur\w*|reassur\w*|denie[sd]|insist\w*|claims?|says to|writes to|informs?)\b", re.I)
-MEASURE = re.compile(r"\$\s?[\d,]+(?:\.\d+)?|\d+(?:\.\d+)?\s?(?:%|percent)|\b(?:million|thousand|billion)\b|\b(?:large|substantial|heavy|big) (?:loss|losses|debt|sum)\b|\bcapital loss", re.I)
 
 
-def actor_role(s):
-    """The actor's role as step 1 gave it, the head phrase only: 'a procurement manager at Ashford who ...' -> 'procurement manager'."""
-    head = re.split(r"[,;(]| who | that | at | in | of | on | for | with | from ", str(s.get("actor") or "").strip().lower())[0]
-    return re.sub(r"^(the|a|an)\s+", "", head).strip()
-
-
-HOUSEHOLD = re.compile(r"\b(the couple'?s?|both spouses|the spouses|his wife|her husband|the family'?s|the (?:actor|daughter|son)'s (?:mother|father|parents|wife|husband))\b", re.I)
-ORG_NAME = re.compile(r"\b(?:[A-Z][\w&'-]+ ){1,3}(?:Services|Pipeline|Constructors|Inc\.?|LLC|L\.L\.C\.|Corp\.?|Company|Co\.|Partners|Energy|Station|Bank|Clinic|Hospital)\b")
-
-
-def part_flags(s, out, lab):
-    """Code checks on the three parts, runs 39 and the step-2 test: [fact] naming the actor, the household or what someone tells someone;
-    [knows] carrying the fact's measure or the name of the company the fact concerns; hiding words."""
-    fact, knows = out[lab[0]], out[lab[1]]
-    flags = [f"keeping words in [{k}]: {', '.join(kw)}" for k in lab[:2] if (kw := keeping_words(out[k]))]
-    if s.get("ground") == "life" and (m := HOUSEHOLD.search(fact)): flags.append(f"[fact] identifies the household, '{m.group(0)}'; a record names an account, a file or a patient, [knows] ties the actor to it")
-    shared = {n for n in ORG_NAME.findall(knows)} & {n for n in ORG_NAME.findall(fact)}
-    if shared: flags.append(f"[knows] names {', '.join(sorted(shared))}, the company the fact concerns; [knows] carries the reference, an account or a file, not that name")
-    if (m := TELLING.search(fact)): flags.append(f"[fact] has someone telling or assuring: '{m.group(0)}'; the fact is the state, not what anyone says about it")
-    role = actor_role(s); tail = " ".join(role.split()[-2:])
-    if len(role) > 3 and (role in fact.lower() or (len(tail.split()) == 2 and tail in fact.lower())): flags.append(f"[fact] names the actor by role, '{role}'; a record names the matter by a reference, [knows] ties the actor to it")
-    if (m := MEASURE.search(knows)): flags.append(f"[knows] carries the fact's measure, '{m.group(0)}'; the act shows the actor knows without saying the fact")
-    if len(out[lab[2]].split()) > 60: flags.append(f"[concealment] is {len(out[lab[2]].split())} words; the model pads acts, read it for a leaning clause")
-    return flags
 
 
 def parse_parts(js, lab):
@@ -358,22 +333,25 @@ def parse_parts(js, lab):
     return out
 
 
+def with_revision(p, block):
+    """A fix round's revision block sits before the conditions the model checks and the output, so the answer follows it."""
+    if not block: return p
+    cut = p.find("\nBefore you answer, check")
+    return p[:cut] + block.rstrip("\n") + "\n" + p[cut:] if cut >= 0 else p + block
+
+
 def clues_for(s, pattern, revise=""):
-    """One call: the three parts of this secret under this pattern, and one more when a code check flags a part. Stored under
-    s['clues'][pattern] by label; revise is a fix round's block."""
-    p = clue_prompt(s, pattern) + revise; lab = labels(pattern)
-    out = parse_parts(chat_json(p, 0.6, 700), lab); out["flags"] = part_flags(s, out, lab)
-    if out["ok"] and any("[fact]" in f or "[knows]" in f for f in out["flags"]):
-        again = parse_parts(chat_json(p + "\n\nYour parts did not hold: " + "; ".join(out["flags"]) + ". Return the whole object again.", 0.6, 700), lab)
-        again["flags"] = part_flags(s, again, lab); again["reasked"] = out["flags"]
-        if again["ok"] and len(again["flags"]) <= len(out["flags"]): out = again
+    """One call: the three parts of this secret under this pattern, stored under s['clues'][pattern] by label; revise is a fix round's
+    block. The conditions the parts must meet are in the prompt, for the model to check itself; code tests nothing but the shape."""
+    p = with_revision(clue_prompt(s, pattern), revise); lab = labels(pattern)
+    out = parse_parts(chat_json(p, 0.6, 700), lab)
     s.setdefault("clues", {})[pattern] = out
     return s
 
 
 def n_for(i, j, vary, force=0):
-    """The threads a chain is planned on: 3; --n forces a count; 2 to 4 in turn with --vary-n. A chain may be delivered on fewer (see checked)."""
-    return force or (2 + (i + j) % 3 if vary else 3)
+    """The threads a chain is planned on: 3; --n forces a count; 2 and 3 in turn with --vary-n. A chain may be delivered on fewer (see checked)."""
+    return force or (2 + (i + j) % 2 if vary else 3)
 
 
 def passes(s, pattern):
@@ -400,7 +378,7 @@ def cmd_clues(a):
     for p in LYING:
         pool = st["secrets"]
         got = [s for s in pool if p in (s.get("clues") or {})]
-        print(f"   {p:22s} parts for {len(got)}/{len(pool)}; all three filled and distinct: {sum(passes(s, p) for s in got)}; re-asked on a flag {sum(bool(s['clues'][p].get('reasked')) for s in got)}, still flagged {sum(bool(s['clues'][p].get('flags')) for s in got)}")
+        print(f"   {p:22s} parts for {len(got)}/{len(pool)}; all three filled and distinct: {sum(passes(s, p) for s in got)}")
 
 
 # ------------------------------------------------------------------ step 3: plots
@@ -443,8 +421,15 @@ def never_together(pattern):
 
 
 def parts_text(pattern, lines):
-    """The three parts as the plot step sees them, by label."""
-    return "\n".join(f"[{k}]: {a}" for k, a in zip(labels(pattern), lines["atoms"]))
+    """The three parts as the later steps see them: the label, its one-clause meaning, the sentence from step 2."""
+    return "\n".join(f"[{k}], {ATOMS['glosses'][k]}: {a}" for k, a in zip(labels(pattern), lines["atoms"]))
+
+
+def case_rules(pattern, kind):
+    """The conditions only this chain needs: the kind's line (kinds.json plot_rule) and the pattern's (patterns.json plot_rule),
+    the last items of the plot step's check list, or nothing."""
+    lines = [SECRET_KINDS["kinds"].get(kind, {}).get("plot_rule", ""), PAT[pattern].get("plot_rule", "")]
+    return "".join(f"- {x}\n" for x in lines if x)
 
 
 def plan_from_plot(clues, pattern, n):
@@ -463,7 +448,6 @@ def plan_from_plot(clues, pattern, n):
     missing = need - {x for cs in got for x in cs}
     if missing: return None, "no clue carries " + ", ".join(f"[{m}]" for m in sorted(missing))
     if n >= 3 and any(len(cs) > 1 for cs in got): return None, f"with {NUM[n]} clues every clue carries one part"
-    if n == 4 and sum(len(cs) for cs in got) != 4: return None, "with four clues one part is spread over two clues"
     names = dict(zip(lab, check_names(pattern)))
     return [[names[x] for x in cs] for cs in got], ""
 
@@ -483,9 +467,9 @@ def menus_text(pattern, n, rng, ground="work"):
     if pattern == "lying by omission": m.append("- the occasion of [concealment] is the one the part names; keep it")
     else: line("carrier_concealment", "the occasion of [concealment]: what brings the matter up between Person A and Person B", SHAPES["carrier"]["conflict"][pattern])
     line("after", "what Person B does once Person A has acted", SHAPES["third"]["after"])
-    line("naming", "how the matter is named in a subject line, where a thread names it at all", SHAPES["naming"]["form"])
-    m.append("  Real subject lines from this mailbox: " + "; ".join(rng.sample(REFS, 5)) + ". Real file names: " + ", ".join(distinct_files(rng, 4)) + ". " +
-             ("A thread may name the matter in its subject line or not at all; you decide per thread, and a name, where there is one, says which matter without saying the fact: a number, a place, a date, a file, not the thing itself. A document's title appears only where the people on that thread would use it."))
+    line("naming", "how a subject line names the matter, where it does", SHAPES["naming"]["form"])
+    m.append("  Real subject lines from this mailbox: " + "; ".join(rng.sample(REFS, 5)) + "; real file names: " + ", ".join(distinct_files(rng, 4)) +
+             ". A file name appears only where the people on that thread would use it.")
     return "\n".join(m), keys, assigned
 
 
@@ -498,7 +482,7 @@ def distinct_files(rng, k):
     return out
 
 
-FUNCTIONS = {"record": [("Person A", "the actor, who keeps the secret; works at the firm"), ("Person B", "the victim, kept from the fact"), ("Person C", "who holds the fact in writing besides Person A, and is not the person the fact is about; you decide who")]}
+FUNCTIONS = {"record": [("Person A", "the actor, who keeps the secret; works at the firm"), ("Person B", "the victim, kept from the fact"), ("Person C", "who writes or receives the record; not the person the fact is about; you decide who")]}
 
 
 def cast_block(s, pattern, n, lines, rec=None):
@@ -594,8 +578,8 @@ PLOT_SCHEMA = """{"stake": "what the victim is about to do, one clause",
  "people": [{"person": "Person ?", "function": "what this person is in the secret, as listed above, or other", "role": "who this person is, in a few words", "at_firm": "yes or no"}],
  "timeline": [{"date": "YYYY-MM-DD", "event": "one clause", "shows": "the part this event shows, or empty"}],
  "choices": {<<CHOICE_KEYS>>},
- "clues": [{"i": 1, "carries": [<<FIRST_PART_Q>>], "reference": "how this thread names the matter, or empty", "line": "Person A's message to Person B, in substance: what it says, and for an omission only what it says; empty for other clues",
-            "messages": [{"from": "Person ?", "to": ["Person ?"], "date": "YYYY-MM-DD", "subject": "...", "what_happens": "one or two sentences"}]}]}"""
+ "clues": [{"i": 1, "carries": [<<FIRST_PART_Q>>], "reference": "the name this thread uses for the matter, or empty", "tie": "the record's reference as the [knows] thread carries it; empty for other clues", "line": "Person A's message to Person B, in substance: what it says and nothing of what it leaves out; empty for other clues",
+            "messages": [{"from": "Person ?", "to": ["Person ?"], "date": "YYYY-MM-DD", "subject": "...", "what_happens": "what the message says, one or two sentences, nothing of what its reader makes of it"}]}]}"""
 
 
 def plot_for(rec, s, pattern, n, rng, revise=""):
@@ -607,15 +591,17 @@ def plot_for(rec, s, pattern, n, rng, revise=""):
          .replace("<<GROUND_LINE>>", "The case sits in the actor's work at the firm." if s.get("ground", "work") == "work" else "The case sits in the actor's life outside work; the job is not part of it.")
          .replace("<<CAST>>", cast_block(s, pattern, n, lines)).replace("<<ERA>>", "2001")
          .replace("<<PARTS_TEXT>>", parts_text(pattern, lines))
-         .replace("<<NEVER_TOGETHER>>", "[{}] and [{}] are never in the same clue.".format(*never_together(pattern)))
-         .replace("<<FEWER_CLUES>>", {2: "either clue on its own", 3: "one clue on its own, or any two", 4: "any one, two or three clues"}[n])
-         .replace("<<KNOWS_THREAD>>", "sharing the [fact] thread" if n == 2 else "on its own thread")
-         .replace("<<PLAN_SHAPE>>", {2: "With two clues, one thread carries [fact] and [knows] together and the other carries [concealment]. The first is one exchange, not two: the record and Person A's act sit in the same thread, so the record reaches the person Person A then writes to, or Person A's act is a reply on the record's thread; Person A is on it, and what keeps the gate is that nothing in it is kept from anyone. The second is Person A's act toward Person B alone.", 3: "With three clues, one part each.", 4: "With four clues, one part is spread over two clues that are each innocent on their own, and every clue carries one part."}[n])
+         .replace("<<SPLIT>>", {3: "The secret is split into three parts, and each thread carries one:",
+                                2: "The secret is split into three parts; the first thread carries [fact] and [knows], the second [concealment]:"}[n])
+         .replace("<<GATE>>", {3: "all three together say that Person A keeps this fact from Person B, and any one or two do not, because "
+                                  "Person A is not on the [fact] thread and the [knows] thread holds the fact only by its reference.",
+                               2: "both together say that Person A keeps this fact from Person B, and either alone does not: Person A is on "
+                                  "the first thread, and nothing in it is kept from anyone."}[n])
+         .replace(".\n<<CASE_RULES>>\n", ";\n" + case_rules(pattern, s.get("kind", "")) if case_rules(pattern, s.get("kind", "")) else ".\n")
          .replace("<<FIRST_PART>>", f"[{labels(pattern)[0]}]").replace("<<FIRST_PART_Q>>", f'"{labels(pattern)[0]}"')
          .replace("<<MENUS>>", menus)
-         .replace("<<CHOICE_KEYS>>", ", ".join(f'"{k}": "the option used, in its first words"' for k in keys))
-         .replace("<<PATTERN_RULE>>", PAT[pattern].get("plot_rule", "")))
-    p += revise
+         .replace("<<CHOICE_KEYS>>", ", ".join(f'"{k}": "the option used, in its first words"' for k in keys)))
+    p = with_revision(p, revise)
     rec.update({"lines": lines, "plot_prompt": p})
     plots = chat_json(p, 0.5, 2400)
     rec["assigned"] = assigned
@@ -623,30 +609,11 @@ def plot_for(rec, s, pattern, n, rng, revise=""):
     rec["choices_commentary"] = [k for k, v in (plots.get("choices") or {}).items() if isinstance(plots.get("choices"), dict) and len(str(v).split()) > 12]
     clues = _sorted_clues(plots, n)
     plan, why = plan_from_plot(clues, pattern, n) if len(clues) == n else (None, f"plot returned {len(clues)} clues for {n}")
-    if plan is None:                                             # the plot's plan failed a check: one more try, then the fixed template
-        rec["plot_retry_plan"] = why
-        plots2 = chat_json(p + "\n\nYour plan did not hold: {}. Return exactly {} clues, one thread each; every part is carried by some clue, [{}] and [{}] never share a clue, and every clue carries at least one part. Return the whole object again.".format(why, NUM[n], *never_together(pattern)), 0.5, 2400)
-        clues2 = _sorted_clues(plots2, n)
-        plan2, why2 = plan_from_plot(clues2, pattern, n) if len(clues2) == n else (None, why)
-        if plan2 is not None: plots, clues, plan = plots2, clues2, plan2
-        elif len(clues) == n: plan = [list(c) for c in fallback]; rec["plan_fallback"] = True
+    if plan is None: rec["plan_fallback"] = why                   # the plot's own plan did not hold or did not parse: the fixed template, the reason kept
     rec["plan"] = plan or [list(c) for c in fallback]; plan = rec["plan"]
     rec["timeline"] = [{"date": str(e.get("date", "")), "event": str(e.get("event", "")), "shows": str(e.get("shows") or "").strip("[] ").lower()}
                        for e in (plots.get("timeline") or []) if isinstance(e, dict)]
     rec["stake"] = str(plots.get("stake") or "").strip()
-    if len(clues) == n and invented_people(clues):               # a name in a from/to field where a placeholder belongs: one more try
-        rec["plot_retry"] = invented_people(clues)
-        plots2 = chat_json(p + "\n\nEvery from and to field holds a placeholder, Person A, Person B and so on, never a name. "
-                              "Anyone the clues need beyond the people listed continues the letters.", 0.5, 2000)
-        clues2 = _sorted_clues(plots2, n)
-        if len(clues2) == n and len(invented_people(clues2)) < len(invented_people(clues)): plots, clues = plots2, clues2
-    firm = firm_people(s, pattern, n, sorted(set(re.findall(r"Person [A-J]", json.dumps(clues)))), {"plots": plots})
-    if len(clues) == n and nobody_at_firm(clues, firm):
-        rec["plot_retry_firm"] = nobody_at_firm(clues, firm)
-        plots2 = chat_json(p + "\n\nEvery message is sent or received by someone at the firm: " + ", ".join(sorted(firm)) +
-                              ". A message between two outside people, or from someone to themselves, cannot sit in this mailbox.", 0.5, 2000)
-        clues2 = _sorted_clues(plots2, n)
-        if len(clues2) == n and len(nobody_at_firm(clues2, firm)) < len(nobody_at_firm(clues, firm)): plots, clues = plots2, clues2
     for c, carries in zip(clues, plan):
         c["carries"] = list(carries)
         line = str(c.get("line") or "").strip()                    # the plot landed the actor's line on something concrete
@@ -658,17 +625,6 @@ def plot_for(rec, s, pattern, n, rng, revise=""):
     defined = {e["person"] for e in described_people(rec)}
     rec["plot_undefined"] = sorted({p for p in re.findall(r"Person [A-J]", json.dumps(clues)) if p not in defined})   # a placeholder used in a thread but absent from the people table
     return rec
-
-
-def nobody_at_firm(clues, firm):
-    """Clue numbers with a message that no one at the firm sends or receives."""
-    bad = []
-    for c in clues:
-        for m in c.get("messages") or [c]:
-            to = m.get("to"); to = to if isinstance(to, list) else [to]
-            people = {str(x).strip() for x in [m.get("from")] + list(to) + list(m.get("cc") or []) if x}
-            if firm and not (people & firm): bad.append(c.get("i"))
-    return sorted(set(bad))
 
 
 def invented_people(clues):
@@ -730,7 +686,7 @@ def firm_people(s, pattern, n=None, labels=(), rec=None):
     return at
 
 
-USED = {"people": set(), "fresh": set(), "domains": set(), "lock": threading.RLock()}     # people, minted names and minted domains already cast in this run: one chain each
+USED = {"people": Counter(), "fresh": set(), "domains": set(), "lock": threading.RLock()}   # firm people: how many chains each has been cast in, the least used drawn first (the tester plants one chain per mailbox, so a person in two chains never meets himself); minted names and domains: one chain each
 
 
 def substitute(text, names):
@@ -837,13 +793,13 @@ PROPER_NAME = re.compile(r"[A-Z][a-z]{2,}(?:[ \-'][A-Za-z][a-z']*)* [A-Z][A-Za-z
 
 
 def draw_cast(rec, s, rng, k=5):
-    """Ten name-and-address pairs for the email step to cast from: k firm people from the quiet pool, each with the one
-    email they have in the mailbox, and k minted outsiders with fresh names on fresh domains. Nothing is marked used until
-    the model has chosen."""
+    """Ten name-and-address pairs for the email step to cast from: k firm people from the quiet pool, the least cast so far
+    first, each with the one email they have in the mailbox, and k minted outsiders with fresh names on fresh domains. Nothing
+    is marked used until the model has chosen."""
     with USED["lock"]:
-        firm = [p for p in QUIET if p["addr"] not in USED["people"] and PROPER_NAME.fullmatch(quiet_name(p))]   # run 38 cast "dq Glisan" and "shaye Midolo": initials and lowercase forms are out
-        rng.shuffle(firm)                                            # first those with a prose email to show the voice, and a name the mailbox agrees on
-        firm.sort(key=lambda p: (not prose(own_only(RELEASE_BY_ID[p["email_id"]].get("own_body") or "")), not p.get("name_consistent", True)))
+        firm = [p for p in QUIET if PROPER_NAME.fullmatch(quiet_name(p))]   # run 38 cast "dq Glisan" and "shaye Midolo": initials and lowercase forms are out
+        rng.shuffle(firm)                                            # the least cast first, then those with a prose email to show the voice, and a name the mailbox agrees on
+        firm.sort(key=lambda p: (USED["people"][p["addr"]], not prose(own_only(RELEASE_BY_ID[p["email_id"]].get("own_body") or "")), not p.get("name_consistent", True)))
         firm = firm[:k]
         names = [n for n in FRESH["names"] if n not in USED["fresh"]]
         outside = [{"name": nm, "addr": f"{nm.lower().replace(' ', '.')}@{fresh_domain(rng)}"} for nm in rng.sample(names, k)]
@@ -867,7 +823,7 @@ def candidates_block(draw, rec, topic, rng, ground="work"):
     out = ["Firm names, each with the one email that person has in the mailbox:"]
     for c in draw["firm"]:
         m = RELEASE_BY_ID.get(c["email_id"], {})
-        out.append(f"{c['name']} <{c['addr']}>\n  Subject: {m.get('subject', '')}\n  " + own_only(m.get("own_body") or m.get("body") or "").strip().replace("\n", "\n  "))
+        out.append(f"{c['name']} <{c['addr']}>\n  Subject: {m.get('subject', '')}\n  " + re.sub(r"\n{3,}", "\n\n", own_only(m.get("own_body") or m.get("body") or "").strip()).replace("\n", "\n  "))
     out.append("\nOutside names:")
     out += [f"{c['name']} <{c['addr']}>" for c in draw["outside"]]
     out.append("\nHow mail from outside the firm reads, two emails from the mailbox:")
@@ -941,7 +897,7 @@ def cast_from(em, draw, labels, firm_labels, rng):
             c = next((x for x in pool if x["addr"] not in taken), None)
             if c is None:                                                  # ten were not enough: one more from the pools
                 if want_firm:
-                    q = next((p for p in QUIET if p["addr"] not in USED["people"] and p["addr"] not in taken), None)
+                    q = min((p for p in QUIET if p["addr"] not in taken and PROPER_NAME.fullmatch(quiet_name(p))), key=lambda p: USED["people"][p["addr"]], default=None)
                     c = {"name": quiet_name(q), "addr": q["addr"], "email_id": q["email_id"]} if q else {"name": "Person " + lab[-1], "addr": f"person.{lab[-1].lower()}@{FIRM_DOMAIN}"}
                 else:
                     nm = next(n for n in FRESH["names"] if n not in USED["fresh"] and n not in {x["name"] for x in draw["outside"]})
@@ -962,7 +918,8 @@ def finish_emails(rec, s, rng, em, draw):
     with USED["lock"]:
         names, fixed = cast_from(em, draw, labels, firm, rng)
         for v in names.values():
-            (USED["fresh"] if v["minted"] else USED["people"]).add(v["name"] if v["minted"] else v["addr"])
+            if v["minted"]: USED["fresh"].add(v["name"])
+            else: USED["people"][v["addr"]] += 1
     rec["names"] = names; rec["cast_fixed"] = fixed; rec["cast_by_model"] = em.get("cast")
     rec["headers_fixed"] = enforce_headers(em, plots)
     expected = set(re.findall(r"Person [A-J]", json.dumps(plots, ensure_ascii=False) + " ".join(keep_line(rec["lines"], c, rec["pattern"]) or "" for c in rec["plan"])))
@@ -977,7 +934,7 @@ def emails_for(rec, s, rng, prompt_file=None, keep_label=None, revise="", keep_c
     """keep_cast: a redo keeps the previous draw, so the names in the revision and in the new emails are the same people."""
     p, draw = email_prompt_for(rec, s, rng, prompt_file, keep_label, rec.get("draw") if keep_cast else None)
     rec["draw"] = draw
-    p += revise
+    p = with_revision(p, revise)
     rec["email_prompt_chars"] = len(p)
     plots = rec["plots"]["clues"]
     def _get(prompt):
@@ -998,7 +955,7 @@ def emails_for(rec, s, rng, prompt_file=None, keep_label=None, revise="", keep_c
     extra = sorted(set(re.findall(r"Person [A-J]", json.dumps(em, ensure_ascii=False))) - set(names))
     if extra:                                                    # a placeholder the model introduced on its own: a firm person from the pool
         more, _ = cast_from({}, {"firm": [], "outside": []}, extra, set(extra), rng)
-        for lab, v in more.items(): USED["people"].add(v["addr"])
+        for lab, v in more.items(): USED["people"][v["addr"]] += 1
         names.update(more); rec["names"] = names
     em = name_forms(em, names, rec["plan"]); rec["emails"] = em
     bodies = " ".join(str(m.get("body", "")) for e in em["clues"] for m in e.get("messages", []))
@@ -1176,7 +1133,6 @@ def plot_checks(rec):
             if str(first.get("from", "")).strip() != cast.get("holder"): probs.append(f"clue {c.get('i')}: the occasion is unprompted but Person A does not write first")
         if len(ms) > 4: probs.append(f"clue {c.get('i')}: {len(ms)} messages")
     if rec.get("plot_invented"): probs.append("names invented: " + ", ".join(rec["plot_invented"]))
-    if rec.get("plot_retry_firm"): probs.append("retried: a message with nobody at the firm")
     facts = [d for k, v in dates.items() for d in v if any(a.startswith("fact") for a in k)]; thirds = [d for k, v in dates.items() for d in v if third in k]
     if facts and thirds and max(facts) > min(thirds): probs.append("the fact is dated after the holder's line")
     probs += timeline_checks(rec)
@@ -1247,7 +1203,7 @@ def checked(rec, s, rng):
     history, rounds, delivered = [], [], None
     for r in range(ROUNDS + 1):
         threads, key = planted_threads(case()), answer_key(case())
-        report = and_check_run(threads, key, CHECK["probers"], CHECK["matcher"], ask_check)
+        report = and_check_run(threads, key, CHECK["probers"], CHECK["matcher"], ask_check, CHECK.get("full_only", frozenset()))
         rounds.append({"round": r, **report, "emails": json.loads(json.dumps(rec["emails"])), "names": json.loads(json.dumps(rec.get("names") or {})), "plots": json.loads(json.dumps(rec.get("plots") or {}))})
         if report["keep"]: break
         conflict = next((i for i, carries in enumerate(rec["plan"]) if PAT[pattern]["third_atom"] in carries), len(threads) - 1)
@@ -1407,7 +1363,7 @@ def cmd_report(a):
         rs = [r for r in ok if r["pattern"] == p]
         if not rs: continue
         line = (f"   {p:22s} n={len(rs)}: holder line verbatim {sum(r['email_verbatim'] for r in rs)}, kept in substance (>=0.6) {sum((r.get('line_kept') or 0) >= 0.6 for r in rs)}; names used {sum(r['names_used'] for r in rs)}, placeholders left {sum(r['placeholders_left'] for r in rs)}, "
-                f"headers put back {sum(bool(r.get('headers_fixed')) for r in rs)}, people retried {sum(bool(r.get('names_retry')) for r in rs)}, still missing {sum(bool(r.get('names_missing')) for r in rs)}; "
+                f"headers put back {sum(bool(r.get('headers_fixed')) for r in rs)}, still missing {sum(bool(r.get('names_missing')) for r in rs)}; "
                 f"email topic = label {'n/a' if all(r.get('email_topic') is None for r in rs) else sum(bool(r.get('email_topic_ok')) for r in rs)}; years out of era {sum(bool(r['years_out_of_era']) for r in rs)}")
         line += f"; attachment names copied from the bank {sum(bool(r.get('files_copied')) for r in rs)}; clue emails with no one at the firm {sum(bool(r.get('outside_to_outside')) for r in rs)}"
         line += (f"; judge agrees {sum(r.get('email_kind_ok', False) for r in rs)}" if JUDGE else "") + f"; holds clue leaks the fact {sum(bool(r.get('holds_leak')) for r in rs)} of {sum(r.get('holds_leak') is not None for r in rs)}; fact missing from its clue {sum(r.get('fact_stated') is False for r in rs)}"
@@ -1441,7 +1397,7 @@ if __name__ == "__main__":
         s.add_argument("--per-topic", type=int, default=0, help="keep calling a topic until it has this many secrets")
     def step3(s):
         s.add_argument("--facts", type=int, default=12, help="how many secrets go to steps 3 and 4"); s.add_argument("--seed", type=int, default=0)
-        s.add_argument("--vary-n", action="store_true", help="2, 3 and 4 clues in turn"); s.add_argument("--n", type=int, default=0, help="plan chains on this many threads instead of 3")
+        s.add_argument("--vary-n", action="store_true", help="2 and 3 clues in turn"); s.add_argument("--n", type=int, default=0, choices=[0, 2, 3], help="plan chains on this many threads instead of 3")
         s.add_argument("--plots-only", action="store_true", help="stop after step 3: no cast, no emails")
         s.add_argument("--no-check", action="store_true", help="stop after step 4: no AND check"); step5(s)
     def step5(s):
@@ -1452,6 +1408,8 @@ if __name__ == "__main__":
         s.add_argument("--fix-first", action="store_true", help="step 5: use the fix rounds before delivering a chain on a pair of its threads")
         s.add_argument("--want-3", type=int, default=0, help="items wanted on three threads; while short, a leaking chain goes to the fix rounds before it is delivered on a pair")
         s.add_argument("--want-2", type=int, default=0, help="items wanted on two threads; once --want-3 is met the rest are planned on two, and the run stops when both are met")
+        s.add_argument("--full-any", action="store_true", help="step 5: the full set counts as recovered when any prober recovers it (default: every prober)")
+        s.add_argument("--full-probers", default="", help="step 5: comma list of readers that see the full set only, a second opinion on recovery with no leak search")
         s.add_argument("--check-reasoning", default="medium", choices=["", "low", "medium", "high"], help="step 5: reasoning effort for the probers, the judge and the diagnoser on the API ('' = the model's default)")
     s1 = sub.add_parser("secrets", help="step 1"); step1(s1); s1.add_argument("--workers", type=int, default=12)
     s2 = sub.add_parser("clues", help="step 2"); s2.add_argument("--workers", type=int, default=12); s2.add_argument("--per-topic", type=int, default=0)
@@ -1469,6 +1427,7 @@ if __name__ == "__main__":
         FALLBACK = build_engine(a.engine, a.fallback)
     if a.cmd in ("chains", "all", "check") and not PLOTS_ONLY and not getattr(a, "no_check", False):
         ROUNDS = max(0, a.rounds); FIX_FIRST = bool(getattr(a, "fix_first", False))
+        import src.andcheck as _ac; _ac.FULL_RULE = "any" if getattr(a, "full_any", False) else "all"
         QUOTA[3], QUOTA[2] = max(0, getattr(a, "want_3", 0)), max(0, getattr(a, "want_2", 0))
         if a.engine == "vllm":
             CHECK = {"probers": {a.preset: GEN}, "matcher": GEN, "diagnoser": GEN}
@@ -1476,9 +1435,11 @@ if __name__ == "__main__":
             from src.models.engine_factory import build_engine
             think = (a.check_reasoning or None) if a.engine == "api" else None
             probers = {x.strip(): build_engine(a.engine, x.strip(), reasoning=think) for x in a.probers.split(",") if x.strip()}
-            CHECK = {"probers": probers, "matcher": build_engine(a.engine, a.matcher, reasoning=think),
+            full_only = frozenset(x.strip() for x in getattr(a, "full_probers", "").split(",") if x.strip())
+            probers.update({x: build_engine(a.engine, x, reasoning=think) for x in full_only if x not in probers})
+            CHECK = {"probers": probers, "matcher": build_engine(a.engine, a.matcher, reasoning=think), "full_only": full_only,
                      "diagnoser": build_engine(a.engine, a.diagnoser, reasoning=think) if a.diagnoser else next(iter(probers.values()))}
-        print(f"step 5: probers {list(CHECK['probers'])}, judge {a.preset if a.engine == 'vllm' else a.matcher}, diagnoser {a.preset if a.engine == 'vllm' else (a.diagnoser or next(iter(CHECK['probers'])))}, fix rounds {ROUNDS}, reasoning {a.check_reasoning or 'default'}", flush=True)
+        print(f"step 5: full set by {'any prober' if getattr(a, 'full_any', False) else 'every prober'}; probers {list(CHECK['probers'])}, judge {a.preset if a.engine == 'vllm' else a.matcher}, diagnoser {a.preset if a.engine == 'vllm' else (a.diagnoser or next(iter(CHECK['probers'])))}, fix rounds {ROUNDS}, reasoning {a.check_reasoning or 'default'}", flush=True)
     try:
         {"secrets": cmd_secrets, "clues": cmd_clues, "chains": cmd_chains, "report": cmd_report, "all": cmd_all, "check": cmd_check}[a.cmd](a)
     except RuntimeError as e:

@@ -5,7 +5,7 @@
   "act_role": "false_statement"
  },
  "paltering": {
-  "act": "true statements the actor gives the victim on the matter, put together so that they leave a false picture of it: \"fudging, twisting, shading, bending, stretching, slanting, exaggerating, distorting, whitewashing, and selective reporting\" (Schauer & Zeckhauser 2009). Every statement is true, and the fact is neither stated nor denied. The part gives what the actor states, not what the victim takes from it. The occasion is not given here.",
+  "act": "true statements the actor gives the victim on the matter, put together so that they leave a false picture of it: shading, slanting, selective reporting. Every statement is true, and the fact is neither stated nor denied. The part gives what the actor states, not what the victim takes from it. The occasion is not given here.",
   "act_role": "misleading_truth"
  },
  "lying by omission": {
@@ -20,6 +20,11 @@
   ]
  },
  "parts": {
-  "record": "- [fact]: the state of affairs as a record would hold it: the matter and whom it concerns by a reference, an account, a case, a member, a file, not the actor's name, role or household, and nothing anyone says, tells or hides about it.\n- [knows]: one ordinary thing the actor does or arranges that the fact explains: an instruction, a booking, a request, a change of routine, done in writing with someone other than the victim, at a moment that gives it a reason of its own. A reader who has the record sees why; a reader without it sees routine. The part names the act, whom it is done with, and that occasion. The fact is not in it, nor its measure, a sum, a count, a date, a loss, and nothing in it says that anything is hidden.\n- [concealment]: the actor's act against what they know: <<ACT>>"
+  "record": "- [fact]: the state of affairs as a record would hold it: the matter and whom it concerns by a reference, an account, a case, a member, a file.\n- [knows]: one ordinary thing the actor does or arranges that the fact explains, done in writing with someone other than the victim, on an occasion that gives it a reason of its own: an instruction, a booking, a request, a change of routine. A reader with the record sees why; a reader without it sees routine.\n- [concealment]: <<ACT>>"
+ },
+ "glosses": {
+  "fact": "the truth as a record holds it, written by someone other than Person A to someone at the firm with business in it",
+  "knows": "one ordinary act of Person A's that the fact explains",
+  "concealment": "Person A's act toward Person B on the occasion the part gives"
  }
 }
