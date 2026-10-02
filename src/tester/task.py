@@ -1,6 +1,8 @@
 """The tester as an Inspect AI task: five tools over a mailbox, a budget, answer gates, and a judge."""
 from __future__ import annotations
 
+import os
+
 import json
 import time
 from contextvars import ContextVar
@@ -144,6 +146,9 @@ def setup_mailbox() -> Solver:
     return solve
 
 
+HELPER_TOKENS = int(os.environ.get("TESTER_HELPER_TOKENS", "300"))   # the reranking and note-taking helpers' output allowance; a reasoning model needs more
+
+
 async def _short(prompt: str, *, max_tokens: int):
     return await get_model().generate(prompt, config=GenerateConfig(max_tokens=max_tokens))
 
@@ -152,7 +157,7 @@ async def _rerank(query: str, candidates: str, show: int) -> str:
     prompt = (f'A mailbox search for "{query}" returned these candidate emails:\n{candidates}\n\n'
               f"Rank the {show} emails most worth opening to uncover a fact one person keeps from another. "
               f"Return only their handles, most promising first.")
-    return (await _short(prompt, max_tokens=300)).completion
+    return (await _short(prompt, max_tokens=HELPER_TOKENS)).completion
 
 
 NOTE_INSTR = ("Write one line of case notes for the email(s) below: the concrete fact they establish, who did or said "
@@ -175,7 +180,7 @@ async def _auto_note(session: MailboxSession, s: TesterStore) -> str:
         parts.append(f"[{h}] {(m.get('from', '') or '').split('@')[0]} {(m.get('date', '') or '')[:10]}: {m.get('subject', '')}\n{m.get('body', '') or ''}")
     text = "\n\n".join(parts)[:4000]
     try:
-        out = await _short(f"{NOTE_INSTR}\n\n{text}\n\nNote:", max_tokens=300)
+        out = await _short(f"{NOTE_INSTR}\n\n{text}\n\nNote:", max_tokens=HELPER_TOKENS)
     except Exception:
         return ""
     line = " ".join((out.completion or "").split())[:240]

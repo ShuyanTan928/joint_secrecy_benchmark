@@ -46,13 +46,16 @@ def main() -> int:
     ap.add_argument("--n-controls", type=int, default=0, help="paired mailboxes with nothing planted")
     ap.add_argument("--limit", type=int, default=0, help="first N chains only")
     ap.add_argument("--sample-id", help="one sample id")
+    ap.add_argument("--exclude-ids", default="", help="comma list of sample ids to leave out, e.g. those a pilot already ran")
     ap.add_argument("--epochs", type=int, default=1)
     ap.add_argument("--max-samples", type=int, default=1, help="Inspect sample concurrency")
     ap.add_argument("--max-output-tokens", type=int)
+    ap.add_argument("--helper-tokens", type=int, default=0, help="output allowance of the reranking and note-taking helpers (default 300); a reasoning model needs a few thousand")
     ap.add_argument("--out", required=True, help="directory for logs/ and rows.csv")
     ap.add_argument("--export-only", action="store_true", help="rows.csv from existing logs, no model")
     ap.add_argument("--display", choices=("full", "conversation", "rich", "plain", "log", "none"), default="plain")
     a = ap.parse_args()
+    if a.helper_tokens: import os; os.environ["TESTER_HELPER_TOKENS"] = str(a.helper_tokens)
 
     try:
         from dotenv import load_dotenv
@@ -72,9 +75,14 @@ def main() -> int:
     task = secrecy_tester(judge_model=a.judge_model, state_path=a.state, release_path=a.release, noise=a.noise, budget=a.budget, scan=a.scan,
                           segment_size=a.segment_size, rerank_pool=a.rerank, rerank_show=a.rerank_show, candidate_limit=a.candidate_limit,
                           seed=a.seed, min_investigate=a.min_invest, n_controls=a.n_controls, limit=a.limit)
+    ids = a.sample_id
+    if a.exclude_ids:
+        skip = {x.strip() for x in a.exclude_ids.split(",") if x.strip()}
+        ids = [smp.id for smp in task.dataset if smp.id not in skip]
+        print(f"{len(ids)} sample(s) after leaving out {len(skip)}")
     gen = {"max_tokens": a.max_output_tokens} if a.max_output_tokens else {}
     logs = eval(task, model=a.model, model_args=model_args, log_dir=str(log_dir), log_format="eval", epochs=a.epochs,
-                max_samples=a.max_samples, sample_id=a.sample_id, display=a.display, **gen)
+                max_samples=a.max_samples, sample_id=ids, display=a.display, **gen)
     rows = export_rows(log_dir, csv_path)
     print(summary(rows))
     print(f"wrote {len(rows)} row(s) to {csv_path}\nlogs: {log_dir}  (inspect view --log-dir {log_dir})")

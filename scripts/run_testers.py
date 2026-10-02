@@ -33,6 +33,8 @@ def run_one(model: str, a) -> Path:
            "--max-samples", str(a.max_samples), "--epochs", str(a.epochs), "--display", "plain"]
     if a.limit: cmd += ["--limit", str(a.limit)]
     if a.model_args: cmd += ["--model-args", a.model_args]
+    if a.helper_tokens: cmd += ["--helper-tokens", str(a.helper_tokens)]
+    if a.exclude_ids: cmd += ["--exclude-ids", a.exclude_ids]
     print(f"\n== {model} -> {out}", flush=True)
     with (out / "run.log").open("w") as log:
         log.write(" ".join(cmd) + "\n\n"); log.flush()
@@ -92,6 +94,8 @@ def main() -> int:
     ap.add_argument("--limit", type=int, default=0, help="first N chains only")
     ap.add_argument("--budget", type=int, default=100); ap.add_argument("--noise", type=int, default=0)
     ap.add_argument("--max-samples", type=int, default=4, help="Inspect sample concurrency"); ap.add_argument("--epochs", type=int, default=1)
+    ap.add_argument("--helper-tokens", type=int, default=0, help="output allowance of the tester's reranking and note-taking helpers (default 300)")
+    ap.add_argument("--exclude-ids", default="", help="comma list of sample ids to leave out, e.g. those a pilot already ran")
     ap.add_argument("--redo", action="store_true", help="run a model again even when its rows.csv exists")
     ap.add_argument("--table-only", action="store_true", help="only the table, from the rows.csv files present")
     a = ap.parse_args()
