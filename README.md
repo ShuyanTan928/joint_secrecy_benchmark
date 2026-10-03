@@ -1411,6 +1411,7 @@ python scripts/test_agent.py --model M --judge-model J [--state F] [--release F]
 python scripts/run_testers.py --models M1,M2 --judge-model J --state F [--n-controls N] [--limit N]   # the tester over several models, one table in results/tester/table.md
 python scripts/clean_background.py --models M1,M2 [--runs 1] [--candidate-count 5] [--agree 2] --out DIR [--apply]
 python scripts/direct_feed.py --model M --judge-model J --state F [--noise 0,100,200,500] [--n-controls N] [--limit N] --out DIR   # the direct feed: planted emails and N random release emails in one prompt, the tester's answer form; --dry-run for sizes, no model
+python scripts/run_direct.py --models M1,M2 --judge-model J --state F [--noise 0,100,200,500,1000,2000] [--n-controls N]   # the direct feed over several models, one table in results/direct/table.md
 python scripts/generate.py check [--probers P1,P2] [--matcher J] [--diagnoser D] [--rounds 3] [--limit N]   # step 5 on the chains in the state file; the same flags on chains and all, --no-check to skip
 ```
 
@@ -1492,6 +1493,7 @@ scripts/
   parse_corpus.py
   quiet_people.py
   reclassify_topics.py
+  run_direct.py
   sample_dataset.py
   test_agent.py
 src/
@@ -1520,7 +1522,7 @@ tests/
 | path | holds |
 |---|---|
 | `prompts/` | the four generation prompts (`secret.md`, `clues.md`, `plot.md`, `email.md`) and their fill files (`kinds.json` the pool and Goffman's kinds; `purposes.json` Goffman's quotes; `patterns.json` the three patterns with the sources' words; `atoms.json` the parts and acts; `shapes.json` the plot's choices); the mailbox prompts (`topic_classify.md`, `people_extract.md`, `name_audit.md`, `quiet_people.md`); the check prompts (`probe.md` the blind prober, `match.md` the judge, `diagnose.md` the fix, `direct.md` the direct feed's question); the IAB taxonomy |
-| `scripts/` | `parse_corpus.py`, the corpus to one parquet; `build_mailbox.py` and the stage scripts it drives; `reclassify_topics.py`, the independent classification; `generate.py`, steps 1 to 5; `assemble.py`; `test_agent.py` and `clean_background.py`, the tester and the background sweep; `direct_feed.py`, the direct feed; `name_registry.py`, the pseudonym registry `anonymize_llm.py` uses |
+| `scripts/` | `parse_corpus.py`, the corpus to one parquet; `build_mailbox.py` and the stage scripts it drives; `reclassify_topics.py`, the independent classification; `generate.py`, steps 1 to 5; `assemble.py`; `test_agent.py` and `clean_background.py`, the tester and the background sweep; `direct_feed.py` and `run_direct.py`, the direct feed on one model and on several; `name_registry.py`, the pseudonym registry `anonymize_llm.py` uses |
 | `src/models/` | one engine interface over the API (`api_engine.py`), local vLLM (`vllm_engine.py`) and the stub (`stub_engine.py`); the shared flags in `engine_factory.py` |
 | `src/andcheck.py` | step 5: the subset probes, the judge call and the diagnosis that `generate.py` runs |
 | `src/tester/` | the tester: the mailbox environment, the session with its gates, the Inspect task (chains, or the background sweep), the export; `direct.py`, the direct feed |
@@ -1586,10 +1588,21 @@ per level, plus how many findings cited a planted email (`src/tester/direct.py`,
 `--dry-run` builds every prompt and prints the sizes without a model.
 
 ```bash
-python scripts/direct_feed.py --dry-run --state data/benchmark/keystone30/state.json --n-controls 30 --out results/direct/dry
-python scripts/direct_feed.py --model openrouter/google/gemini-3.8-flash --judge-model openrouter/openai/gpt-6-sol \
-    --state data/benchmark/keystone30/state.json --n-controls 30 --out results/direct/gemini-3.8-flash
+# several tested models (Inspect model strings) at any noise levels, in emails; the whole release is 2000; one table over all
+python scripts/run_direct.py --models openrouter/anthropic/claude-opus-5.5,openrouter/openai/gpt-6-sol,openrouter/google/gemini-3.8-flash \
+    --judge-model openrouter/openai/gpt-6-sol --state data/benchmark/keystone30/state.json --noise 0,100,200,500,1000,2000 --n-controls 30
+# one model by hand
+MODEL=openrouter/google/gemini-3.8-flash; NOISE=0,100,200,500,1000,2000
+python scripts/direct_feed.py --dry-run --state data/benchmark/keystone30/state.json --noise "$NOISE" --n-controls 30 --out results/direct/dry   # sizes first, free
+python scripts/direct_feed.py --model "$MODEL" --judge-model openrouter/openai/gpt-6-sol --state data/benchmark/keystone30/state.json \
+    --noise "$NOISE" --n-controls 30 --out "results/direct/${MODEL##*/}"                      # add --prompt prompts/direct_plain.md for the bare question
+python scripts/direct_feed.py --export-only --out "results/direct/${MODEL##*/}"                # rows.csv and table.md from the logs
 ```
+
+Sizes on keystone30: a prompt holds about 1,000 tokens at noise 0, 31,000 at 100, 63,000 at 200, 157,000 at 500,
+and about 660,000 at 2000 (the whole release; inside a 1M window). Each sample is one call; the judge adds one short
+call per finding. Gemini 3.8 Flash on OpenRouter, four levels with 30 controls: 210 calls, about $19; the 2000 level
+alone, 60 calls, about $32.
 
 **Cleaning the background first.** The real mailbox may hold secrets of its own, and the tester would
 report them. So before anything is planted, the same tester runs on the untouched release with several

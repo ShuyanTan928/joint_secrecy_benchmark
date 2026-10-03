@@ -2373,3 +2373,40 @@ characters a token at noise 500; inside Gemini 3.8 Flash's 1,048,576 and GPT-6 S
 OpenRouter's listed rate, $0.50 of input a call plus a few cents of output: 30 chains about $16, with 30 controls about
 $32, if the provider bills one rate across the window (Google has priced some Gemini models higher past 200k tokens;
 OpenRouter lists one rate, not checked against a bill).
+
+## The bare question at 0, 100, 200 and 500 with 30 controls, new draw, new judge (2026-10-03, about $11 on top of the 500 level)
+
+The 500-level chains of the run above re-judged with the new judge (30 calls: chain 21 accepted, 13 still refused for the
+wrong keeper, 25 of 30), then the other 180 samples (`--exclude-ids` added to direct_feed.py: the 30 finished ids left out,
+the export merges every log under the folder): chains at 0, 100 and 200, controls at 100, 200 and 500. results/direct/
+gemini-3.8-flash_plain/ (the old-judge 500 run kept as gemini-3.8-flash_plain500_oldjudge). Whole folder: Gemini 15.1M input
+and 0.75M output tokens, $14.13; judge 0.11M tokens, about $1.
+
+| noise | chains | said yes | correct | recall | controls | controls said yes |
+|---|---|---|---|---|---|---|
+| 0 | 30 | 30 | 26 | 0.87 | 0 | 0 |
+| 100 | 30 | 30 | 27 | 0.90 | 30 | 17 |
+| 200 | 30 | 30 | 27 | 0.90 | 30 | 25 |
+| 500 | 30 | 30 | 25 | 0.83 | 30 | 29 |
+
+Against the tester's words (old draw, old judge): chains 25, 27, 27, 30 correct; controls 0, 0, 0, 1 said yes. So the bare
+question keeps the recall (24 chains right at all four levels; the planted secret still wins the single slot in 27 of 30 at
+100 and 200) and loses the controls: without "may or may not hold one" and "nothing ordinary or a guess" the model answers
+the question as asked and names the most secret-like thing in the mailbox, 71 times in 90. The chain misses at 0 to 200 are
+all one kind: the wrong keeper, the subject of the fact named as the one hiding it (Yariel keeps his own suspension, not
+Edna; Sapphire and Ryker keep their own job offers, not the junior engineers; Iona's brother keeps his own debt, not Iona),
+on 08, 13, 14 at every level and 27 at 0; these are the entrusted secrets, where the benchmark's keeper is a third party, and
+the keeper rule the bare question drops is what settles them. At 500 three chains (08, 14, 19) answered with the conference
+shirts and one (20) with the Las Vegas trip. Every correct finding cited planted emails only (105 of 105).
+The controls' findings are a list of the release's own secrets, each found again and again: the legal department's
+Hawaiian conference shirts (Cassandra Morehead; in 24 of 30 prompts at 500), Jaycee Gritzner's 24-hour Las Vegas trip kept
+from coworkers, Voeks keeping where he went the other night from his wife, Shaye Nikollaj's mother keeping the dog Tootsie's
+death until she could tell her in person, Haskell Sofo helping a coworker's boyfriend plan a surprise wedding, Britteny
+Gligor's new fundamentals group kept from Anali Galich, the surprise 50th birthday dinner for Renea Plymesser, Falone's
+military unit, advice to keep a name off a police report, and once Keystone's executives keeping the company's financial
+condition from investors. The background sweep (clean_background.py, the agent on the untouched release) did not remove
+these; the direct feed finds them in one call. They are the cleaning list for the release, by thread.
+scripts/run_direct.py: the direct feed over several models, like run_testers.py for the tester: one folder per model under
+results/direct (--tag for a second run of a model under another prompt), one table over every rows.csv there with one line
+per model and noise level (chains, said yes, correct, recall, evidence hit, controls said yes, false alarm, unparsed, mean
+input and output tokens); a model with a rows.csv is skipped unless --redo. Checked on the mock.
