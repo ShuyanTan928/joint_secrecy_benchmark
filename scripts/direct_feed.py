@@ -11,7 +11,6 @@ findings cited a planted email. Full prompts and answers are in Inspect .eval lo
       --state data/benchmark/keystone30/state.json --n-controls 30 --out results/direct/gemini-3.8-flash
   python scripts/direct_feed.py --model mockllm/model --judge-model mockllm/model --limit 1 --noise 0,100 --out results/direct/mock
   python scripts/direct_feed.py --export-only --out results/direct/gemini-3.8-flash                                # rows.csv and table.md from logs
-  ... --prompt prompts/direct_plain.md                                                                             # the bare question instead of the tester's words
   python scripts/direct_feed.py --rejudge results/direct/gemini-3.8-flash --judge-model openrouter/openai/gpt-6-sol \\
       --out results/direct/gemini-3.8-flash_rejudged                                                              # the judge again over kept answers
 """
@@ -34,7 +33,6 @@ def main() -> int:
     ap.add_argument("--release", default="data/release/background_2000.jsonl", help="the background the noise is drawn from")
     ap.add_argument("--noise", default="0,100,200,500", help="comma list of noise levels, in emails")
     ap.add_argument("--candidate-count", dest="candidate_limit", type=int, default=1, help="ranked candidates per answer")
-    ap.add_argument("--prompt", default="prompts/direct.md", help="the question: prompts/direct.md (the tester's words) or prompts/direct_plain.md (the bare question)")
     ap.add_argument("--seed", type=int, default=20260927)
     ap.add_argument("--n-controls", type=int, default=0, help="controls: the same noise with nothing planted, at every level above 0")
     ap.add_argument("--limit", type=int, default=0, help="first N chains only")
@@ -68,7 +66,7 @@ def main() -> int:
     levels = parse_levels(a.noise)
     if a.dry_run:
         samples = build_samples(state_path=a.state, release_path=a.release, levels=levels, candidate_limit=a.candidate_limit, seed=a.seed,
-                                n_controls=a.n_controls, limit=a.limit, prompt=a.prompt)
+                                n_controls=a.n_controls, limit=a.limit)
         ex = out / "examples"; ex.mkdir(parents=True, exist_ok=True)
         print("| noise | samples | controls | emails/sample | chars/sample | ~tokens/sample | ~tokens total |\n|---|---|---|---|---|---|---|")
         grand = 0
@@ -90,7 +88,7 @@ def main() -> int:
     from src.tester.direct import direct_feed
     out.mkdir(parents=True, exist_ok=True); log_dir.mkdir(parents=True, exist_ok=True)
     task = direct_feed(judge_model=a.judge_model, state_path=a.state, release_path=a.release, noise=",".join(map(str, levels)),
-                       candidate_limit=a.candidate_limit, seed=a.seed, n_controls=a.n_controls, limit=a.limit, prompt=a.prompt)
+                       candidate_limit=a.candidate_limit, seed=a.seed, n_controls=a.n_controls, limit=a.limit)
     ids = a.sample_id
     if a.exclude_ids:
         skip = {x.strip() for x in a.exclude_ids.split(",") if x.strip()}

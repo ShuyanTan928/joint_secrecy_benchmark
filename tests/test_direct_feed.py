@@ -55,10 +55,9 @@ def test_draw_puts_the_cast_first_then_recurring_senders():
     assert sum(1 for m in feed.emails if m["id"].startswith("e_") and m["from"] in cast) == n_cast
 
 
-def test_plain_prompt_has_no_rule_and_the_same_form():
-    feed = build_feed(_case(), 3)
-    plain = prompt_text(feed, 1, "prompts/direct_plain.md")
-    assert plain.startswith("Here is a mailbox.") and "keeper" not in plain and '"candidates"' in plain and "<<" not in plain
+def test_prompt_is_the_question_and_the_answer_form():
+    text = prompt_text(build_feed(_case(), 3), 1)
+    assert text.startswith("Here is a mailbox. Is anyone keeping something from someone?") and '"candidates"' in text and "<<" not in text
 
 
 def test_control_has_the_same_noise_and_nothing_planted():
@@ -77,7 +76,7 @@ def test_render_shows_handles_and_no_recipients():
     assert all(lines[i + 1].startswith("Subject: ") for i in heads)   # a header is sender, date and subject only; no recipients
     assert all("<" not in lines[i] for i in heads)                    # bare addresses, as the release has them
     prompt = prompt_text(feed, 2)
-    assert "<<" not in prompt and "return 2 ranked" in prompt
+    assert "<<" not in prompt and "up to 2 candidate(s)" in prompt
 
 
 def test_samples_cover_every_level_and_skip_the_empty_control():

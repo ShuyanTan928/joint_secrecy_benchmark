@@ -8,8 +8,7 @@ all of them, one line per model and noise level, to results/direct/table.md and 
   python scripts/run_direct.py --models mockllm/model --judge-model mockllm/model --limit 1 --noise 0,100   # no model
   python scripts/run_direct.py --table-only --out-root results/direct                                       # the table from the rows.csv files
 
-A model whose rows.csv already exists is not run again unless --redo; --tag adds a suffix to the model's folder, for a second
-run of the same model under another prompt. The table always covers every rows.csv under --out-root."""
+A model whose rows.csv already exists is not run again unless --redo. The table always covers every rows.csv under --out-root."""
 from __future__ import annotations
 
 import argparse
@@ -29,9 +28,9 @@ def slug(model: str) -> str:
 
 
 def run_one(model: str, a) -> Path:
-    out = Path(a.out_root) / (slug(model) + (f"_{a.tag}" if a.tag else "")); out.mkdir(parents=True, exist_ok=True)
+    out = Path(a.out_root) / slug(model); out.mkdir(parents=True, exist_ok=True)
     cmd = [sys.executable, str(ROOT / "scripts" / "direct_feed.py"), "--model", model, "--judge-model", a.judge_model, "--state", a.state,
-           "--release", a.release, "--noise", a.noise, "--n-controls", str(a.n_controls), "--prompt", a.prompt, "--candidate-count", str(a.candidate_limit),
+           "--release", a.release, "--noise", a.noise, "--n-controls", str(a.n_controls), "--candidate-count", str(a.candidate_limit),
            "--seed", str(a.seed), "--max-samples", str(a.max_samples), "--display", "plain", "--out", str(out)]
     if a.limit: cmd += ["--limit", str(a.limit)]
     if a.model_args: cmd += ["--model-args", a.model_args]
@@ -82,14 +81,12 @@ def main() -> int:
     ap.add_argument("--release", default="data/release/background_2000.jsonl", help="the background the noise is drawn from")
     ap.add_argument("--noise", default="0,100,200,500", help="comma list of noise levels, in emails; 2000 is the whole release")
     ap.add_argument("--n-controls", type=int, default=0, help="controls: the same noise with nothing planted, at every level above 0")
-    ap.add_argument("--prompt", default="prompts/direct.md", help="prompts/direct.md (the tester's words) or prompts/direct_plain.md (the bare question)")
     ap.add_argument("--candidate-count", dest="candidate_limit", type=int, default=1)
     ap.add_argument("--seed", type=int, default=20260927)
     ap.add_argument("--limit", type=int, default=0, help="first N chains only")
     ap.add_argument("--exclude-ids", default="", help="comma list of sample ids to leave out")
     ap.add_argument("--max-samples", type=int, default=4, help="Inspect sample concurrency")
     ap.add_argument("--max-output-tokens", type=int)
-    ap.add_argument("--tag", default="", help="suffix for the model's folder, e.g. plain for a run under the bare question")
     ap.add_argument("--out-root", default="results/direct")
     ap.add_argument("--redo", action="store_true", help="run a model again even when its rows.csv exists")
     ap.add_argument("--table-only", action="store_true", help="only the table, from the rows.csv files present")
@@ -97,7 +94,7 @@ def main() -> int:
     out_root = Path(a.out_root); out_root.mkdir(parents=True, exist_ok=True)
     if not a.table_only:
         for m in [x.strip() for x in a.models.split(",") if x.strip()]:
-            folder = out_root / (slug(m) + (f"_{a.tag}" if a.tag else ""))
+            folder = out_root / slug(m)
             if (folder / "rows.csv").exists() and not a.redo: print(f"== {m}: {folder / 'rows.csv'} exists, skipped (--redo to run again)"); continue
             run_one(m, a)
     md, _ = table(out_root)

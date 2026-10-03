@@ -2410,3 +2410,11 @@ scripts/run_direct.py: the direct feed over several models, like run_testers.py 
 results/direct (--tag for a second run of a model under another prompt), one table over every rows.csv there with one line
 per model and noise level (chains, said yes, correct, recall, evidence hit, controls said yes, false alarm, unparsed, mean
 input and output tokens); a model with a rows.csv is skipped unless --redo. Checked on the mock.
+
+## One question for the direct feed (2026-10-03)
+
+The user's decision: the question "Here is a mailbox. Is anyone keeping something from someone? Who, what, and which emails
+show it?" with the answer form is the direct feed's one prompt, prompts/direct.md; the other page and the --prompt and --tag
+flags are gone, and the README describes the feed with this question alone. Local result folders renamed to match:
+results/direct/gemini-3.8-flash is the run under this question at 0, 100, 200 and 500 with 30 controls; the earlier runs
+are kept beside it as gemini-3.8-flash_earlier_prompt and gemini-3.8-flash_500_earlier_judge.

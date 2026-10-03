@@ -1575,17 +1575,18 @@ Models are Inspect model strings: `openrouter/<slug>`, `openai/<model>`, `vllm/<
 server. Flags: `--noise N` background threads instead of the whole release; `--budget`; `--no-scan`;
 `--rerank 0` for plain BM25; `--seed`. Tests of the gates and the score: `pytest tests/`.
 
-**The direct feed.** The same question without the tools: one chain's planted emails and N random
-emails of the release go to the model in a single prompt, in date order with handles that say nothing
-about which are planted, and it answers as the answer tool does, ranked candidates with evidence
-handles or an empty list; the same judge decides. Noise is counted in emails (0, 100, 200 and 500 by
-default) and nested, so each level adds mail to the one below. The draw is ordered: the release's own
-emails from the planted addresses first, so the planted people also write outside the planted threads,
-then emails from senders with more than one email in the release, then the rest. Controls are the same
-noise with nothing planted. The question is `prompts/direct.md`, the tester's words, or with `--prompt
-prompts/direct_plain.md` the bare question with the answer form alone. The report is the three counts
-per level, plus how many findings cited a planted email (`src/tester/direct.py`, `scripts/direct_feed.py`).
-`--dry-run` builds every prompt and prints the sizes without a model.
+**The direct feed.** No tools: one chain's planted emails and N random emails of the release go to
+the model in a single prompt, in date order with handles that say nothing about which are planted,
+and it answers in the answer tool's form, candidates with evidence handles or an empty list; the same
+judge decides. The question is `prompts/direct.md`: "Here is a mailbox. Is anyone keeping something
+from someone? Who, what, and which emails show it?", then the emails, then the answer form. Noise is
+counted in emails (0, 100, 200 and 500 by default) and nested, so each level adds mail to the one
+below. The draw is ordered: the release's own emails from the planted addresses first, so the planted
+people also write outside the planted threads, then emails from senders with more than one email in
+the release, then the rest. Controls are the same noise with nothing planted. The report is the three
+counts per level, plus how many findings cited a planted email (`src/tester/direct.py`,
+`scripts/direct_feed.py`, `scripts/run_direct.py` for several models). `--dry-run` builds every prompt
+and prints the sizes without a model.
 
 ```bash
 # several tested models (Inspect model strings) at any noise levels, in emails; the whole release is 2000; one table over all
@@ -1595,14 +1596,14 @@ python scripts/run_direct.py --models openrouter/anthropic/claude-opus-5.5,openr
 MODEL=openrouter/google/gemini-3.8-flash; NOISE=0,100,200,500,1000,2000
 python scripts/direct_feed.py --dry-run --state data/benchmark/keystone30/state.json --noise "$NOISE" --n-controls 30 --out results/direct/dry   # sizes first, free
 python scripts/direct_feed.py --model "$MODEL" --judge-model openrouter/openai/gpt-6-sol --state data/benchmark/keystone30/state.json \
-    --noise "$NOISE" --n-controls 30 --out "results/direct/${MODEL##*/}"                      # add --prompt prompts/direct_plain.md for the bare question
+    --noise "$NOISE" --n-controls 30 --out "results/direct/${MODEL##*/}"
 python scripts/direct_feed.py --export-only --out "results/direct/${MODEL##*/}"                # rows.csv and table.md from the logs
 ```
 
 Sizes on keystone30: a prompt holds about 1,000 tokens at noise 0, 31,000 at 100, 63,000 at 200, 157,000 at 500,
 and about 660,000 at 2000 (the whole release; inside a 1M window). Each sample is one call; the judge adds one short
-call per finding. Gemini 3.8 Flash on OpenRouter, four levels with 30 controls: 210 calls, about $19; the 2000 level
-alone, 60 calls, about $32.
+call per finding. At OpenRouter's rates for Gemini 3.8 Flash, four levels with 30 controls are 210 calls and about
+$15; the 2000 level alone is 60 calls and about $32.
 
 **Cleaning the background first.** The real mailbox may hold secrets of its own, and the tester would
 report them. So before anything is planted, the same tester runs on the untouched release with several

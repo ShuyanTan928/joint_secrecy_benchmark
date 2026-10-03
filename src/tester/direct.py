@@ -8,8 +8,8 @@ is ordered: first the release's own emails from the chain's planted addresses, s
 outside the planted threads; then emails from senders with more than one email in the release; then the single-email
 senders, which a level reaches only past the 1,475 emails of the recurring ones. Emails are shown in date order with
 handles e1, e2, ... that say nothing about which are planted, and without recipients, as the tester's read tool
-shows them. A control is the same noise with nothing planted; at noise 0 there is none. The question is a prompt
-file: prompts/direct.md, the tester's words, or prompts/direct_plain.md, the bare question.
+shows them. A control is the same noise with nothing planted; at noise 0 there is none. The question is prompts/direct.md:
+is anyone keeping something from someone, who, what, and which emails show it, with the answer form.
 """
 from __future__ import annotations
 
@@ -103,8 +103,8 @@ def render(feed: Feed) -> str:
     return "\n".join(out) if out else "(no emails)"
 
 
-def prompt_text(feed: Feed, candidate_limit: int = 1, prompt: str | Path = PROMPT) -> str:
-    return _resolve(prompt).read_text().replace("<<EMAILS>>", render(feed)).replace("<<CANDIDATE_LIMIT>>", str(candidate_limit))
+def prompt_text(feed: Feed, candidate_limit: int = 1) -> str:
+    return PROMPT.read_text().replace("<<EMAILS>>", render(feed)).replace("<<CANDIDATE_LIMIT>>", str(candidate_limit))
 
 
 def read_answer(completion: str, candidate_limit: int) -> tuple[list[dict], int, bool]:
@@ -120,7 +120,7 @@ def sample_id(case: BenchmarkCase, noise: int) -> str:
 
 
 def build_samples(*, state_path: str = DEFAULT_STATE, release_path: str = DEFAULT_RELEASE, levels: Iterable[int] = NOISE_LEVELS,
-                  candidate_limit: int = 1, seed: int = 20260927, n_controls: int = 0, limit: int = 0, prompt: str | Path = PROMPT) -> list[Sample]:
+                  candidate_limit: int = 1, seed: int = 20260927, n_controls: int = 0, limit: int = 0) -> list[Sample]:
     """One sample per kept chain and noise level, then the controls at every level above 0."""
     positives = load_cases(state_path, limit=limit)
     cases = positives + make_controls(positives, n_controls)
@@ -133,8 +133,8 @@ def build_samples(*, state_path: str = DEFAULT_STATE, release_path: str = DEFAUL
             md = {"sample_id": sample_id(case, noise), "case": case.sample_id, "state_path": state_path, "release_path": release_path,
                   "topic": case.topic, "kind": case.kind, "pattern": case.pattern, "n_clues": case.n_clues, "noise": noise, "seed": seed,
                   "candidate_limit": candidate_limit, "is_control": case.is_control, "n_emails": len(feed.emails), "chars": feed.chars,
-                  "planted_handles": list(feed.planted), "prompt": str(prompt)}
-            samples.append(Sample(id=md["sample_id"], input=prompt_text(feed, candidate_limit, prompt), target=json.dumps(answer_key(case), ensure_ascii=False),
+                  "planted_handles": list(feed.planted)}
+            samples.append(Sample(id=md["sample_id"], input=prompt_text(feed, candidate_limit), target=json.dumps(answer_key(case), ensure_ascii=False),
                                   metadata=md))
     return samples
 
@@ -181,12 +181,12 @@ def direct_scorer(judge_model: str) -> Scorer:
 
 @task(name="direct_feed")
 def direct_feed(judge_model: str = "", state_path: str = DEFAULT_STATE, release_path: str = DEFAULT_RELEASE, noise: str = "0,100,200,500",
-                candidate_limit: int = 1, seed: int = 20260927, n_controls: int = 0, limit: int = 0, prompt: str = "prompts/direct.md") -> Task:
+                candidate_limit: int = 1, seed: int = 20260927, n_controls: int = 0, limit: int = 0) -> Task:
     """The direct feed over the chains of a state file at each noise level: one model call per sample, the judge on each finding."""
     if not judge_model:
         raise ValueError("judge_model is required")
     samples = build_samples(state_path=state_path, release_path=release_path, levels=parse_levels(noise), candidate_limit=candidate_limit,
-                            seed=seed, n_controls=n_controls, limit=limit, prompt=prompt)
+                            seed=seed, n_controls=n_controls, limit=limit)
     return Task(dataset=MemoryDataset(samples, name="direct-feed"), solver=[generate()], scorer=direct_scorer(judge_model), epochs=1,
                 fail_on_error=False, score_on_error=True, name="direct_feed", version="1")
 
