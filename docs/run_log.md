@@ -1763,3 +1763,613 @@ email has a line over 100 characters is not wrapped, one whose lines stop short 
 address. On a stub run of steps 3 and 4 over keystone30's parts: a line over 100 characters 32% (release 33%), two
 spaces after a sentence 72% (release 73%). logs/restyle_k30.json holds keystone30's 10 secrets with their parts and no
 chains, ready for `chains --facts 10 --no-check` under the new prompts.
+
+## Step 4: the plan's words are not the email's; register by relationship; personal samples (2026-10-01)
+
+Reviewers (Terrance Liu, with the user) found keystone30's mail natural in tone but too serious and too written: "I need
+to ask you straight out: do we owe anything on any credit card?" between spouses, the colon set-up in particular, and
+little of the casualness of teammates or family. The cause, read off chain 9: the plan said "She asks him straight out
+whether they owe anything on any credit card" and step 4 wrote the plan's sentence out; and the wife, a minted outside
+person with no mail of her own, had for register only the two outside samples, which are business mail. The reviewers
+suggested a rewriting call after the check; the user prefers to fix the prompt, not to add a model only for tone.
+email.md: the plan says what a message is about, in the planner's words, and the message is in the sender's; spouses,
+family and close friends write the way they talk to each other, short, in pieces, with their shorthand and whatever else
+is going on; teammates offhand; an office or a stranger the plain business letter of 2001; a new condition: a question is
+asked the way it would be asked aloud, a colon only before a list or a time. Code: the names block gains "How people write
+to family, friends and close colleagues", two real emails of the release on personal topics, informal (an exclamation,
+dots, a paragraph begun in lower case, hey, yeah), no title block, nothing charged (personal_samples).
+Prepared, not run: logs/tone_opus.json and logs/tone_sol.json, ten keystone30 chains (0, 4, 8, 9, 13, 17, 18, 22, 26, 27:
+one per secret, every pattern, work and life), for `emails` under the new prompt with Opus 5.5 and with GPT-6 Sol, no
+fallback; logs/tone_k30.json the same chains as generated; the scratch script tone_compare.py tabulates plan-following
+and writes logs/tone_side_by_side.txt.
+
+## Opus 5.5 against GPT-6 Sol on the same step-4 prompt and plots (2026-10-01, 25 calls, under $1)
+
+The step-4 prompt gained a reader-check line before its conditions: every message is read beside real mail from this
+mailbox, one that reads as written by a model gives the chain away; check each message as a reader of that mailbox
+would and rewrite any that fails. Then `emails` on ten keystone30 chains (0, 4, 8, 9, 13, 17, 18, 22, 26, 27) with Opus
+5.5 and with GPT-6 Sol, no fallback; Opus had 5 of 15 calls content-filtered and its retries went through, Sol none.
+Both follow the plan: all 10 chains each, thread counts as planned, no header put back by code (4 in the keystone30
+originals), no placeholder left, no actor or victim named in a record; Person A's points kept 0.92 (Opus), 0.85 (Sol),
+0.94 originally. Against the release (median words 77): Opus 48, Sol 29, the originals 38; two spaces after a sentence
+65% and 60% against 73%; a line over 100 characters 23% and 27% against 33%; dots or a spaced dash 27% and 18%
+against 33%; a greeting line 72% and 52% against 34%; "Thanks," alone 18% and 12% against 4%; exclamation 7% and 0%
+against 28%; under 20 words 7% and 23% against 3%. Read side by side (logs/tone_side_by_side.txt): Opus's family mail
+now reads like family mail, chain 9's wife "hon - Carol at the mortgage place called during my planning period ... also
+parent conferences til 7 tonight, can you get something for dinner", the husband "I'll pick up Pappas on the way home";
+the colon set-up is gone. Sol follows the plan as closely but writes short flat notes: spouses sign full first names,
+no other business, no exclamation anywhere. Still in both: Person A's points stay in the plan's wording ("He owes
+nothing to anyone beyond the last few payments on his car"), the next step told with "nonrefundable", and the record
+letters formal (a step-3 matter). Opus stays the generator. After this run: the names paragraph no longer asks for a
+greeting and a sign-off on every message ("a reply inside a thread often has neither"); not yet measured.
+
+## Opus run 2 on the same ten chains (2026-10-01, 16 calls, under $1)
+
+Before it: email.md's register paragraph asks for quick lines and long rambles between family and friends, sentences that
+run on, capitals on the work's acronyms and now and then for emphasis; the email step gets four personal samples instead
+of two; "a reply inside a thread often has neither" greeting nor sign-off (from the run-1 analysis). logs/tone_opus2.json,
+from a fresh copy of the ten keystone30 chains, no fallback, none filtered. Plan kept in all ten; Person A's points 0.83 by
+word overlap, read one by one: every meaning kept, the wording now the sender's ("Not a weird question. He doesn't owe
+anybody anything except the last few payments on his car. Tell your mom yes on the games, I'll call her."). Against the
+release: greeting 48% (run 1 72%, release 34%), "Thanks," alone 12% (4%), dots or a spaced dash 40% (33%), median words
+52 (77), under 20 words 5% (3%); not taken: capitals 2% (26%), a sentence over 35 words 7% (26%), over 150 words 0% (21%),
+exclamation 7% (28%). Two spaces after a sentence came out 96%: the model copied the habit from the samples and the code
+only added spaces; mailbox_form now returns the senders who type one space to one space, which puts run 2 at 56% (73%).
+Still from the old plots, fixed at step 3 for new sets: "OL-2001-117 is my file for checking these dates", "asks him
+straight out" carried into the email, the next step reported with "nonrefundable".
+
+## Can the planted mail be told from the release? Two free tests (2026-10-01)
+
+The user asked for a mathematical test that the planted emails lie within the Enron corpus. Nothing proves two samples
+the same; a test measures how far apart they are, or bounds it. Two run on local resources, no paid calls (scratch
+scripts c2st.py and ppl.py).
+1. A classifier two-sample test (Lopez-Paz and Oquab 2017): logistic regression on 90 style features (length, sentence
+length, line shape, punctuation rates, capitals, numbers, contractions, greeting, sign-off, 60 function words), 5-fold
+cross-validated, AUC with a bootstrap interval. Against the whole release (1,997 emails): keystone30 0.98, Opus run 1
+0.89, Opus run 2 0.93, GPT-6 Sol 0.96. Against real person-to-person mail only (969 emails, no newsletters, forwards or
+automated mail): keystone30 0.99 (0.98-0.99), Opus run 1 0.91 (0.87-0.95), run 2 0.92 (0.88-0.96, the same under the
+fixed spacing), Sol 0.98. The features that separate most: fewer colons, capitals and quote marks in planted mail, more
+"the", shorter sentences, fewer lines. A trained classifier still tells them apart; the prompt work took it from 0.99 to
+about 0.91.
+2. Perplexity under Qwen3-32B, local (the measure GPTZero- and DetectGPT-style detectors build on), emails of 20 to 200
+words: median perplexity release 26.3, keystone30 31.9, Opus run 1 30.4, run 2 25.5, Sol 54.1. As a detector, lower
+perplexity for machine text: AUC 0.40, 0.46, 0.50, 0.24, so no planted set is more predictable than real mail and run 2
+is indistinguishable on it; with burstiness and length together 0.72, 0.69, 0.70, 0.81. Caveat: the Enron corpus is
+public and very likely in the model's training data, which lowers real mail's perplexity and weakens this test.
+Prepared, not run (paid): a ten-email lineup (scratch lineup.py): nine real person-to-person emails matched in length
+and one planted, subject and body only; the judge names the machine-written one; chance 10%, binomial test; 40 lineups
+per set (keystone30's ten chains, Opus run 2) for GPT-6 Sol and Gemini 3.7 Flash, 160 calls.
+
+## The lineup test, the human lineup page and the map (2026-10-01, 160 calls, about $2)
+
+Ten-email lineups, nine real person-to-person emails matched in length and one planted, subject and body only; the judge
+names the machine-written one; chance 10%. keystone30's ten chains: GPT-6 Sol 35 of 40 (88%, 95% CI 73-96%), Gemini 3.7
+Flash 37 of 40 (92%); Opus run 2: Sol 36 of 40 (90%), Gemini 34 of 40 (85%); p < 1e-27 each. The prompt work did not move
+it. The judges' reasons are mostly content: "a neatly constructed scenario", "a contrived reason to insert that question",
+"deliberately placed Houston local references"; one is form: "lacks the formatting quirks, encoding artifacts ... of the
+authentic Enron corpus", which also shows the judges know the corpus, a confound a human lineup does not have. For the
+benchmark this matters beyond realism: a tester could find planted threads by how they read, not by reasoning about the
+secret. The human lineup page (artifact a4f6ce8f): the same lineups (rebuilt from the same seed), twelve of them, six per
+set, picks stored per person in the page's db (picks/<id>, each writes only their own), answers shown after the last
+lineup with the judges' picks on the same lineups. The map (artifact add9b203): every email by its out-of-fold style-
+classifier score against a second style direction; the typical planted email scores as more planted-looking than 99%
+(keystone30), 97% (run 2), 99% (Sol) of real emails; 4%, 15%, 3% sit inside the real bulk (left of the 90th percentile).
+Run 2's largest gaps against real mail, in standard deviations: more "the" (+1.15) and "no" (+1.13, the denials), fewer
+"be", "I", "that", "a", shorter (-0.63), fewer brackets and colons, more sign-offs and apostrophes.
+
+## The classifier checked; the lineup feedback and the classifier's gaps into the prompts (2026-10-01)
+
+The style classifier is a logistic regression trained here, on these two samples only: real person-to-person mail of the
+release against planted mail, 90 hand-chosen style features, scored out of fold. It is a two-sample test, not a general
+AI-text detector. Checks: real against real (60 random real emails as the planted side, ten draws) AUC 0.51 (0.48-0.58),
+so it does not invent differences; trained on keystone30 alone it picks out Opus run 2 at 0.87 and Sol at 0.96 against
+real mail it never saw, so it learned habits of our generated mail, not keystone30's quirks. One form trait it did not
+have as a feature: 56% of real person-to-person emails have a line ending in a space, left by the client's wrap; ours had
+none. Lost characters (word.? Word) are in 2%, quoted-printable leftovers in none.
+Changes. shapes.json: the first record option is a record "as the office whose business it is handles it day to day:
+forwarded with a line on top, an item in a list, a quick question back to the sender", not a notice or letter (the judges:
+"a polished, self-contained legal notice"). plot.md, a condition: each thread is about an everyday matter these people
+would write about anyway, with other business of the day in it; the part comes up inside it, and Person B asks because
+something that day prompts it ("a contrived reason to insert that question"). email.md: written "for that person alone";
+people write in the first person about what they think, want and are doing, and say what they do rather than describe the
+situation (the gaps: more "the", fewer "I", "be", "that", "a"); asides go in brackets (fewer brackets); the place-naming
+clause dropped ("deliberately placed Houston local references"); the condition "a message refers to what both people
+already know without explaining it" ("context-dependent" mail). Code: mailbox_form leaves a space at each wrapped line
+end for the senders whose own mail has them, three wrapping clients in four otherwise; `emails --plot` redoes step 3
+before step 4. The lineup prompt no longer names an energy company, 2001 or employees: "Below are ten emails. Nine were
+written by people; one was written by a language model. Which one?". Prepared, needs a yes: logs/tone_opus3.json, the ten
+chains, `emails --plot` with Opus (about 20 calls), then the neutral lineup on keystone30 and run 3 (160 calls).
+
+## Opus run 3, step 4 only, and a style-only lineup (2026-10-01, 16 + 80 calls, about $1.50)
+
+The user asked for step 4 alone (keystone30's plots kept, so the step-3 fixes are not in it) and a lineup that asks only
+about style: "Judge only by how each one is written, its style, tone, wording and form, not by what it is about." Run 3,
+logs/tone_opus3.json: 9 of 10 chains written (one empty answer, no fallback). Lineup on run 3 only, 40 per judge: GPT-6 Sol
+33 (82%, 95% CI 67-93%), Gemini 3.7 Flash 30 (75%, 59-87%); run 2 under the earlier, unrestricted question was 90% and
+85%, so the drop mixes the prompt change with the narrower question. The judges' style reasons: "unusually polished,
+evenly structured wording", "a perfectly punctuated list", "a casual tone that feels deliberately constructed", "lacking
+the idiosyncratic errors and quirks". The classifier against real person-to-person mail: run 3 AUC 0.94 (0.91-0.97),
+run 2 0.92, keystone30's ten chains 0.98; lines ending in a space 52% (real 56%, run 2 0%), the code's trailing-space
+habit working; the word gaps did not move ("the" +1.08, "be" -0.60, "a" -0.55, "no" +1.17), so the first-person and
+"say what they do" lines in the prompt did not change Opus's word habits. Prompt changes to step 4 look spent: the
+remaining tell, by both measures, is evenness and polish.
+
+## Step 4 cut back to its job: plan to email (2026-10-01)
+
+User: list which parts of an email are code's and which the prompt's, and review the step-4 prompt, which grew a rule
+per finding; adding rules hurts the plan-to-email task. The division: the plan (step 3) decides content, the step-4
+prompt decides wording, code decides form. email.md's instructions went from 3,148 to 1,684 characters. Out, because
+measured as not followed (runs 2 and 3): first person, run-on sentences, brackets, capitals, dashes and dots, quick lines
+and long rambles. Out, because the plan owns them: other business in a message, how the victim's next step comes up.
+Out, because code already enforces them: headers as planned (enforce_headers), one name per placeholder on the right
+side of the firm (cast_from). Out, as no longer needed: the colon rule (planted mail has fewer colons than real mail)
+and the long check preamble, folded into one clause ("every message will be read beside them"). Kept: the plan's words
+are not the email's; the register by relationship; replies often without greeting or sign-off; the gate conditions
+(the record names neither person, nothing confidential, Person A's points kept, a reference where people would write
+it). plots_block labels each planned message "about:" instead of "what it says:". Not yet measured.
+
+## Run 4: step 4 under the short prompt (2026-10-01, 15 calls, under $1)
+
+logs/tone_opus4.json, the ten chains, Opus, no fallback: 9 of 10 written (a different chain's answer came back empty
+than in run 3; the fallback model covers this in a normal run). Plan kept: thread counts as planned, no header put back,
+no one named in a record, Person A's points 0.93 by word overlap (runs 2 and 3: 0.83). Classifier against real person-to-
+person mail: AUC 0.90 (0.84-0.95), runs 2 and 3 0.92 and 0.94, so the cut did not hurt. Two removed lines had been doing
+work: dots or a spaced dash fell from 40-44% (runs 2, 3) to 7% (real 33%), and chain 9's wife again wrote "I'm just going
+to ask you straight out: do we owe anything on any credit card?". Both restored as one sentence: "Dashes and dots are
+common; a question is asked the way it would be asked aloud, with no colon setting it up." The rest of the cut stays.
+Also seen: a firm person cast as "Girl Ankenbrandt", the release's signed name for abdiel.ankenbrandt, first flagged in
+run 42; the casting pool should take the address's first name where the signed one is a common word.
+
+## Run 5: the two lines restored (2026-10-01, 16 calls, under $1)
+
+logs/tone_opus5.json, the ten chains, Opus, no fallback: 8 of 10 written (two empty answers; the fallback covers them in a
+normal run). Plan kept: counts as planned, no header put back, no one named in a record, Person A's points 0.89. Dots or
+a spaced dash back to 35% (real 33%, run 4 7%). Chain 9's wife: "So I'm just going to ask you straight out... do we owe
+anything on any credit card? Anything at all?", no colon. Classifier AUC 0.92 (0.87-0.95), run 4 0.90: the same within
+noise. Greetings stay high, 61% against 34%.
+
+## Preparing a Gemini 3.7 Flash tester run on keystone30 (2026-10-01, not run)
+
+The user's comparison point, a GPT-6 Sol tester run on keystone30 at commit 4a95a77 (Azure, 2026-09-29): 30 planted cases and
+30 controls, GPT-6 Sol as tester and judge, budget 100, the full background, one epoch, four samples at a time; 6 of 30
+recovered (20% recall), 6 of 7 findings correct (86% precision), 0 of 30 controls with a finding. Its caveat: 1,064 of
+2,174 helper calls (975 of 986 search reranks, 89 of 1,188 notes) hit the 300-token output allowance and 972 returned no
+text, because a reasoning model spends the allowance thinking. The tester now takes --helper-tokens (test_agent.py and
+run_testers.py, read by task.py as TESTER_HELPER_TOKENS; default 300, so earlier runs are unchanged). Size of a keystone30
+mailbox as the tester sees it: 21 listing segments of about 1,600 tokens each, which a "nothing found" answer must cover,
+and about 600 tokens per thread read; the conversation is resent on every step, so a sample takes roughly 2 to 4.5 million
+input tokens. Mock run of the setup on one case and one control: complete, table written.
+
+## Gemini 3.8 Flash tester pilot on keystone30, five planted cases (2026-10-01, $4.11)
+
+`run_testers.py --models openrouter/google/gemini-3.8-flash --judge-model openrouter/openai/gpt-6-sol --state
+data/benchmark/keystone30/state.json --limit 5 --n-controls 0 --max-samples 4 --helper-tokens 4000`, results/tester_pilot/.
+The first five cases are family and relationships: the undivorced first husband under three patterns, the brother out of
+work under commission and paltering. Found 3 of 5, all three correct (recall 60%, precision 100%): the undivorced
+marriage as a palter, the brother's job loss as a lie and as a palter; missed the marriage as a lie (46 tool calls, gave
+up) and as an omission (budget hit, 121 calls). Cost: $4.11 by the account, $4.15 by the logs' token counts, $0.83 a
+sample; tester input 16.3M tokens of which 87% billed at the repeated-input rate, output 0.41M. A sample that scans the
+whole mailbox costs $1.29 to $1.75, one that finds the secret early $0.28 to $0.48; samples took 8 to 28 minutes.
+Projection for 30 planted and 30 controls (controls scan the whole mailbox): about $65 to $80, about four hours at four
+samples at a time. The GPT-6 Sol reference found 6 of 30 (20%); five cases are too few to compare.
+Full run started 18:00 UTC on the remaining 55 samples (cases 05 to 29 and all 30 controls), same settings, results/tester_full/,
+with a spend watcher that stops it past $100 (scratch watch_spend.sh, spend.log). test_agent.py and run_testers.py gained
+--exclude-ids, to leave out samples already run; the pilot's five and the 55 merge into results/tester/gemini-3.8-flash_keystone30.
+
+## Gemini 3.8 Flash as tester on keystone30: the full result (2026-10-01, $62.32 with the pilot)
+
+The 55 remaining samples finished at 21:12 UTC ($58.21 by the account; with the pilot $62.32, about $1.04 a sample); merged
+with the pilot's five into results/tester/gemini-3.8-flash_keystone30 (rows.csv, table in results/tester/table.md).
+Gemini 3.8 Flash: 10 of 30 secrets recovered (33% recall); 11 findings on planted cases, 10 correct (91% precision); 0 of
+30 controls with a finding. GPT-6 Sol reference (Azure, helper allowance 300, most helper calls empty): 6 of 30 (20%), 6 of
+7 (86%), 0 of 30. The difference is not significant on 30 cases (Fisher exact p = 0.38), and the runs differ in the helper
+allowance and the provider. By topic: family and relationships 6 of 9, personal finance 2 of 6, careers 2 of 9, law 0 of 6.
+By kind: entrusted 6 of 12, strategic 2 of 6, dark 2 of 12. By pattern: commission 4 of 10, paltering 4 of 10, omission 2
+of 10. By threads: three-thread items 9 of 25, two-thread items 1 of 5. The one wrong finding (10, the husband's card debt
+as a palter) named a background matter, shirts ordered for a legal-department conference. Budget hit on 2 planted cases and
+4 controls; controls averaged 91.5 tool calls.
+Release bundle for this run, in the format of keystone30-gpt-6-sol-2026-09-29: results/release/keystone30-gemini-3.8-flash-2026-10-01
+(zip with REPRODUCE.md, conversations.jsonl.gz, judge-decisions.json, provenance.json, rows.csv, summary, table and SHA256SUMS; the
+same files beside it). The tested code is commit fd4d407 (the two tester options only). Case 28's first judge call returned no text
+and the scorer retried it; all 11 findings have a valid judgment. Even at 4,000 tokens, 249 of 1,128 reranking calls hit the
+allowance and 78 helper calls returned no text (Sol's run: 972).
+
+## A real email under each planned message; the Qwen3-32B A/B; the plan toward mail no detector tells apart (2026-10-02)
+
+The user: the style and tone of the planted mail are far from the corpus; their own classifier (original corpus against
+generated) always tells, GPT-6 Sol picks the planted email out of ten about 80% of the time, "polished" in 46 of 61
+correct calls. Measured against 1,620 real person-to-person emails of the release: Opus run 5 median 46 words (real 72),
+none over 150 (20%), a greeting 61% (33%), a sign-off word 43% (23%), a lower-case sentence start 12% (21%), doubled
+punctuation 10% (21%), a colon 16% (45%), an exclamation 6% (25%).
+Built: scripts/exemplars.py, a bank from the parsed corpus (517,401 emails): person-to-person mail of 1999-2002, one or
+two recipients, own words only, 5-250 words, no mailers, lists, records, HTML or legal footers, nothing from the
+topic-sampled set the release was drawn from and nothing sharing a six-word run with a released email (1,259 dropped so),
+Enron renamed, phones given the 555 exchange; 19,650 emails in ten cells (inside / out / in x personal / business x first
+/ reply; personal = a home or school account about something other than business, or family talk). generate.py:
+plots_block draws one exemplar per planned message from its cell, at least 70% as long as the plan's "about" line,
+prints it under the message ("written like this real one, a reply from someone at home to the firm, 34 words"), records
+ids in rec["exemplars"], keeps them on a redo; email.md asks for the message written the way that one is written, the
+content from the plan alone; the outside and personal sample pickers are gone (candidates_block shows the firm people's
+own emails only). Checks: exemplar_names_in_mail, enron_in_mail. The bank stays in data/enron (gitignored) like the corpus.
+Qwen3-32B A/B on the ten tone chains, same model, old prompt against new (free, GPUs 0-1, --workers 1): classifier AUC
+0.93 (0.90-0.97) against 0.93 (0.90-0.96); median words 28 against 32; greeting 28% against 48%; exclamation, dots,
+lower-case starts, over 150 words all 0% in both. Qwen greeted the exemplar's addressee by name in 3 of 10 chains and
+copied sign-off blocks; the plan's sentence was still written out. Fix: EX.fit puts the message's own placeholders in the
+exemplar's greeting and signing lines and blanks other first names (the SSA list less names that are ordinary words, such
+as Hope and Will, by their lower-case frequency in the bank). Not run on Opus (16 calls; needs a yes; expected small).
+The plan, docs/email_realism.md: (1) the step-3 conditions already in the tree; (2) the exemplars, cheap help for shape;
+(3) the lever: a style inverter fitted to the corpus (STRAP: a local model polishes 45,000 real emails, a Qwen3-32B LoRA
+learns polished -> original; Opus's drafts go through it, code checks Person A's points, the reference, the names, the
+length, and falls back to the draft); (4) quirks by code only if a gap remains; (5) verification with chance-level
+targets: the two-sample classifier (and the user's own, and a fine-tuned transformer), perplexity, model lineups,
+human lineups, the planted emails' ranks in a whole scored mailbox, the AND-check's KEPT rate.
+
+## Part 3 built: the style inverter, first fit (2026-10-02, free, local GPUs)
+
+scripts/style_inverter.py (data, polish, train, eval, score, invert). data: 45,389 real emails from the corpus filter of
+exemplars.py without the per-cell caps (release's sources excluded, 1,258 dropped as the release's by six-word shingles),
+split by id 43,531 / 911 / 947. polish: Qwen3-32B (tp 2, GPUs 0-1, about 1,000 emails a minute) rewrote each as a careful
+assistant copy-edits: standard spelling and punctuation, complete sentences, no emoticons or runs of dots, a greeting and a
+sign-off asked for on three in five; 42,954 pairs kept, 2,435 rewrites dropped (not a rewrite, wrong length). On the pairs
+the real quirks mostly went: lower-case sentence start 16% -> 2%, dots or a spaced dash 15% -> 2%, exclamation 12% -> 5%,
+greeting 26% -> 65%. train: Qwen3-14B (downloaded), LoRA rank 32 on all projections, 2,574 steps of 16 pairs, lr 1e-4
+cosine, one epoch, 66 minutes on two A100s with torchrun; loss 1.8 -> 0.58, validation 0.56. Held-out test (907 pairs):
+the style classifier tells original from polished at AUC 0.95 (0.94-0.96) and original from inverted at 0.53 (0.50-0.56);
+greeting 65% -> 27% (originals 26%), lower-case start 3% -> 13% (21%), exclamation 6% -> 8% (12%). So the inverter undoes
+its own polisher. On the Opus drafts it changed little: run 5 AUC 0.89 -> 0.88, run 4 0.85 -> 0.85, run 2 0.95 -> 0.90,
+keystone30 0.99 -> 0.96; read side by side, the inverted texts are the drafts with a comma dropped, a colon after the
+greeting, a lower-case first word. Cause: the copy-editing polisher kept the originals' wording, so the pairs differed by
+small edits and that is what the inverter learned; an Opus draft is composed, not copy-edited, and gives it nothing it
+knows how to undo. The guard against real text (three shared six-word shingles) fired on stock phrases ("please let me know
+if you need anything else"), 5 of 51 messages; it is now the longest run of consecutive shared shingles (six, an eleven-word
+run). The inverter's own hard wraps are joined before mailbox_form puts the sender's on (a "May / 14, 2001" break showed why).
+Artifacts kept beside the new ones as *_copyedit (data/enron/inverter, logs/inverted_copyedit_*.json).
+Second fit, started 04:47: the polisher asks for an email that says the same things in the model's own words ("your own
+sentences and phrasing throughout, not the writer's"), temperature 0.8, STRAP's paraphrase proper, so the inverter must
+rewrite rather than touch up; then train, eval and invert as before, chained.
+
+## Part 3, second fit: the paraphrase inverter (2026-10-02, free)
+
+polish as a paraphrase ("your own sentences and phrasing throughout, not the writer's", temperature 0.8): 41,540 pairs,
+3,849 dropped; word-sequence similarity between original and paraphrase median 0.45 (the copy-edit's was near 1); on the
+pairs greeting 13% -> 68%, lower-case start 7% -> 1%, dots 15% -> 1%. train as before: 2,490 steps, 61 minutes; loss
+1.8 -> 0.99, validation 1.02 (the copy-edit fit reached 0.56: reconstructing wording from a paraphrase is a harder task,
+as it should be). Held-out (869 pairs): original against polished AUC 0.96 (0.95-0.97), original against inverted 0.58
+(0.56-0.61); median words polished 31 -> inverted 24 (originals 23), greeting 78% -> 30% (28%), lower-case start 3% ->
+10% (21%), exclamation 7% -> 9% (12%). The guard against real text (longest run of shared six-word shingles >= 6) fired
+on no message; the digit and reference checks kept 2 to 9 drafts per set.
+On the Opus drafts, against real person-to-person mail: run 5 AUC 0.89 -> 0.88, run 4 0.85 -> 0.82, run 2 0.95 -> 0.88,
+keystone30 0.99 -> 0.94 (the copy-edit fit: 0.88, 0.85, 0.90, 0.96). The shape table barely moves: median words 46 -> 45,
+greeting 61% -> 63%, none over 150 words; lower-case starts 12% -> 20% (real 21%) and keystone30's two-space and wrap
+habits are put right (0% -> 65%, 86% -> 39% long lines) because mailbox_form now runs on the output. Read side by side,
+the inverter paraphrases ("The Commission cannot accept Keystone's compliance report of May 14, 2001", "Per your request
+for dependent-eligibility review"), lowercases a whole note now and then ("done -- paid the deposit this morning.  no
+getting our money back now"), and keeps the drafts' greetings, sign-offs and length. What the classifier still reads is
+lexical and bound to the content: more "the", fewer capitalised words, quote marks, "not", "more"; a content-preserving
+rewrite leaves those. Cost: Person A's kept points (line_kept) 0.89 -> 0.79 on run 5, 0.93 -> 0.81 on run 4, 0.83 -> 0.69
+on run 2, 0.91 -> 0.82 on keystone30; verbatim keys mostly gone (the points are paraphrased, the meaning read by hand kept).
+The inverted sets are logs/inverted_opus5.json, inverted_opus4.json, inverted_opus2.json, inverted_k30.json, each message
+with draft_body, inverted, invert_reason; the adapter data/enron/inverter/lora, the copy-edit one lora_copyedit.
+Next, free: eight candidates per message and a realism critic (the style classifier trained on real mail against all 348
+Opus drafts, saved as weights in data/enron/inverter/critic.json) choosing the most real-looking candidate among those
+that pass the content checks; to be judged by a classifier retrained on the result, by perplexity, and by the lineup.
+
+## The critic, a second detector, and what a flexible classifier reads (2026-10-02 evening, free)
+
+Critic-guided inversion: eight candidates per message at temperature 0.8, the content checks, then the realism critic (the
+90-feature style classifier trained on real person-to-person mail against all 348 Opus drafts, saved as weights in
+data/enron/inverter/critic.json) keeps the most real-looking candidate. Run 5: style AUC 0.89 -> 0.74 (0.67-0.82)
+(the plain inversion 0.88); the critic's own score of the messages median 0.99 -> 0.53. keystone30: 0.99 -> 0.87
+(0.85-0.90) (plain 0.94); critic score 0.99 -> 0.64. The classifier is retrained out of fold on the result, with the
+same features the critic used, so part of this is the critic optimising its own test; the shape table hardly moves
+(greeting 61% -> 51%, median words 46 -> 45). Read: "The hotel called...they want the wedding deposit by Friday and its
+non refundable so I just want to get one thing out of the way"; "nope.  i have never been married before."; the record
+letters stay formal. Cost: line_kept 0.89 -> 0.79 (run 5), 0.91 -> 0.76 (keystone30), verbatim keys 15 -> 6; the critic
+prefers the candidates that stray furthest. Fix: a per-message constraint, a candidate must keep at least the draft's
+share less 0.15 of each carried key line's content words ("Person A's points thinned" rejects it); rerun below.
+Two detectors the critic never saw. (1) Character 3-5-gram tf-idf with logistic regression, names and digits masked, out of
+fold: every set at 0.98-0.99, drafts and inverted alike. Its top planted-side features are content: " sign", " file",
+"record", " card", "deposit", " desk", " bar"; the real side: clock times, "you", "think", "Name:". Control: 181 real
+personal emails of the corpus outside the release against the release's real mail, AUC 0.84; 181 real inside-the-firm
+emails, 0.85. A flexible text classifier at these sample sizes separates any two samples of mail that differ in what they
+are about, real from real included; planted mail is about the secrets' matters, and that is what such a classifier
+finds. This bears on the user's own classifier: it is very likely reading content, which no style work can move; the
+content signal is the plot's (part 1) and, in the benchmark, diluted by 2,000 emails of other matters. (2) Perplexity and
+burstiness under Qwen3-14B (the earlier measure used Qwen3-32B), emails of 20 to 200 words, real 1,395: median perplexity
+real 32.9, keystone30 drafts 36.8, inverted 35.1, critic 39.9; run 5 33.1, 38.6, 34.8. As a detector (lower perplexity =
+machine) AUC 0.42-0.52: no planted set is more predictable than real mail; with burstiness and length 0.67-0.71 on
+every set, driven by length, which the inverter does not change.
+Rerun with the key constraint (same eight candidates, temperature 0.8): run 5 AUC 0.74 (0.66-0.82), critic score 0.99 ->
+0.67, line_kept 0.89 -> 0.86 (was 0.79 without it), verbatim keys 4 -> 1; keystone30 AUC 0.87 (0.84-0.90), critic score
+0.99 -> 0.64, line_kept 0.91 -> 0.88 (was 0.76), verbatim 15 -> 9, drafts kept for "Person A's points thinned" 5 of 181.
+So the constraint keeps the points at almost no cost to the style gain. The critic-inverted sets are
+logs/inverted_critic_opus5.json and logs/inverted_critic_k30.json (each message: draft_body, body, critic scores).
+Where this leaves part 3: the inverter plus the critic takes keystone30 from 0.99 to 0.87 and the best prompt run from
+0.89 to 0.74 on the content-blind style classifier, with perplexity already at chance and the kept points held; the
+rest of the style gap is in length (no planted email over 150 words against a fifth of real ones) and in greetings and
+sign-offs, which the inverter leaves as the draft has them, and in words bound to the content. Not run, paid, waiting for
+a yes: the lineups (drafts against critic-inverted, run 5 and keystone30, style-only and unrestricted questions, two
+judges, 40 each: 320 calls, about $4) and a fresh Opus run under the exemplar prompt with the part-1 plot conditions
+(`emails --plot` on the ten chains, about 20 calls, under $1), which the inverter would then take.
+
+## Run 6: steps 3 and 4 with the exemplar prompt and the part-1 plot conditions, then the inverter (2026-10-02, 30 calls, under $1)
+
+`generate.py --engine api --preset or-claude-opus --max-calls 45 --state logs/tone_opus6.json emails --plot --workers 4`,
+the ten keystone30 chains, Opus 5.5 with GPT-6 Sol as fallback. 20 generation calls, 10 of them content-filtered (6 of 10
+plot calls, 4 of 10 email calls, and two chains had both), so Sol wrote those: run 6 is a mixed Opus/Sol run, which no
+earlier tone run was. All 10 chains written, no placeholder left, no Enron, the exemplar-name check tripped only on month
+names (now excluded). The plots: records handled day to day (a list of four background checks forwarded with a line on
+top), threads about Thanksgiving pies, second interviews, a cruise deposit, with the part inside; 68 messages, median 55
+words (run 5: 46; real 72), 6% over 150 words (first time above 0), greeting 40% (61%; real 33%), sign-off 28% (43%; 23%).
+Style classifier against real mail: run 6 drafts AUC 0.93 (0.90-0.96), worse than run 5's 0.89; fewer exclamation and quote
+marks, more "the", dots or a spaced dash down to 13% (35%). Person A's points: line_kept 0.81. Then the critic-guided
+inverter (eight candidates, the key constraint): 62 of 68 messages rewritten, AUC 0.85 (0.80-0.89), critic score 0.89 ->
+0.18, line_kept 0.79. The inverter's mid-sentence line breaks are now joined before mailbox_form puts the sender's wrap
+on. Sets: logs/tone_opus6.json, logs/inverted_critic_opus6.json.
+Where the measured sets stand on the content-blind style classifier (0.5 is chance): keystone30 0.99 -> 0.87; run 5 0.89
+-> 0.74; run 6 0.93 -> 0.85. Perplexity at chance throughout. Not measured yet: the lineup judges and human readers on the
+inverted sets (paid, 320 calls, about $4).
+
+## Lineups on the inverted set (2026-10-02, 320 calls, about $4)
+
+Run 5 drafts against run 5 after the critic-guided inverter, ten-email lineups (nine real, matched in length; chance 10%),
+the same lineups for both sets by seed, 40 per judge. Style-only question: drafts GPT-6 Sol 33/40 = 82% (67-93), Gemini
+3.7 Flash 31/40 = 78% (62-89); inverted Sol 24/40 = 60% (43-75), Gemini 21/40 = 52% (36-68). Unrestricted question: drafts
+Sol 35/40 = 88% (73-96), Gemini 30/40 = 75% (59-87); inverted Sol 27/40 = 68% (51-81), Gemini 21/40 = 52% (36-68). The
+inverter takes a quarter to a third off the judges' pick rate; they stay five to seven times above chance. Their reasons
+on the inverted emails they still picked: "polished", "evenly structured", "template", "tidy", "self-contained"; what is
+new in them: exposition ("unnecessarily over-explains internal context to a coworker", "neatly staged reveal",
+"artificially complete explanatory style"), a 555 telephone number read as fictional, an awkward phrase the inverter
+made ("draft sig pages for spring to the commission"), "lacks headers or artifacts". Files logs/lineup_style_inverted5.json,
+logs/lineup_content_inverted5.json. Reading: the inverter removes part of the polish; what the judges read next is the
+exposition that planting requires (a message that explains its own context to someone who would know it) and the
+absence of the clutter real mail carries (quoted headers, signatures, artifacts), both outside a sentence-level rewrite.
+
+## Step 4b set aside; step 4 carries the work: shapes from the release and habits per person (2026-10-02)
+
+The user's decision: no step after generation; keep step 4 simple and do as much as the prompt can for three things, the
+plot followed, the AND gate held, the mail reading natural. scripts/style_inverter.py and scripts/exemplars.py are out of the
+tree (in /work6/shuyant/joint_secrecy_benchmark_removed_2026-10-02.tar.gz beside the repo; the adapter, pairs, critic and
+bank stay in data/enron, gitignored, with the corpus); the per-message exemplars are out of the prompt (no measured gain).
+In their place, two things code can draw from real mail and the model can follow, since the runs of 2026-10-01 showed a
+concrete per-message instruction is kept and a general one is not:
+- A shape per message, drawn from the release's real person-to-person mail in the same situation (sender at the firm or
+  outside; a first message or a reply; four cells, 181 to 823 emails each): about how many words (at least 70% of the
+  plan's "about" line, so a record can carry its content), a greeting or none, how it ends (no sign-off 44%, a name,
+  a sign-off word and a name, a signature block, an initial, a sign-off word alone). Printed under the message's "about"
+  line as "shape: about 60 words, a greeting, ends with a name"; kept on a redo (rec["shapes"]); measured afterwards as
+  rec["shape_kept"] (words within 0.6 to 1.6 of the target, greeting as planned, a sign-off or none as planned), no retry.
+- How each person writes, in the people list: a firm person "as the email under their name shows" (their one real email
+  in the names block); an outsider with habits drawn for the chain at about the rates real mail shows them (lower case
+  15%, an exclamation mark 25%, dots and dashes 30%, run-on sentences 25%, a slip of the keys 25%, capitals 10%; an
+  office draws from a milder menu), or "plain, careful writing".
+email.md: the message is in the sender's words to someone who already knows the background, "so it says what is new and
+leaves the rest unsaid; nobody explains to a colleague or a spouse what the two of them already know" (the judges'
+"over-explains internal context"); the register by relationship; dashes, dots, a question asked aloud; the shape kept, a
+short note short even when more could be said; the people's ways of writing; the gate conditions unchanged. Dry run with
+the stub: shapes drawn and measured. A free sanity run on Qwen3-14B (GPU 3; GPUs 0-1 are taken) is next, then Opus with a yes.
+Qwen3-14B sanity run (GPU 3, free, the ten chains, `emails`): 10 of 10 written, no placeholder, Person A's points kept
+0.92; the shapes followed poorly (words within range 31%, greeting as planned 63%, ending 45%; median 36 words against
+targets drawn at a median near 60), the plan's sentences written out as before; classifier 0.92 against the 32B's 0.93
+under the old prompt. The code path holds; whether the shapes are kept is a question for Opus, 10 to 16 calls, needs a yes.
+email.md rewritten for plainness at the user's request (2026-10-02, late): one opening line on what is given; the setting,
+people and threads; five short bullets on how to write (the sender's words to a reader who knows the background, the
+register by relationship, the shape kept, each person's way of writing, dashes and dots with one example of a question
+asked aloud); the names; the quoting form; five check lines that are the gate and repeat nothing from the bullets; the
+answer format. In the people list an outsider's habits read as verbs ("slips on the keys now and then", "writes plainly
+and carefully"), a firm person "writes as their email below shows"; the shape line reads "about 60 words, a greeting,
+signed with a name". About 9,000 characters assembled. Stub dry run clean.
+
+## The direct feed: the tester's final step without the tools, at four noise sizes (2026-10-02, not run)
+
+The user's ask: feed the generated emails to the model directly, with 0, 100, 200 or 500 random emails of the anonymised
+2,000-email release around them, and ask what the tester's answer tool asks, is there a secret and which emails show it.
+Built as a second Inspect task beside the tester: src/tester/direct.py (the feed, the task, the scorer, the export and a
+table per level), scripts/direct_feed.py (the runner, with --dry-run for the sizes and --export-only), prompts/direct.md
+(the tester's system prompt and answer form in one page: the keeper rule, several emails may be needed, nothing ordinary or
+guessed; return N ranked candidates with evidence e-handles or an empty list). One call per sample, then the tester's judge
+(task.judge_finding, the former _judge made public) on each candidate, first match wins; the three counts are the tester's
+(found, correct, false positive), plus evidence_planted, how many cited handles were planted emails. Choices: noise is counted
+in emails, this repository's unit, not threads; each chain gets one seeded shuffle of the release and a level takes the first
+N, so the 100 of noise 100 are among the 200 and the 500; emails are shown flat in date order as the read tool shows them
+(handle, bare sender address, date, subject, body; no recipients, which the release does not have), handles assigned after
+the sort so the planted ones sit by date among the rest; a control is the same noise with nothing planted, at every level
+above 0 (noise 0 would be an empty prompt); more candidates than the limit are cut to the limit, since the answer tool's
+rejection and resubmit has no one-call equivalent (n_returned keeps the count). Sample ids are the tester's with -n<noise>.
+Dry run on keystone30 with 30 controls: 210 samples; per sample about 860 tokens at noise 0, 26,000 at 100, 53,000 at 200,
+131,000 at 500 (characters / 4; the mock's character heuristic counted 20 to 40% more), about 12.7M input tokens in all, 6.3M without the
+controls; the longest release email is 59,000 characters, so a 500-email prompt can reach 150,000 tokens. Checks without a
+model: tests/test_direct_feed.py (7 tests: contents, date order, seeded nested noise, the control, the rendering, the samples,
+the answer parse) with the tester's 6 still passing; a mock Inspect run with canned answers (a found candidate citing two
+planted handles of three, two candidates cut to one, a control with no JSON) gave the expected rows and table. A real run
+needs a yes: 120 tester calls (210 with 30 controls) plus one judge call per finding. Spend estimate on OpenRouter's rates of
+2026-10-02 (Gemini 3.8 Flash $0.75 per million input tokens and $3.75 per million output, GPT-6 Sol $2 and $10; no prompt is
+repeated, so nothing bills at the cached rate): input 25.4M characters without controls, 6.4M to 7.7M tokens, $4.80 to $5.80;
+output at 2,000 to 8,000 reasoning-and-answer tokens a call $0.90 to $3.60; the judge under $1; about $7 to $10 in all. With
+30 controls, 50.7M characters, 12.7M to 15.4M tokens, $9.50 to $11.50 input, $1.60 to $6.30 output, about $12 to $19 in all.
+The agent run on the same 60 samples cost $62.
+
+## The direct feed on Gemini 3.8 Flash, keystone30 at 0, 100, 200 and 500 noise emails, with 30 controls (2026-10-02, about $19)
+
+`direct_feed.py --model openrouter/google/gemini-3.8-flash --judge-model openrouter/openai/gpt-6-sol --state
+data/benchmark/keystone30/state.json --noise 0,100,200,500 --n-controls 30 --max-samples 4`, results/direct/gemini-3.8-flash/
+(rows.csv, table.md, the .eval log). 210 samples, no errors, every answer parsed, 48 minutes. Spend by the logs' token counts:
+Gemini 15.1M input and 1.9M output tokens, $18.48; the judge 37k tokens, under $0.40. Input came in at the top of the
+estimate (156,700 tokens a sample at noise 500, 3.3 characters a token) and output above it: 9,100 reasoning-and-answer tokens
+a call on average, up to 21,000.
+
+| noise | chains | said yes | correct | recall | cited a planted email | controls | controls said yes |
+|---|---|---|---|---|---|---|---|
+| 0 | 30 | 27 | 25 | 0.83 | 27 | 0 | 0 |
+| 100 | 30 | 29 | 27 | 0.90 | 29 | 30 | 0 |
+| 200 | 30 | 29 | 27 | 0.90 | 29 | 30 | 0 |
+| 500 | 30 | 30 | 30 | 1.00 | 30 | 30 | 1 |
+
+Read whole, the mail gives the secret up: 23 of 30 chains correct at all four levels, and recall does not fall with noise; it
+is lowest with the planted emails alone. Every finding on a chain cited planted emails only (109 of 109 correct ones; 41 cited
+every planted email). Against the agent's 10 of 30 on the same chains, the gap is the search, not the reading. By kind at
+noise 500: dark 12 of 12, entrusted 12 of 12, strategic 6 of 6; at noise 0: dark 10 of 12, entrusted 10 of 12, strategic 5
+of 6; by pattern at noise 0: commission 8, omission 8, paltering 9 of 10 each; by topic at noise 0: careers 6 of 9, law 4 of
+6, family 9 of 9, finance 6 of 6.
+The five misses with no finding are at noise 0 to 200 (08 omission law, 13 paltering careers twice, 20 omission careers, 14
+omission careers). The six findings the judge refused are all near-misses of the same matter: chain 00 "she has been married
+before" against the key's "still legally married" (refused at 100 and 200, accepted in the same words at 500); chain 21 "her
+license is subject to a disciplinary order, falsely claiming it is active" against "her license is suspended" (refused at 0,
+100 and 200, accepted in the same words at 500); chain 15 "he and five traders have accepted employment elsewhere" against
+"agreed to join a rival firm and lining up his traders to leave with him" (refused at 0, accepted at the other levels). So
+the judge's verdict varied on findings that differ only in wording, four times in the same direction as the noise. Neither
+scorer kept the judge's reason on a refusal (the explanation read "no candidate matched"); both now append it. One control
+said yes, at noise 500: the legal department's conference shirts kept a surprise from the attendees, the same background
+matter the agent's one wrong finding on keystone30 named; a cleaning candidate for the release.
+
+## Run 7: step 4 under the rewritten prompt with shapes and habits (2026-10-03, 16 calls, under $1)
+
+`emails` on the ten chains, Opus 5.5, GPT-6 Sol as fallback, cap 30: 10 generation calls, 6 of them stopped by the
+content filter in ordinary business text ("I am writing from the Keystone Employees Federal Credit Union regarding a debt
+consolidation loan", "active suspension since March 2000"), so Sol wrote chains 1, 2, 3, 5, 6, 7 and Opus 0, 4, 8, 9.
+The shapes are followed: words within range 99%, greeting as planned 99%, ending 85%; Person A's points 0.81; no
+placeholder, no name off the cast, the [fact] thread clean in all ten. Whole set against real mail: median words 87 (real
+72), over 150 words 18% (20%), greeting 38% (33%), a sign-off word 27% (23%), a name alone 33% (28%): the shape table
+matches for the first time; classifier AUC 0.95 (0.92-0.97), worse than run 5's 0.89, on length ("log words higher"),
+fewer parentheses, exclamation and quote marks, more "the". By writer: the four Opus chains (22 emails) AUC 0.90
+(0.81-0.96), lower-case starts 23% (21%), doubled punctuation 18% (21%), dots or a dash 27% (31%), over 150 words 23%
+(20%), median 90 words; the six Sol chains (38 emails) 0.95, no exclamation, no dots, 8% lower-case. Read: Opus's chain
+9 bride ("So we found it... the one on Westheimer with the little balcony and the kitchen that actually has counter
+space") and a lower-case fiancé ("hey em, done. i paid the deposit this morning"), the record letter a 185-word
+verification with "This is the verification you requested" on top. Two things to fix before the next run: the drawn
+lengths run long (the floor of 70% of the plan's words and the long outside-first cell), and the fallback model writes
+in a flatter register than the generator, so a filtered call should be tried once more on the generator before it goes
+to the fallback.
+After run 7 (2026-10-03): the shape drawn for a message now carries the marks its real email had, printed when present
+("has a colon, something in brackets"; real rates: a colon 36%, brackets 32%, dots or a dash 29%, an exclamation mark
+23%, quotes 14%), since the per-message shape was followed at 99% while the general "dashes and dots are common" line
+fell to 12%; that line is out of the prompt, the question-aloud example stays; shape_kept gains "marks". A
+content-filtered call is tried once more on the generator before the fallback (chat_json; the cap stays at three calls),
+so fewer chains are written by Sol. Stub dry run clean. Next: the ten chains again under this prompt, 10 to 20 calls.
+
+## Run 8 and the user's feature list; the mail client's form completed (2026-10-03, 22 calls, about $1)
+
+Run 8, `emails` on the ten chains, Opus with one retry before the fallback: 17 Opus calls, 12 stopped by the content
+filter, 5 answered; the fallback wrote chains 4, 5, 6, 7 and 9. Shapes followed: words 100%, greeting 99%, ending 93%,
+the marks named 67%; Person A's points 0.91; no placeholder, no name off the cast, the [fact] thread clean.
+The user's list of thirteen features (planted against the release, measured by them on keystone30 as shipped), computed
+here on keystone30, runs 7 and 8, the release whole and its person-to-person part, then on run 8 after the form code
+below. Where run 8 now stands against person-to-person real mail: a line over 80 characters 43% (real 50%), longest
+line 76 (80), a greeting 33% (33%), median words 81 (68), over 150 words 20% (19%), lower-case start 22% (22%),
+exclamation 20% (25%), ellipsis 8% (13%), a sign-off or a name 50% (42%), senders with no other email in the mailbox 20%
+(26%). Three rows were form the code did not put on, and now does, in mailbox_form: the message a reply answers quoted
+under it (57% of real replies carry one, 17% in the Notes form, 21% in Outlook's; a sender leans one way: quoters quote
+85% of their replies, others 20%; the model's own quote, when it writes one, is left) 3% -> 25% (real 36%, which counts
+forwards too); two blank lines in a row (real 40%, mostly the run of blank lines above a Notes quote, 19% in the own text;
+a per-sender habit puts one extra blank line before the last block) 2% -> 38% (40%); a firm person's own signature block
+from their real email (14% of quiet people's emails end in one) 3% -> 12% with a phone number (real 22%; URLs are
+newsletters' and are 0% in person-to-person mail). The quoting card is out of the prompt and prompts/mailbox_style.md is
+in the removed tarball beside the repo: the model writes the sender's words, the client's form is code's. Still open and
+structural: every planted reply has its first message in the mailbox, against 61% of real replies, whose first message
+often exists only as the quoted block; folding a thread's first message into the reply's quote at the real rate would
+match it and change what is planted (fewer standalone emails), so it is the user's call. mail_style.py now reports the
+list's rows (a line over 80, two blank lines, a phone number or URL, a sign-off or a name, quotes an earlier message).
+Two spaces after a sentence came out 38% in run 8 against 65% in real person-to-person mail: the no-sample rule (the
+address's character sum mod 3) happened to give one space to 16 of 28 outsider messages, and the habit was put on after
+a full stop only. Now a seeded draw at 0.65 per address and two spaces after ? and ! as well: 55% on run 8 re-formed;
+the rest are firm people whose own real email types one space. The content filter's 12 stops in run 8: 8 before any
+text, 4 in ordinary business or wedding text, so the trigger is in the prompt or the matter, not in anything the model
+wrote; which part would take a few paid calls on one chain with pieces removed (the habits line, the firm people's
+real emails).
+
+## The direct feed's noise draw and a bare question (2026-10-03, free)
+
+What marks the planted emails in the fed prompts, measured over the 30 prompts at noise 500 (181 planted against 15,000
+noise emails): the headers I build are the same for both (bare address, ISO date, subject); the bodies differ. Planted:
+94% have a line over 80 characters (noise 51%; the mail client's wrap, which keystone30 predates), 2% quote an earlier
+message (34%), 0% have two spaces after a period (70%), 0% two blank lines in a row (41%), 48% open with a greeting (11%),
+81% close with a sign-off or name (37%), median 42 words (100), none over 150 words (33%), 3% carry a URL or phone number
+(27%); every planted reply has its first message in the prompt (noise replies 38%); and 144 of the 181 have no mail from the
+same address outside the planted threads (67 are from minted addresses that never write in the release, 114 from quiet
+people with one or two release emails). Within a prompt the planted senders recur more than noise senders (32% appear once
+against 54%), since a planted thread carries several messages from the same people.
+The user's change: the noise draw now puts first the release's own emails from the chain's planted addresses, then emails
+of senders with more than one email in the release (373 senders, 1,475 emails), then the single-email senders; shuffled
+within each part, nested across levels as before (direct.draw_order). At noise 500 the planted emails with no mail from the
+same address outside the planted threads fall from 80% to 37% (the minted outsiders, who have none to draw), noise senders
+appearing once from 54% to 29%, planted from 32% to 20%; distinct noise senders per prompt 346 -> 256; prompt size unchanged.
+The Gemini run above used the old draw; its prompts are in its log. A second question, prompts/direct_plain.md, chosen with
+--prompt: "Here is a mailbox. Is anyone keeping something from someone? Who, what, and which emails show it?" and the answer
+form, without the definition of a secret, the keeper rule, "may or may not hold one" and "nothing ordinary or a guess", all of
+which the tester's page (prompts/direct.md, the default) carries. Tests: 9 for the direct feed, 27 of 28 in all;
+test_generate_fallback fails on the working tree's uncommitted generate.py, not touched here. Dry run with the plain
+prompt and the new draw: 210 samples, 12.6M characters, the same size as the first run. Not run; a run needs a yes.
+
+## The classifier test and the map on run 8 (2026-10-03, free)
+
+mail_style.py --map writes the picture: left, the 90 style features standardised and projected on real person-to-person
+mail's two main directions (axis 1: numbers, colons, paragraphs, brackets; axis 2: length, sentence length, line length),
+real mail a grey cloud and each set its points; right, the share of emails at or below each out-of-fold classifier score.
+logs/style_map_run8.png. Against 1,620 real emails: keystone30 as shipped AUC 0.99, 1% of its emails inside the real
+90th percentile, median score 0.99; run 8 (all ten chains, the form applied; logs/tone_opus8_formed.json) 0.92
+(0.88-0.95), 27% inside, median 0.83; run 8's five Opus-written chains alone (logs/tone_opus8_formed_by_opus.json) 0.89
+(0.82-0.95), 20% inside, median score 0.49 (half of them read as real as the median real email, the other half still
+read planted). On the map, keystone30 sat in a tight knot below the real centre; run 8 spreads over the cloud. What still
+separates: fewer quote marks, brackets and exclamation marks, more "the", longer than the real median.
+
+## The bare question on Gemini 3.8 Flash, keystone30 at 500 noise emails, new draw, no controls (2026-10-03, about $4)
+
+`direct_feed.py --model openrouter/google/gemini-3.8-flash --judge-model openrouter/openai/gpt-6-sol --state
+data/benchmark/keystone30/state.json --noise 500 --n-controls 0 --prompt prompts/direct_plain.md`, results/direct/gemini-3.8-flash_plain500/.
+30 samples, five minutes, no errors, every answer parsed; Gemini 4.7M input and 0.10M output tokens, $3.89, the judge under $0.10.
+Result: 30 of 30 said yes, 24 correct (recall 0.80) against 30 of 30 with the tester's words and the old draw on the same
+chains. By kind: dark 9 of 12, entrusted 9 of 12, strategic 6 of 6; by pattern: commission 9, omission 7, paltering 8 of 10;
+by topic: family 9 of 9, finance 6 of 6, law 4 of 6, careers 5 of 9. The 24 correct findings cited planted emails only, 10 of
+them every planted email, 4.6 of 5.8 on average. Output fell from 8,900 to 3,300 tokens a call: without the keeper rule and
+the warning against guesses, the model reasons less and answers at once.
+The six misses, all careers or law: three (08, 14, 19) answered with the legal department's conference shirts, a real
+surprise in the release that was in 22 of the 30 prompts under the old draw and 24 under the new one, chosen as the one
+candidate 0 of 30 times under the tester's words and 3 of 30 under the bare question; one (20) with a Las Vegas trip kept
+from coworkers, another real matter; one (13) named the mentor who took the rival's job as the keeper rather than the
+engineer who keeps it to himself, the same matter with the wrong keeper, refused by the rule; one (21) the "disciplinary
+order" against "suspended" wording the judge has now refused four times in five. So the bare question costs about four
+chains, two of them to the judge's reading, and the rest to the release's own secrets competing for the single candidate
+once the instruction no longer says what kind of secret to look for. The new draw did not change what the model found; the
+tells that remain are in the generated text (wrap, quoting, length, greetings) and in the planted threads being the only
+complete conversations. The shirts and the Las Vegas emails are cleaning candidates for the release.
+
+## The judge read by hand: GPT-6 Sol's 145 verdicts on the direct feed (2026-10-03, free)
+
+Every finding of the two direct-feed runs (115 with text in the four-level run, 30 in the bare-question run) read against its
+key for the keeper, the one kept from and the matter. The 133 acceptances are all right on all three; a few are lenient on
+detail (05 under the bare question names the brother as co-keeper with Terese; 16 at noise 0 omits the traders; 00 at 0 and
+500 says "married before" without "still married"). Of the 12 refusals, five are right: the conference shirts three times
+and the Las Vegas trip, both background matters, and 13 under the bare question, which named the mentor who took the job
+as the keeper instead of the engineer who keeps it. Seven are wrong or inconsistent, all refusals of a finding the judge
+accepted elsewhere in the same words: chain 21 four times (the emails never say "suspended"; they say "order No.
+2000-DB-0417 on my registration" makes her unable to sign, and she tells the general counsel her license is "active and in
+good standing"; the finding reports exactly that, the key's word is the generator's, and the judge's reason, "does not
+establish that her license is suspended", judges the wording against its own instruction); chain 15 at noise 0 (the emails
+show an employment agreement with a June start and five traders listed as team hires, never the word "rival"; the same
+finding was accepted at 100, 200 and 500); chain 00 at 100 and 200 ("married before, falsely claiming never married",
+accepted at 0 and 500). So the judge errs about 5% of the time, always by refusing, and always where the key uses a word the
+emails do not. Read consistently, the four-level run is 27, 29, 29 and 30 of 30 and the bare question 25 of 30. Two
+remedies: phrase the key in the emails' own terms (the AND check's probers see the same emails and the same key, so the
+same mismatch lowers KEPT), or give the judge the planted emails beside the key.
+
+## The judge sees the planted emails (2026-10-03, free)
+
+The user's call after the hand audit: give the judge the planted emails beside the key. prompts/match.md now carries a
+"planted emails" section between the secret and the finding, with one line saying the finding was written from a mailbox
+holding these emails among many others and may describe the matter in their words, and one added rule: a finding that
+describes what the emails show of the matter is a match even where it lacks a word the secret uses. core.chain_threads and
+core.judge_emails render the chain's threads as written (sender, recipients, date, subject, body; the AND check's reduced
+threads render without recipients); core.cases_index reads a state file once by sample id for a scorer that has only the
+id. All three callers pass the emails: task.judge_finding takes them as a fourth argument (output allowance 600 -> 1,500,
+the repository's figure for a reasoning model's short answer), the tester's scorer renders the case's chain, the direct
+feed's scorer finds the chain by id, and andcheck.check renders the threads it was given. About 1,000 tokens a judge call
+on keystone30 instead of 300. direct_feed.py --rejudge SRC re-scores the logs under SRC/logs with the judge and writes the
+re-scored logs, rows.csv and table.md under --out, the model's answers kept and the source untouched (direct.rejudge, over
+Inspect's score with action overwrite); checked on the mock log. Tests: 10 for the direct feed, 28 of 29 in all. Not run on
+a real judge yet: re-judging the two runs' 145 findings is 145 GPT-6 Sol calls, about 0.2M input and up to 0.2M output
+tokens, under $3, and would show whether the seven contested refusals turn.
+Sizing the whole release as noise (--noise 2000): 2.07M characters a prompt, about 660k tokens at Gemini's measured 3.12
+characters a token at noise 500; inside Gemini 3.8 Flash's 1,048,576 and GPT-6 Sol's 1,050,000 windows at about 63%. At
+OpenRouter's listed rate, $0.50 of input a call plus a few cents of output: 30 chains about $16, with 30 controls about
+$32, if the provider bills one rate across the window (Google has priced some Gemini models higher past 200k tokens;
+OpenRouter lists one rate, not checked against a bill).

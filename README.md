@@ -1410,6 +1410,7 @@ python scripts/test_agent.py --model M --judge-model J [--state F] [--release F]
     [--candidate-count 1] [--n-controls N] [--limit N] [--sample-id ID] [--max-samples 1] --out DIR    # or --export-only --out DIR
 python scripts/run_testers.py --models M1,M2 --judge-model J --state F [--n-controls N] [--limit N]   # the tester over several models, one table in results/tester/table.md
 python scripts/clean_background.py --models M1,M2 [--runs 1] [--candidate-count 5] [--agree 2] --out DIR [--apply]
+python scripts/direct_feed.py --model M --judge-model J --state F [--noise 0,100,200,500] [--n-controls N] [--limit N] --out DIR   # the direct feed: planted emails and N random release emails in one prompt, the tester's answer form; --dry-run for sizes, no model
 python scripts/generate.py check [--probers P1,P2] [--matcher J] [--diagnoser D] [--rounds 3] [--limit N]   # step 5 on the chains in the state file; the same flags on chains and all, --no-check to skip
 ```
 
@@ -1464,7 +1465,6 @@ prompts/
   iab_tier1.txt
   iab_tier1_desc.json
   kinds.json
-  mailbox_style.md
   match.md
   name_audit.md
   patterns.json
@@ -1483,6 +1483,7 @@ scripts/
   classify_topics.py
   classify_topics_embed.py
   clean_background.py
+  direct_feed.py
   extract_people.py
   generate.py
   mailbox_profile.py
@@ -1504,6 +1505,7 @@ src/
   tester/
     __init__.py
     core.py
+    direct.py
     export.py
     mailbox.py
     retrieval.py
@@ -1511,17 +1513,18 @@ src/
 tests/
   __init__.py
   test_andcheck.py
+  test_direct_feed.py
   test_tester_core.py
 ```
 
 | path | holds |
 |---|---|
-| `prompts/` | the four generation prompts (`secret.md`, `clues.md`, `plot.md`, `email.md`) and their fill files (`kinds.json` the pool and Goffman's kinds; `purposes.json` Goffman's quotes; `patterns.json` the three patterns with the sources' words; `atoms.json` the parts and acts; `shapes.json` the plot's choices; `mailbox_style.md` the quoting form); the mailbox prompts (`topic_classify.md`, `people_extract.md`, `name_audit.md`, `quiet_people.md`); the check prompts (`probe.md` the blind prober, `match.md` the judge, `diagnose.md` the fix); the IAB taxonomy |
-| `scripts/` | `parse_corpus.py`, the corpus to one parquet; `build_mailbox.py` and the stage scripts it drives; `reclassify_topics.py`, the independent classification; `generate.py`, steps 1 to 5; `assemble.py`; `test_agent.py` and `clean_background.py`, the tester and the background sweep; `name_registry.py`, the pseudonym registry `anonymize_llm.py` uses |
+| `prompts/` | the four generation prompts (`secret.md`, `clues.md`, `plot.md`, `email.md`) and their fill files (`kinds.json` the pool and Goffman's kinds; `purposes.json` Goffman's quotes; `patterns.json` the three patterns with the sources' words; `atoms.json` the parts and acts; `shapes.json` the plot's choices); the mailbox prompts (`topic_classify.md`, `people_extract.md`, `name_audit.md`, `quiet_people.md`); the check prompts (`probe.md` the blind prober, `match.md` the judge, `diagnose.md` the fix, `direct.md` the direct feed's question); the IAB taxonomy |
+| `scripts/` | `parse_corpus.py`, the corpus to one parquet; `build_mailbox.py` and the stage scripts it drives; `reclassify_topics.py`, the independent classification; `generate.py`, steps 1 to 5; `assemble.py`; `test_agent.py` and `clean_background.py`, the tester and the background sweep; `direct_feed.py`, the direct feed; `name_registry.py`, the pseudonym registry `anonymize_llm.py` uses |
 | `src/models/` | one engine interface over the API (`api_engine.py`), local vLLM (`vllm_engine.py`) and the stub (`stub_engine.py`); the shared flags in `engine_factory.py` |
 | `src/andcheck.py` | step 5: the subset probes, the judge call and the diagnosis that `generate.py` runs |
-| `src/tester/` | the tester: the mailbox environment, the session with its gates, the Inspect task (chains, or the background sweep), the export |
-| `tests/` | the tester's gates and the AND check's keep rule, without a model |
+| `src/tester/` | the tester: the mailbox environment, the session with its gates, the Inspect task (chains, or the background sweep), the export; `direct.py`, the direct feed |
+| `tests/` | the tester's gates, the direct feed and the AND check's keep rule, without a model |
 | `data/topics/` | topic labels for the eligible pool, the sample, the anonymised sample and its map (the map is private and gitignored) |
 | `data/release/` | the released mailbox and its manifest |
 | `benchmark_pool/` | banks mined from the mailbox: the profile, the quiet people, the fresh names, real subject lines, real file names |
@@ -1555,7 +1558,8 @@ every page is reviewed. Listing, searching and reading share one budget (100 cal
 
 The report is three counts. On the chains: how many the tester said yes on, and how many of those a
 separate judge model accepted as the planted secret, comparing the finding with the chain's secret,
-actor and victim (`prompts/match.md`). On the controls: how many it said yes on with nothing planted.
+actor and victim, with the planted emails beside them so a finding in the emails' words is not refused
+for the key's (`prompts/match.md`). On the controls: how many it said yes on with nothing planted.
 Each row also keeps the threads the tester cited beside the planted ones, for reading.
 
 ```bash
@@ -1568,6 +1572,24 @@ inspect view --log-dir results/tester/opus/logs                             # br
 Models are Inspect model strings: `openrouter/<slug>`, `openai/<model>`, `vllm/<hf-model>` for a local
 server. Flags: `--noise N` background threads instead of the whole release; `--budget`; `--no-scan`;
 `--rerank 0` for plain BM25; `--seed`. Tests of the gates and the score: `pytest tests/`.
+
+**The direct feed.** The same question without the tools: one chain's planted emails and N random
+emails of the release go to the model in a single prompt, in date order with handles that say nothing
+about which are planted, and it answers as the answer tool does, ranked candidates with evidence
+handles or an empty list; the same judge decides. Noise is counted in emails (0, 100, 200 and 500 by
+default) and nested, so each level adds mail to the one below. The draw is ordered: the release's own
+emails from the planted addresses first, so the planted people also write outside the planted threads,
+then emails from senders with more than one email in the release, then the rest. Controls are the same
+noise with nothing planted. The question is `prompts/direct.md`, the tester's words, or with `--prompt
+prompts/direct_plain.md` the bare question with the answer form alone. The report is the three counts
+per level, plus how many findings cited a planted email (`src/tester/direct.py`, `scripts/direct_feed.py`).
+`--dry-run` builds every prompt and prints the sizes without a model.
+
+```bash
+python scripts/direct_feed.py --dry-run --state data/benchmark/keystone30/state.json --n-controls 30 --out results/direct/dry
+python scripts/direct_feed.py --model openrouter/google/gemini-3.8-flash --judge-model openrouter/openai/gpt-6-sol \
+    --state data/benchmark/keystone30/state.json --n-controls 30 --out results/direct/gemini-3.8-flash
+```
 
 **Cleaning the background first.** The real mailbox may hold secrets of its own, and the tester would
 report them. So before anything is planted, the same tester runs on the untouched release with several

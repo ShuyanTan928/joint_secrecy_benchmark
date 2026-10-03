@@ -112,6 +112,29 @@ def planted_threads(case: BenchmarkCase) -> list[list[dict]]:
     return out
 
 
+def chain_threads(chain: dict) -> list[list[dict]]:
+    """The chain's planted threads as written: the messages with their names and recipients."""
+    return [list(c.get("messages") or []) for c in (chain.get("emails") or {}).get("clues") or [] if c.get("messages")]
+
+
+def judge_emails(threads: list[list[dict]]) -> str:
+    """The planted emails as the judge sees them beside the key: sender, recipients where given, date, subject, body."""
+    out = []
+    for k, th in enumerate(threads, 1):
+        out.append(f"thread {k} ({len(th)} message{'s' if len(th) != 1 else ''}):")
+        for m in th:
+            to = m.get("to") or []
+            to_line = f"  To: {', '.join(to) if isinstance(to, list) else to}" if to else ""
+            out.append(f"From: {m.get('from', '')}{to_line}  Date: {(m.get('date') or '')[:10]}\nSubject: {m.get('subject', '')}\n{m.get('body') or ''}\n")
+    return "\n".join(out) if out else "(none)"
+
+
+@lru_cache(maxsize=4)
+def cases_index(state: str) -> dict[str, BenchmarkCase]:
+    """Every kept case of a state file by sample id, read once; for a scorer that has only the id."""
+    return {c.sample_id: c for c in load_cases(state)}
+
+
 def build_mailbox(case: BenchmarkCase, settings: MailboxSettings, *, root: Path = ROOT,
                   release: str | Path = DEFAULT_RELEASE) -> MailboxEnv:
     """The background threads (all, or a seeded sample of `noise`) plus the case's planted threads, placed

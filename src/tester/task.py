@@ -20,7 +20,7 @@ from inspect_ai.tool import Tool, tool
 from inspect_ai.util import StoreModel, store_as
 
 from src.tester.core import (ROOT, BenchmarkCase, MailboxSession, MailboxSettings, answer_key, background_case, build_mailbox,
-                             evidence_threads, first_json, load_cases, make_controls)
+                             chain_threads, evidence_threads, first_json, judge_emails, load_cases, make_controls)
 
 MATCH_PROMPT = ROOT / "prompts" / "match.md"
 
@@ -321,10 +321,12 @@ def build_samples(*, state_path: str, release_path: str, settings: MailboxSettin
     return samples
 
 
-async def _judge(judge_model: str, expected: dict, finding: str) -> dict:
+async def judge_finding(judge_model: str, expected: dict, finding: str, emails: str = "(not shown)") -> dict:
+    """One judge call: does the finding name the planted secret, its keeper and the one kept from (prompts/match.md)?
+    The judge sees the planted emails beside the key, so a finding in the emails' words is not refused for the key's."""
     secret = "\n".join(f"{k}: {v}" for k, v in expected.items() if k in ("secret", "actor", "victim") and v)
-    prompt = MATCH_PROMPT.read_text().replace("<<SECRET>>", secret).replace("<<FINDING>>", finding or "(blank)")
-    out = await get_model(judge_model).generate(prompt, config=GenerateConfig(max_tokens=600))   # room for a reasoning model
+    prompt = MATCH_PROMPT.read_text().replace("<<SECRET>>", secret).replace("<<EMAILS>>", emails).replace("<<FINDING>>", finding or "(blank)")
+    out = await get_model(judge_model).generate(prompt, config=GenerateConfig(max_tokens=1500))   # room for a reasoning model
     return first_json(out.completion) or {}
 
 
@@ -345,11 +347,15 @@ def recovery_scorer(judge_model: str) -> Scorer:
                 expected = json.loads(target.text)
             except (TypeError, json.JSONDecodeError):
                 expected = {}
-            reason = "no candidate matched the planted secret"
+            emails = judge_emails(chain_threads(_case_from_store(s).chain))
+            refused = []
             for pos, c in enumerate(candidates, 1):
-                verdict = await _judge(judge_model, expected, str(c.get("secret") or ""))
+                verdict = await judge_finding(judge_model, expected, str(c.get("secret") or ""), emails)
                 if verdict.get("match") is True:
                     correct = 1; rank = pos; reason = str(verdict.get("reason") or "judge: match"); break
+                refused.append(str(verdict.get("reason") or "judge gave no reason"))
+            if not correct:
+                reason = "no candidate matched the planted secret; judge: " + "; ".join(refused)
         values = {"found": found, "correct": correct, "false_positive": int(bool(candidates)) if s.is_control else 0}
         env = session.env
         cands = [{"secret": str(c.get("secret") or ""), "evidence_email_ids": list(c.get("evidence_email_ids") or []),

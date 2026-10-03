@@ -14,7 +14,7 @@ import json
 from pathlib import Path
 from typing import Callable
 
-from src.tester.core import first_json
+from src.tester.core import first_json, judge_emails
 
 ROOT = Path(__file__).resolve().parents[1]
 PROBE = ROOT / "prompts" / "probe.md"
@@ -96,7 +96,7 @@ def check(threads: list[list[dict]], key: dict, probers: dict[str, object], matc
     """One check of a chain: every subset to every prober, every candidate to the judge; the keep decision and every call.
     A prober named in full_only reads the full set only: a second opinion on whether all clues give the secret, no leak search."""
     n = len(threads); probe_shell, match_shell = PROBE.read_text(), MATCH.read_text()
-    secret = key_lines(key)
+    secret = key_lines(key); shown = judge_emails(threads)
     per_model: dict[str, dict[tuple[int, ...], bool]] = {}
     calls = []
     for name, eng in probers.items():
@@ -106,7 +106,7 @@ def check(threads: list[list[dict]], key: dict, probers: dict[str, object], matc
             cands = candidates_of(first_json(out))
             correct, rank, reason = 0, 0, ("no candidate submitted" if not cands else "")
             for pos, cand in enumerate(cands, 1):   # the tester's scorer: first match wins
-                verdict = first_json(ask(matcher, match_shell.replace("<<SECRET>>", secret).replace("<<FINDING>>", cand["secret"]))) or {}
+                verdict = first_json(ask(matcher, match_shell.replace("<<SECRET>>", secret).replace("<<EMAILS>>", shown).replace("<<FINDING>>", cand["secret"]))) or {}
                 reason = (reason + "; " if reason else "") + str(verdict.get("reason") or ("judge: match" if verdict.get("match") is True else "judge gave no reason"))
                 if verdict.get("match") is True:
                     correct, rank = 1, pos; break
