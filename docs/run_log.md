@@ -2418,3 +2418,42 @@ show it?" with the answer form is the direct feed's one prompt, prompts/direct.m
 flags are gone, and the README describes the feed with this question alone. Local result folders renamed to match:
 results/direct/gemini-3.8-flash is the run under this question at 0, 100, 200 and 500 with 30 controls; the earlier runs
 are kept beside it as gemini-3.8-flash_earlier_prompt and gemini-3.8-flash_500_earlier_judge.
+
+## Two mechanical changes for mail between people who share a home, and the classifier by message type (2026-10-03)
+
+Read on keystone30 chain 9's "I need to ask you straight out: do we owe anything on any credit card?" and run 8's version:
+what reads planted is the background told to the one person who knows it, the motive stated, the categorical question
+from the plan's logic, a habit worn over full grammar, and a sign-off drawn from a business cell. Code now: (1) a personal
+shape cell, the release's mail on personal topics (family, celebrations, hobbies, food, sport, holidays, pets, home: 132
+first messages, median 72 words, greeting 28%, no sign-off 48%; 353 replies, median 54, greeting 28%, no sign-off 43%, an
+initial 5%), drawn for a message where the outside party's role is a spouse, relative, friend or the like (HOME_ROLE), in
+place of the sender-side cell; (2) for those messages the "about" line loses a leading "Before ..., " clause and the
+manner "straight out" (recorded in rec["about_trimmed"]), and the shape line ends "they share the background, so only
+what is new is said, and no reason for it". Stub dry run clean; chain 9's line now reaches the model as "Person B writes
+that the mortgage lender will pull their credit on Thursday. She asks him whether they owe anything on any credit card."
+The classifier by message type on run 8 (formed), each against the matching real mail: personal (16 messages) 0.94
+(0.89-0.98) against 490 real personal-topic emails, with "the", "than", "them" and apostrophes higher ("i'd rather know
+now than have it come up in front of them": the motive shows in the function words); records (15) 0.94 (0.87-0.99)
+against 170 real first messages from outside, "no", "it", "on", "does" higher (the denials); work (29) 0.93 (0.87-0.97)
+against 1,130 real work-topic emails, "the" and length higher. keystone30 as shipped: 0.98, 0.98, 0.99. The gap is the
+same size in every kind of message and matching the reference does not reduce it: it is the writing, not the comparison.
+Not run: the ten chains under these changes, 16 to 22 calls, needs a yes.
+Proofread of the step-4 prompt (2026-10-03): the setting now comes before the line that says what is below; the first
+bullet no longer claims every reader knows the background (false for a clerk writing to the firm) and says "say only what
+the reader does not already know"; "that ending" and the comma-joined shape list are gone (the shape line is joined with
+semicolons: "about 40 words; no greeting; signed with a name; has an exclamation mark"); the rule for mail between people
+who share a home is its own "note:" line under the message, not a clause on the shape; the people lines read "Person B,
+outside the firm: his wife, a middle-school teacher. Writes in lower case." so the role's own semicolons no longer collide
+with the habit; "the other business of the day" is "whatever else is going on that day"; the check lines say "about line"
+where the model sees "about:". Stub dry run clean.
+
+## Release bundle of the direct-feed run (2026-10-03)
+
+scripts/bundle_direct.py builds a release bundle for a direct-feed run in the format of the tester releases: summary.md and
+summary.json, rows.csv, table.md and table.csv, conversations.jsonl.gz (one record per sample: the prompt, the answer with
+reasoning omitted, the candidates, the score, each judge call's prompt and verdict, token use), judge-decisions.json,
+provenance.json (tested and release commits, the logs' recorded revision, source blob shas in both commits, input and log
+hashes, task args, limits), REPRODUCE.md and SHA256SUMS, zipped, with the summary, rows, provenance and checksums beside the
+zip; it also rebuilds every prompt from the checkout and counts those matching the logged prompts. Bundle for the Gemini 3.8
+Flash run: results/release/keystone30-direct-gemini-3.8-flash-2026-10-03 (18.7 MB zip; 210 of 210 prompts rebuilt match;
+120 judge calls, all valid; cost by token counts $14.32), published as the GitHub release of that tag on commit 2f2bee7.
